@@ -1,0 +1,678 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Apprenants - KALANSSO{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* ===== DESIGN APPRENANTS - Élégant & Chaleureux ===== */
+    :root {
+        --student-primary: #4361ee;
+        --student-secondary: #3f37c9;
+        --student-accent: #f72585;
+        --student-success: #4cc9f0;
+        --student-soft-blue: #f0f4ff;
+        --student-soft-pink: #fff0f5;
+        --student-soft-green: #f0fff0;
+        --student-soft-purple: #f8f0ff;
+        --student-gray: #fafbfc;
+        --student-text: #1e293b;
+        --student-text-light: #64748b;
+    }
+
+    /* ===== HEADER ===== */
+    .student-header {
+        margin-bottom: 2.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #f1f5f9;
+    }
+
+    .student-title {
+        font-size: 1.85rem;
+        font-weight: 700;
+        color: var(--student-text);
+        letter-spacing: -0.02em;
+        margin-bottom: 0.25rem;
+    }
+
+    .student-subtitle {
+        color: var(--student-text-light);
+        font-size: 0.9rem;
+    }
+
+    /* ===== STATS CARDS - Épurées ===== */
+    .student-stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.5rem;
+        margin-bottom: 2.5rem;
+    }
+
+    .student-stat-card {
+        background: white;
+        border-radius: 20px;
+        padding: 1.5rem;
+        border: 1px solid #edf2f9;
+        transition: all 0.2s ease;
+    }
+
+    .student-stat-card:hover {
+        border-color: var(--student-primary);
+        box-shadow: 0 8px 20px -8px rgba(67, 97, 238, 0.15);
+        transform: translateY(-2px);
+    }
+
+    .stat-label {
+        color: var(--student-text-light);
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-number {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--student-text);
+        line-height: 1;
+        margin-bottom: 0.25rem;
+    }
+
+    .stat-trend {
+        font-size: 0.75rem;
+        color: #10b981;
+        background: #f0fdf4;
+        padding: 0.2rem 0.5rem;
+        border-radius: 20px;
+        display: inline-block;
+    }
+
+    /* ===== FILTRES - Minimalistes ===== */
+    .filters-section {
+        background: white;
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        border: 1px solid #edf2f9;
+    }
+
+    .search-wrapper {
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 0.15rem;
+        transition: all 0.2s;
+        background: white;
+    }
+
+    .search-wrapper:focus-within {
+        border-color: var(--student-primary);
+        box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+    }
+
+    .search-input {
+        border: none;
+        padding: 0.65rem 1rem;
+        background: transparent;
+    }
+
+    .search-input:focus {
+        box-shadow: none;
+    }
+
+    .filter-select {
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 0.65rem 1rem;
+        background: white;
+        color: var(--student-text);
+        font-size: 0.95rem;
+        transition: all 0.2s;
+    }
+
+    .filter-select:hover {
+        border-color: var(--student-primary);
+    }
+
+    .btn-filter {
+        background: var(--student-primary);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 0.65rem 1.5rem;
+        font-weight: 500;
+        transition: all 0.2s;
+        width: 100%;
+    }
+
+    .btn-filter:hover {
+        background: var(--student-secondary);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(67, 97, 238, 0.25);
+    }
+
+    .btn-export {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 0.65rem 1.5rem;
+        color: var(--student-text-light);
+        transition: all 0.2s;
+    }
+
+    .btn-export:hover {
+        border-color: var(--student-primary);
+        color: var(--student-primary);
+        background: var(--student-soft-blue);
+    }
+
+    /* ===== TABLEAU - Élégant & Aéré ===== */
+    .table-container {
+        background: white;
+        border-radius: 20px;
+        border: 1px solid #edf2f9;
+        overflow: hidden;
+        margin-bottom: 2rem;
+    }
+
+    .student-table {
+        margin-bottom: 0;
+    }
+
+    .student-table thead th {
+        background: #fafcff;
+        color: var(--student-text-light);
+        font-weight: 600;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        padding: 1.25rem 1rem;
+        border-bottom: 1px solid #edf2f9;
+    }
+
+    .student-table tbody td {
+        padding: 1.25rem 1rem;
+        border-bottom: 1px solid #f1f5f9;
+        vertical-align: middle;
+        color: var(--student-text);
+    }
+
+    .student-table tbody tr {
+        transition: background 0.2s;
+    }
+
+    .student-table tbody tr:hover {
+        background: #fafcff;
+    }
+
+    .student-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    /* Avatar - Simple & Élégant */
+    .avatar-circle {
+        width: 44px;
+        height: 44px;
+        border-radius: 14px;
+        background: linear-gradient(135deg, var(--student-soft-blue), #e9f0ff);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 1rem;
+        color: var(--student-primary);
+        transition: all 0.2s;
+    }
+
+    .student-table tbody tr:hover .avatar-circle {
+        background: var(--student-primary);
+        color: white;
+    }
+
+    /* Badges Permis - Discrets */
+    .permis-badge {
+        background: #f8fafc;
+        border: 1px solid #e9ecef;
+        color: var(--student-text-light);
+        padding: 0.3rem 0.7rem;
+        border-radius: 30px;
+        font-size: 0.7rem;
+        font-weight: 500;
+        display: inline-block;
+        margin: 0.1rem;
+        transition: all 0.2s;
+    }
+
+    .permis-badge:hover {
+        background: var(--student-soft-blue);
+        border-color: var(--student-primary);
+        color: var(--student-primary);
+    }
+
+    /* Status Badges - Sans icônes */
+    .status-badge {
+        padding: 0.4rem 1rem;
+        border-radius: 30px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        display: inline-block;
+    }
+
+    .status-inscrit {
+        background: #fff9f0;
+        color: #b85e00;
+        border: 1px solid #ffe0b2;
+    }
+
+    .status-formation {
+        background: #f0f4ff;
+        color: var(--student-primary);
+        border: 1px solid #d0e0ff;
+    }
+
+    .status-permis_obtenu {
+        background: #f0fff4;
+        color: #0b6e4f;
+        border: 1px solid #c3e6cb;
+    }
+
+    .status-abandon {
+        background: #fff5f5;
+        color: #b22222;
+        border: 1px solid #fcc6c6;
+    }
+
+    /* Progression - Subtile */
+    .progress-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .progress-bar-custom {
+        background: #f1f5f9;
+        border-radius: 30px;
+        height: 6px;
+        width: 120px;
+        overflow: hidden;
+    }
+
+    .progress-fill {
+        background: var(--student-primary);
+        border-radius: 30px;
+        height: 100%;
+        width: 0%;
+        transition: width 0.3s ease;
+    }
+
+    .progress-text {
+        color: var(--student-text-light);
+        font-size: 0.8rem;
+        font-weight: 500;
+        min-width: 60px;
+    }
+
+    /* Actions - Épurées */
+    .action-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid #edf2f9;
+        background: white;
+        color: var(--student-text-light);
+        transition: all 0.2s;
+    }
+
+    .action-btn:hover {
+        border-color: transparent;
+        transform: translateY(-2px);
+    }
+
+    .btn-view:hover {
+        background: var(--student-soft-blue);
+        color: var(--student-primary);
+    }
+
+    .btn-edit:hover {
+        background: #fff9f0;
+        color: #b85e00;
+    }
+
+    .btn-delete:hover {
+        background: #fff5f5;
+        color: #b22222;
+    }
+
+    /* Pagination - Simple */
+    .pagination-custom {
+        gap: 0.35rem;
+    }
+
+    .page-link-custom {
+        border: 1px solid #edf2f9;
+        padding: 0.5rem 1rem;
+        border-radius: 10px !important;
+        color: var(--student-text-light);
+        background: white;
+        transition: all 0.2s;
+    }
+
+    .page-link-custom:hover {
+        border-color: var(--student-primary);
+        color: var(--student-primary);
+        background: var(--student-soft-blue);
+    }
+
+    .page-item.active .page-link-custom {
+        background: var(--student-primary);
+        color: white;
+        border-color: var(--student-primary);
+    }
+
+    /* Empty State - Élégant */
+    .empty-state {
+        padding: 4rem 2rem;
+        text-align: center;
+        background: linear-gradient(135deg, #fafcff, white);
+        border-radius: 20px;
+    }
+
+    .empty-state h5 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--student-text);
+        margin-bottom: 0.5rem;
+    }
+
+    .empty-state p {
+        color: var(--student-text-light);
+        margin-bottom: 1.5rem;
+    }
+
+    .btn-add {
+        background: var(--student-primary);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 0.65rem 2rem;
+        font-weight: 500;
+        transition: all 0.2s;
+    }
+
+    .btn-add:hover {
+        background: var(--student-secondary);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 16px -4px rgba(67, 97, 238, 0.3);
+        color: white;
+    }
+
+    /* Responsive */
+    @media (max-width: 1200px) {
+        .student-stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .student-stats-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .student-title {
+            font-size: 1.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <!-- Header Élégant -->
+    <div class="student-header d-flex flex-wrap align-items-center justify-content-between">
+        <div>
+            <h1 class="student-title">Apprenants</h1>
+            <p class="student-subtitle">
+                {{ apprenants_count }} apprenant{% if apprenants_count > 1 %}s{% endif %} • 
+                {{ en_formation_count }} en formation
+            </p>
+        </div>
+        <div class="d-flex gap-2 mt-3 mt-sm-0">
+            <a href="{% url 'exporter_apprenants' %}" class="btn-export">
+                Exporter
+            </a>
+            <a href="{% url 'ajouter_apprenant' %}" class="btn-add">
+                Nouvel apprenant
+            </a>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="student-stats-grid">
+        <div class="student-stat-card">
+            <div class="stat-label">Total apprenants</div>
+            <div class="stat-number">{{ apprenants_count }}</div>
+            <span class="stat-trend">+12% ce mois</span>
+        </div>
+        <div class="student-stat-card">
+            <div class="stat-label">En formation</div>
+            <div class="stat-number">{{ en_formation_count }}</div>
+            <span class="stat-trend">18 prêts pour examen</span>
+        </div>
+        <div class="student-stat-card">
+            <div class="stat-label">Permis obtenus</div>
+            <div class="stat-number">{{ permis_obtenu_count }}</div>
+            <span class="stat-trend">+5 cette semaine</span>
+        </div>
+        <div class="student-stat-card">
+            <div class="stat-label">Taux de réussite</div>
+            <div class="stat-number">{{ taux_reussite }}%</div>
+            <span class="stat-trend">+3% vs mois dernier</span>
+        </div>
+    </div>
+
+    <!-- Filtres -->
+    <div class="filters-section">
+        <form method="get" class="row g-3 align-items-end">
+            <div class="col-lg-5">
+                <label class="form-label fw-semibold small text-muted mb-2">Rechercher</label>
+                <div class="search-wrapper d-flex align-items-center">
+                    <input type="text" class="form-control search-input" name="q" 
+                           placeholder="Nom, prénom, email..." value="{{ request.GET.q|default:'' }}">
+                </div>
+            </div>
+            <div class="col-lg-2">
+                <label class="form-label fw-semibold small text-muted mb-2">Statut</label>
+                <select class="form-select filter-select" name="statut">
+                    <option value="">Tous les statuts</option>
+                    <option value="inscrit" {% if request.GET.statut == 'inscrit' %}selected{% endif %}>Inscrit</option>
+                    <option value="formation" {% if request.GET.statut == 'formation' %}selected{% endif %}>En formation</option>
+                    <option value="permis_obtenu" {% if request.GET.statut == 'permis_obtenu' %}selected{% endif %}>Permis obtenu</option>
+                </select>
+            </div>
+            <div class="col-lg-3">
+                <label class="form-label fw-semibold small text-muted mb-2">Type de permis</label>
+                <select class="form-select filter-select" name="permis">
+                    <option value="">Tous les permis</option>
+                    {% for permis in types_permis %}
+                    <option value="{{ permis.code }}" {% if request.GET.permis == permis.code %}selected{% endif %}>
+                        {{ permis.code }} - {{ permis.libelle }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-lg-2">
+                <div class="d-grid">
+                    <button type="submit" class="btn-filter">
+                        Filtrer
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Tableau -->
+    <div class="table-container">
+        <div class="table-responsive">
+            <table class="table student-table">
+                <thead>
+                    <tr>
+                        <th class="ps-4">Apprenant</th>
+                        <th>Contact</th>
+                        <th>Permis</th>
+                        <th>Progression</th>
+                        <th>Statut</th>
+                        <th class="text-end pe-4">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for apprenant in apprenants %}
+                    <tr>
+                        <td class="ps-4">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="avatar-circle">
+                                    {{ apprenant.prenom|first|upper }}{{ apprenant.nom|first|upper }}
+                                </div>
+                                <div>
+                                    <div class="fw-semibold">{{ apprenant.prenom }} {{ apprenant.nom }}</div>
+                                    <small class="text-muted">
+                                        {{ apprenant.date_inscription|date:"d M Y" }}
+                                    </small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="small text-muted">{{ apprenant.email|default:"-"|truncatechars:20 }}</div>
+                            <div class="small text-muted mt-1">{{ apprenant.telephone }}</div>
+                        </td>
+                        <td>
+                            <div class="d-flex flex-wrap gap-1">
+                                {% for permis in apprenant.types_permis.all|slice:":3" %}
+                                    <span class="permis-badge">{{ permis.code }}</span>
+                                {% empty %}
+                                    <span class="text-muted small">-</span>
+                                {% endfor %}
+                                {% if apprenant.types_permis.all|length > 3 %}
+                                    <span class="permis-badge">+{{ apprenant.types_permis.all|length|add:"-3" }}</span>
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td>
+                            {% with prog=apprenant.progression_conduite %}
+                                <div class="progress-wrapper">
+                                    <div class="progress-bar-custom">
+                                        <div class="progress-fill" style="width: {{ prog.progression_pourcentage|default:0 }}%;"></div>
+                                    </div>
+                                    <span class="progress-text">
+                                        {{ prog.heures_effectuees|default:0 }}/{{ prog.heures_achetees|default:0 }}h
+                                    </span>
+                                </div>
+                            {% endwith %}
+                        </td>
+                        <td>
+                            <span class="status-badge status-{{ apprenant.statut }}">
+                                {{ apprenant.get_statut_display }}
+                            </span>
+                        </td>
+                        <td class="text-end pe-4">
+                            <div class="d-flex gap-2 justify-content-end">
+                                <a href="{% url 'detail_apprenant' apprenant.id %}" class="action-btn btn-view">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{% url 'modifier_apprenant' apprenant.id %}" class="action-btn btn-edit">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{% url 'planning_apprenant' apprenant.id %}" class="action-btn">
+                                    <i class="fas fa-calendar-alt"></i>
+                                </a>
+                                <button type="button" class="action-btn btn-delete" 
+                                        data-bs-toggle="modal" data-bs-target="#deleteModal{{ apprenant.id }}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6">
+                            <div class="empty-state">
+                                <h5>Aucun apprenant</h5>
+                                <p>Commencez par ajouter votre premier apprenant.</p>
+                                <a href="{% url 'ajouter_apprenant' %}" class="btn-add">
+                                    Ajouter un apprenant
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    {% if is_paginated %}
+    <nav aria-label="Navigation">
+        <ul class="pagination justify-content-center pagination-custom">
+            {% if apprenants.has_previous %}
+            <li class="page-item">
+                <a class="page-link page-link-custom" href="?page={{ apprenants.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.statut %}&statut={{ request.GET.statut }}{% endif %}">
+                    Précédent
+                </a>
+            </li>
+            {% endif %}
+
+            {% for num in apprenants.paginator.page_range %}
+                {% if apprenants.number == num %}
+                <li class="page-item active">
+                    <span class="page-link page-link-custom">{{ num }}</span>
+                </li>
+                {% elif num > apprenants.number|add:'-3' and num < apprenants.number|add:'3' %}
+                <li class="page-item">
+                    <a class="page-link page-link-custom" href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.statut %}&statut={{ request.GET.statut }}{% endif %}">{{ num }}</a>
+                </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if apprenants.has_next %}
+            <li class="page-item">
+                <a class="page-link page-link-custom" href="?page={{ apprenants.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.statut %}&statut={{ request.GET.statut }}{% endif %}">
+                    Suivant
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+
+<!-- Modals Suppression -->
+{% for apprenant in apprenants %}
+<div class="modal fade" id="deleteModal{{ apprenant.id }}" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius: 16px; border: none;">
+            <div class="modal-body p-4">
+                <h5 class="fw-semibold mb-3">Confirmer la suppression</h5>
+                <p class="text-muted mb-4">
+                    Êtes-vous sûr de vouloir supprimer <span class="fw-semibold">{{ apprenant.prenom }} {{ apprenant.nom }}</span> ?
+                    Cette action est irréversible.
+                </p>
+                <div class="d-flex gap-2 justify-content-end">
+                    <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal">
+                        Annuler
+                    </button>
+                    <form method="post" action="{% url 'supprimer_apprenant' apprenant.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger px-4">
+                            Supprimer
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endblock %}

@@ -1,0 +1,52 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom py-3 px-4 shadow-sm">
+    <div class="container-fluid p-0">
+        <div class="d-flex align-items-center">
+            <button type="button" id="sidebarCollapse" class="btn btn-light border-0 me-3 rounded-circle shadow-sm" style="width: 40px; height: 40px;">
+                <i class="fas fa-bars text-secondary"></i>
+            </button>
+            <h5 class="mb-0 fw-bold text-dark d-none d-md-block">Tableau de bord</h5>
+        </div>
+
+        <div class="d-flex align-items-center gap-3">
+            <!-- Notifications -->
+            <div class="dropdown">
+                <a class="nav-link position-relative p-2 rounded-circle bg-light text-secondary" href="#" id="notificationsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-bell"></i>
+                    <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle" style="margin-top: 5px; margin-left: -5px;"></span>
+                </a>
+                <div class="dropdown-menu dropdown-menu-end shadow border-0 mt-3" aria-labelledby="notificationsDropdown">
+                    <h6 class="dropdown-header">Notifications</h6>
+                    <a class="dropdown-item" href="#"><small class="text-muted">Aucune nouvelle notification</small></a>
+                </div>
+            </div>
+
+            <div class="vr mx-2 text-muted opacity-25"></div>
+
+            <!-- User Menu Quick Actions -->
+            <div class="dropdown">
+                <a class="d-flex align-items-center gap-2 text-decoration-none" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <div class="d-flex align-items-center justify-content-center rounded-circle bg-primary text-white fw-bold" style="width: 38px; height: 38px; font-size: 14px;">
+                        {{ user.username|slice:":2"|upper }}
+                    </div>
+                    <div class="d-none d-lg-block">
+                        <p class="mb-0 text-dark fw-semibold" style="font-size: 14px;">{{ user.username }}</p>
+                        <p class="mb-0 text-muted" style="font-size: 11px;">En ligne</p>
+                    </div>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-3" aria-labelledby="userDropdown">
+                    <li><a class="dropdown-item py-2" href="#"><i class="fas fa-user-circle me-2 text-muted"></i>Mon profil</a></li>
+                    <li><a class="dropdown-item py-2" href="#"><i class="fas fa-cog me-2 text-muted"></i>Paramètres</a></li>
+                    <li><hr class="dropdown-divider opacity-50"></li>
+                    <li>
+                        <form method="post" action="{% url 'logout' %}">
+                            {% csrf_token %}
+                            <button type="submit" class="dropdown-item py-2 text-danger">
+                                <i class="fas fa-sign-out-alt me-2"></i>Déconnexion
+                            </button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>

@@ -1,0 +1,1098 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    {% if form.instance.pk %}
+        Modifier le dossier - {{ apprenant.prenom }} {{ apprenant.nom }} - KALANSSO
+    {% else %}
+        Nouveau dossier - {{ apprenant.prenom }} {{ apprenant.nom }} - KALANSSO
+    {% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<style>
+/* ------------------------------------------------
+   VARIABLES - Héritées du style existant
+------------------------------------------------ */
+:root {
+    --primary: #0f172a;
+    --primary-soft: #f1f5f9;
+    --accent: #3b82f6;
+    --success: #0b6e4f;
+    --warning: #b45309;
+    --danger: #b91c1c;
+    --text-dark: #0f172a;
+    --text-medium: #334155;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+    --radius: 16px;
+    --radius-sm: 12px;
+    --shadow: 0 4px 12px rgba(0,0,0,0.08);
+    --transition: 0.2s ease;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: #f8fafc;
+    color: var(--text-dark);
+}
+
+/* ------------------------------------------------
+   BREADCRUMB (identique au style existant)
+------------------------------------------------ */
+.breadcrumb-custom .breadcrumb {
+    background: transparent;
+    padding: 0;
+    margin-bottom: 0.5rem;
+}
+.breadcrumb-custom .breadcrumb-item + .breadcrumb-item::before {
+    content: "·";
+    color: var(--text-muted);
+}
+.breadcrumb-custom .breadcrumb-item a {
+    text-decoration: none;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    transition: var(--transition);
+}
+.breadcrumb-custom .breadcrumb-item a:hover {
+    color: var(--primary);
+}
+.breadcrumb-custom .breadcrumb-item.active {
+    color: var(--text-medium);
+    font-size: 0.85rem;
+}
+
+/* ------------------------------------------------
+   PAGE HEADER (style existant adapté)
+------------------------------------------------ */
+.page-header {
+    margin-bottom: 2rem;
+}
+.page-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 0.3rem;
+}
+.page-subtitle {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+/* ------------------------------------------------
+   BOUTONS (strictement identiques au style existant)
+------------------------------------------------ */
+.btn-outline, .btn-soft, .btn-accent {
+    border-radius: 30px;
+    padding: 0.5rem 1.2rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: 0.2s;
+    text-decoration: none !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: none;
+    cursor: pointer;
+}
+.btn-outline {
+    background: #fff;
+    border: 1px solid var(--border);
+    color: var(--text-medium);
+}
+.btn-outline:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    box-shadow: var(--shadow);
+    transform: translateY(-1px);
+}
+.btn-soft {
+    background: var(--primary-soft);
+    color: var(--text-medium);
+    border: 1px solid transparent;
+}
+.btn-soft:hover {
+    background: #fff;
+    border: 1px solid var(--border);
+    transform: translateY(-1px);
+}
+.btn-accent {
+    background: var(--accent);
+    color: #fff !important;
+    border-radius: 30px;
+    padding: 0.5rem 1.5rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border: none;
+}
+.btn-accent:hover {
+    background: #2563eb;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    transform: translateY(-1px);
+}
+
+/* ------------------------------------------------
+   CARD PRINCIPALE (style detail-card adapté)
+------------------------------------------------ */
+.dossier-card {
+    background: #fff;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    transition: transform 0.2s;
+    overflow: hidden;
+}
+.dossier-card:hover {
+    transform: translateY(-2px);
+}
+
+.card-header-custom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.card-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+.card-title i {
+    color: var(--accent);
+}
+
+.dossier-badge {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--accent);
+    background: var(--primary-soft);
+    padding: 0.35rem 0.85rem;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* ------------------------------------------------
+   MINI CARTE APPRENANT (style profile-card adapté)
+------------------------------------------------ */
+.apprenant-mini-card {
+    background: #fff;
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    border: 1px solid var(--border);
+    transition: var(--transition);
+}
+.apprenant-mini-card:hover {
+    box-shadow: var(--shadow);
+}
+
+.avatar-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(145deg, var(--primary), #1e2a3a);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.75rem;
+    color: #fff;
+    font-weight: 600;
+    transition: transform 0.2s;
+}
+.avatar-circle:hover {
+    transform: scale(1.05);
+}
+
+.apprenant-info h6 {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 0.25rem;
+}
+.apprenant-info h4 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 0.5rem;
+}
+.apprenant-meta {
+    display: flex;
+    gap: 1.5rem;
+    font-size: 0.9rem;
+    color: var(--text-medium);
+}
+.apprenant-meta i {
+    color: var(--accent);
+    margin-right: 0.5rem;
+}
+
+/* ------------------------------------------------
+   SECTIONS DE FORMULAIRE
+------------------------------------------------ */
+.form-section {
+    margin-bottom: 2rem;
+}
+
+.form-section-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.section-icon {
+    width: 36px;
+    height: 36px;
+    background: var(--primary-soft);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    transition: var(--transition);
+}
+.form-section-title:hover .section-icon {
+    color: var(--accent);
+    background: #fff;
+    border: 1px solid var(--border);
+}
+
+.section-title-text {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 0.25rem;
+}
+.section-subtitle {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+/* ------------------------------------------------
+   GRILLE DU FORMULAIRE
+------------------------------------------------ */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group.full-width {
+    grid-column: span 2;
+}
+
+.form-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0;
+}
+.form-label i {
+    color: var(--accent);
+    font-size: 0.7rem;
+}
+.required-star {
+    color: var(--danger);
+    margin-left: 0.25rem;
+}
+
+/* ------------------------------------------------
+   CHAMPS DE SAISIE (style épuré)
+------------------------------------------------ */
+.form-control, .form-select {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    transition: var(--transition);
+    background: #fff;
+}
+.form-control:hover, .form-select:hover {
+    border-color: var(--text-muted);
+}
+.form-control:focus, .form-select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    outline: none;
+}
+
+/* ------------------------------------------------
+   UPLOAD DE FICHIERS (style document-item adapté)
+------------------------------------------------ */
+.current-file {
+    background: var(--primary-soft);
+    border-radius: 12px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 1px solid transparent;
+    transition: var(--transition);
+}
+.current-file:hover {
+    background: #fff;
+    border-color: var(--border);
+}
+
+.current-file-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+.current-file-info i {
+    font-size: 1.25rem;
+    color: var(--accent);
+}
+
+.file-name {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-dark);
+}
+.file-size {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+}
+
+.file-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+.file-link {
+    color: var(--text-muted);
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    transition: var(--transition);
+    cursor: pointer;
+}
+.file-link:hover {
+    color: var(--accent);
+    background: #fff;
+}
+
+.custom-file-upload {
+    background: var(--primary-soft);
+    border-radius: 12px;
+    padding: 1.25rem;
+    text-align: center;
+    cursor: pointer;
+    transition: var(--transition);
+    border: 1px dashed var(--border);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+.custom-file-upload:hover {
+    border-color: var(--accent);
+    background: #fff;
+}
+.custom-file-upload i {
+    font-size: 1.5rem;
+    color: var(--text-muted);
+    transition: var(--transition);
+}
+.custom-file-upload:hover i {
+    color: var(--accent);
+}
+.upload-text {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-dark);
+}
+.upload-hint {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+}
+
+input[type="file"] {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
+
+/* ------------------------------------------------
+   MESSAGES D'AIDE ET D'ERREUR
+------------------------------------------------ */
+.help-text {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.25rem;
+}
+.help-text i {
+    color: var(--accent);
+    font-size: 0.65rem;
+}
+
+.error-feedback {
+    color: var(--danger);
+    font-size: 0.65rem;
+    font-weight: 500;
+    margin-top: 0.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+/* ------------------------------------------------
+   STATUS CARDS (style document-item adapté)
+------------------------------------------------ */
+.document-status-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+.document-status-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 1rem;
+    text-align: center;
+    box-shadow: var(--shadow);
+    transition: 0.2s;
+    border: 1px solid transparent;
+}
+.document-status-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--border);
+}
+
+.document-status-icon {
+    font-size: 1.5rem;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+    transition: var(--transition);
+}
+.document-status-card:hover .document-status-icon {
+    color: var(--accent);
+}
+
+.document-status-title {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 0.25rem;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.65rem;
+    font-weight: 600;
+    background: var(--primary-soft);
+    color: var(--text-medium);
+}
+.status-badge.present {
+    background: #e7f3ef;
+    color: var(--success);
+}
+.status-badge i {
+    margin-right: 0.25rem;
+}
+
+/* ------------------------------------------------
+   FOOTER DU FORMULAIRE
+------------------------------------------------ */
+.form-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    background: var(--primary-soft);
+    border-top: 1px solid var(--border);
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.dossier-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.info-chip {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: #fff;
+    padding: 0.35rem 0.75rem;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+}
+.info-chip i {
+    color: var(--accent);
+}
+
+.form-actions {
+    display: flex;
+    gap: 0.75rem;
+}
+
+/* ------------------------------------------------
+   EMPTY STATES
+------------------------------------------------ */
+.empty-state {
+    text-align: center;
+    padding: 2rem 1rem;
+    color: var(--text-muted);
+}
+.empty-state i {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    color: #cbd5e1;
+}
+
+/* ------------------------------------------------
+   RESPONSIVE (identique au style existant)
+------------------------------------------------ */
+@media (max-width: 768px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+    .form-group.full-width {
+        grid-column: span 1;
+    }
+    .document-status-grid {
+        grid-template-columns: 1fr;
+    }
+    .apprenant-mini-card {
+        flex-direction: column;
+        text-align: center;
+    }
+    .apprenant-meta {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    .card-header-custom {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .form-footer {
+        flex-direction: column-reverse;
+        align-items: flex-start;
+    }
+    .dossier-info {
+        width: 100%;
+        justify-content: space-between;
+    }
+}
+
+/* ------------------------------------------------
+   TOAST NOTIFICATION
+------------------------------------------------ */
+.toast-notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: white;
+    border-radius: var(--radius-sm);
+    padding: 1rem 1.5rem;
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    z-index: 1050;
+    border-left: 4px solid var(--accent);
+    animation: slideIn 0.3s ease;
+}
+.toast-success { border-left-color: var(--success); }
+.toast-error { border-left-color: var(--danger); }
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4 py-4">
+    <!-- Header avec breadcrumb - style identique au profil -->
+    <div class="page-header">
+        <nav class="breadcrumb-custom" aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'liste_apprenants' %}">Apprenants</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'detail_apprenant' apprenant.id %}">{{ apprenant.prenom }} {{ apprenant.nom }}</a></li>
+                <li class="breadcrumb-item active">
+                    {% if form.instance.pk %}Modifier dossier{% else %}Nouveau dossier{% endif %}
+                </li>
+            </ol>
+        </nav>
+        
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="page-title">
+                    {% if form.instance.pk %}
+                        Modifier le dossier
+                    {% else %}
+                        Nouveau dossier administratif
+                    {% endif %}
+                </h1>
+                <p class="page-subtitle">
+                    {{ apprenant.prenom }} {{ apprenant.nom }} · 
+                    {% if form.instance.pk %}
+                        Dossier n° {{ form.instance.numero_dossier }}
+                    {% else %}
+                        Génération automatique du numéro
+                    {% endif %}
+                </p>
+            </div>
+            <a href="{% url 'detail_apprenant' apprenant.id %}" class="btn-soft">
+                <i class="fas fa-arrow-left"></i> Retour au profil
+            </a>
+        </div>
+    </div>
+
+    <!-- Formulaire principal -->
+    <form method="post" enctype="multipart/form-data" id="dossierForm">
+        {% csrf_token %}
+        
+        <!-- Carte principale - style detail-card -->
+        <div class="dossier-card">
+            <!-- Header de la carte - style card-header-custom -->
+            <div class="card-header-custom">
+                <div class="card-title">
+                    <i class="fas fa-folder"></i>
+                    Dossier administratif
+                </div>
+                <span class="dossier-badge">
+                    <i class="fas {% if form.instance.pk %}fa-check-circle{% else %}fa-clock{% endif %}"></i>
+                    {% if form.instance.pk %}Dossier actif{% else %}En création{% endif %}
+                </span>
+            </div>
+
+            <!-- Body de la carte -->
+            <div style="padding: 2rem;">
+                <!-- Mini carte apprenant - style profile-card -->
+                <div class="apprenant-mini-card">
+                    <div class="avatar-circle">
+                        {{ apprenant.prenom|first|upper }}{{ apprenant.nom|first|upper }}
+                    </div>
+                    <div class="apprenant-info">
+                        <h6>Apprenant</h6>
+                        <h4>{{ apprenant.prenom }} {{ apprenant.nom }}</h4>
+                        <div class="apprenant-meta">
+                            <span><i class="fas fa-calendar-alt"></i> {{ apprenant.age }} ans</span>
+                            <span><i class="fas fa-phone"></i> {{ apprenant.telephone }}</span>
+                            <span><i class="fas fa-id-card"></i> 
+                                {% for permis in apprenant.types_permis.all %}
+                                    {{ permis.code }}{% if not forloop.last %}, {% endif %}
+                                {% empty %}
+                                    Aucun permis
+                                {% endfor %}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section Documents requis -->
+                <div class="form-section">
+                    <div class="form-section-title">
+                        <div class="section-icon">
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                        <div>
+                            <div class="section-title-text">Documents obligatoires</div>
+                            <div class="section-subtitle">Tous les documents sont requis pour la constitution du dossier</div>
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+                        <!-- Pièce d'identité -->
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-id-card"></i> Pièce d'identité
+                                <span class="required-star">*</span>
+                            </label>
+                            
+                            {% if form.instance.pk and form.instance.piece_identite %}
+                            <div class="current-file">
+                                <div class="current-file-info">
+                                    <i class="fas fa-file-pdf"></i>
+                                    <div>
+                                        <div class="file-name">{{ form.instance.piece_identite.name|slice:"18:" }}</div>
+                                        <div class="file-size">Document actuel</div>
+                                    </div>
+                                </div>
+                                <div class="file-actions">
+                                    <a href="{{ form.instance.piece_identite.url }}" target="_blank" class="file-link">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <label for="{{ form.piece_identite.id_for_label }}" class="file-link">
+                                        <i class="fas fa-upload"></i>
+                                    </label>
+                                </div>
+                            </div>
+                            {% endif %}
+                            
+                            <div class="file-upload-area">
+                                {{ form.piece_identite }}
+                                <label for="{{ form.piece_identite.id_for_label }}" class="custom-file-upload">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <div class="upload-text">
+                                        {% if form.instance.pk and form.instance.piece_identite %}
+                                            Remplacer le document
+                                        {% else %}
+                                            Choisir un fichier
+                                        {% endif %}
+                                    </div>
+                                    <div class="upload-hint">
+                                        PNG, JPG ou PDF (max. 5 Mo)
+                                    </div>
+                                </label>
+                            </div>
+                            
+                            {% for error in form.piece_identite.errors %}
+                            <div class="error-feedback">
+                                <i class="fas fa-exclamation-circle"></i> {{ error }}
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Photo d'identité -->
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-camera"></i> Photo d'identité
+                                <span class="required-star">*</span>
+                            </label>
+                            
+                            {% if form.instance.pk and form.instance.photo %}
+                            <div class="current-file">
+                                <div class="current-file-info">
+                                    <i class="fas fa-image"></i>
+                                    <div>
+                                        <div class="file-name">{{ form.instance.photo.name|slice:"18:" }}</div>
+                                        <div class="file-size">Photo actuelle</div>
+                                    </div>
+                                </div>
+                                <div class="file-actions">
+                                    <a href="{{ form.instance.photo.url }}" target="_blank" class="file-link">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <label for="{{ form.photo.id_for_label }}" class="file-link">
+                                        <i class="fas fa-upload"></i>
+                                    </label>
+                                </div>
+                            </div>
+                            {% endif %}
+                            
+                            <div class="file-upload-area">
+                                {{ form.photo }}
+                                <label for="{{ form.photo.id_for_label }}" class="custom-file-upload">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <div class="upload-text">
+                                        {% if form.instance.pk and form.instance.photo %}
+                                            Remplacer la photo
+                                        {% else %}
+                                            Choisir une photo
+                                        {% endif %}
+                                    </div>
+                                    <div class="upload-hint">
+                                        PNG ou JPG, format d'identité (max. 2 Mo)
+                                    </div>
+                                </label>
+                            </div>
+                            
+                            {% for error in form.photo.errors %}
+                            <div class="error-feedback">
+                                <i class="fas fa-exclamation-circle"></i> {{ error }}
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Certificat médical -->
+                        <div class="form-group full-width">
+                            <label class="form-label">
+                                <i class="fas fa-file-prescription"></i> Certificat médical
+                                <span class="required-star">*</span>
+                            </label>
+                            
+                            {% if form.instance.pk and form.instance.certificat_medical %}
+                            <div class="current-file">
+                                <div class="current-file-info">
+                                    <i class="fas fa-file-pdf"></i>
+                                    <div>
+                                        <div class="file-name">{{ form.instance.certificat_medical.name|slice:"22:" }}</div>
+                                        <div class="file-size">Document actuel</div>
+                                    </div>
+                                </div>
+                                <div class="file-actions">
+                                    <a href="{{ form.instance.certificat_medical.url }}" target="_blank" class="file-link">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <label for="{{ form.certificat_medical.id_for_label }}" class="file-link">
+                                        <i class="fas fa-upload"></i>
+                                    </label>
+                                </div>
+                            </div>
+                            {% endif %}
+                            
+                            <div class="file-upload-area">
+                                {{ form.certificat_medical }}
+                                <label for="{{ form.certificat_medical.id_for_label }}" class="custom-file-upload">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <div class="upload-text">
+                                        {% if form.instance.pk and form.instance.certificat_medical %}
+                                            Remplacer le certificat
+                                        {% else %}
+                                            Choisir un fichier
+                                        {% endif %}
+                                    </div>
+                                    <div class="upload-hint">
+                                        PDF uniquement, moins de 6 mois (max. 5 Mo)
+                                    </div>
+                                </label>
+                            </div>
+                            
+                            {% for error in form.certificat_medical.errors %}
+                            <div class="error-feedback">
+                                <i class="fas fa-exclamation-circle"></i> {{ error }}
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- État du dossier - style document-grid -->
+                {% if form.instance.pk %}
+                <div class="form-section">
+                    <div class="form-section-title">
+                        <div class="section-icon">
+                            <i class="fas fa-clipboard-check"></i>
+                        </div>
+                        <div>
+                            <div class="section-title-text">État du dossier</div>
+                            <div class="section-subtitle">Vérification des documents requis</div>
+                        </div>
+                    </div>
+
+                    <div class="document-status-grid">
+                        <div class="document-status-card">
+                            <div class="document-status-icon">
+                                <i class="fas fa-id-card"></i>
+                            </div>
+                            <div class="document-status-title">Pièce d'identité</div>
+                            <div>
+                                {% if form.instance.piece_identite %}
+                                <span class="status-badge present">
+                                    <i class="fas fa-check-circle"></i> Présent
+                                </span>
+                                {% else %}
+                                <span class="status-badge">
+                                    <i class="fas fa-clock"></i> Manquant
+                                </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="document-status-card">
+                            <div class="document-status-icon">
+                                <i class="fas fa-camera"></i>
+                            </div>
+                            <div class="document-status-title">Photo d'identité</div>
+                            <div>
+                                {% if form.instance.photo %}
+                                <span class="status-badge present">
+                                    <i class="fas fa-check-circle"></i> Présente
+                                </span>
+                                {% else %}
+                                <span class="status-badge">
+                                    <i class="fas fa-clock"></i> Manquante
+                                </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="document-status-card">
+                            <div class="document-status-icon">
+                                <i class="fas fa-file-prescription"></i>
+                            </div>
+                            <div class="document-status-title">Certificat médical</div>
+                            <div>
+                                {% if form.instance.certificat_medical %}
+                                <span class="status-badge present">
+                                    <i class="fas fa-check-circle"></i> Présent
+                                </span>
+                                {% else %}
+                                <span class="status-badge">
+                                    <i class="fas fa-clock"></i> Manquant
+                                </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Footer avec actions -->
+            <div class="form-footer">
+                <div class="dossier-info">
+                    <span class="info-chip">
+                        <i class="fas fa-folder"></i>
+                        {% if form.instance.pk %}
+                            {{ form.instance.numero_dossier }}
+                        {% else %}
+                            N° à générer
+                        {% endif %}
+                    </span>
+                    <span class="info-chip">
+                        <i class="fas fa-user"></i>
+                        {{ apprenant.prenom }} {{ apprenant.nom }}
+                    </span>
+                </div>
+                
+                <div class="form-actions">
+                    <a href="{% url 'detail_apprenant' apprenant.id %}" class="btn-outline">
+                        <i class="fas fa-times"></i> Annuler
+                    </a>
+                    <button type="submit" class="btn-accent">
+                        <i class="fas fa-save"></i>
+                        {% if form.instance.pk %}
+                            Enregistrer
+                        {% else %}
+                            Créer le dossier
+                        {% endif %}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Gestionnaire pour l'affichage du nom des fichiers sélectionnés
+    const fileInputs = document.querySelectorAll('input[type="file"]');
+    
+    fileInputs.forEach(input => {
+        input.addEventListener('change', function(e) {
+            const label = this.nextElementSibling;
+            if (label && label.classList.contains('custom-file-upload')) {
+                const fileName = this.files[0]?.name;
+                if (fileName) {
+                    const uploadText = label.querySelector('.upload-text');
+                    if (uploadText) {
+                        uploadText.textContent = fileName.length > 30 ? fileName.substring(0, 27) + '...' : fileName;
+                    }
+                    
+                    // Feedback visuel
+                    label.style.borderColor = 'var(--accent)';
+                    label.style.background = '#fff';
+                    
+                    // Icône de succès
+                    const icon = label.querySelector('i');
+                    if (icon) {
+                        icon.className = 'fas fa-check-circle';
+                        icon.style.color = 'var(--success)';
+                    }
+                }
+            }
+        });
+    });
+
+    // Validation côté client
+    const form = document.getElementById('dossierForm');
+    
+    form.addEventListener('submit', function(e) {
+        {% if not form.instance.pk %}
+        const requiredFields = [
+            { input: document.getElementById('{{ form.piece_identite.id_for_label }}'), name: 'pièce d\'identité' },
+            { input: document.getElementById('{{ form.photo.id_for_label }}'), name: 'photo' },
+            { input: document.getElementById('{{ form.certificat_medical.id_for_label }}'), name: 'certificat médical' }
+        ];
+        
+        let hasErrors = false;
+        
+        requiredFields.forEach(field => {
+            if (!field.input.files.length) {
+                e.preventDefault();
+                hasErrors = true;
+                
+                const uploadArea = field.input.closest('.form-group').querySelector('.custom-file-upload');
+                if (uploadArea) {
+                    uploadArea.style.borderColor = 'var(--danger)';
+                    uploadArea.style.background = '#fef2f2';
+                    
+                    setTimeout(() => {
+                        uploadArea.style.borderColor = 'var(--border)';
+                        uploadArea.style.background = 'var(--primary-soft)';
+                    }, 3000);
+                }
+            }
+        });
+        
+        if (hasErrors) {
+            showToast('Veuillez sélectionner tous les documents requis', 'error');
+        }
+        {% endif %}
+    });
+
+    // Fonction pour afficher les toasts
+    function showToast(message, type = 'info') {
+        const toast = document.createElement('div');
+        toast.className = `toast-notification toast-${type}`;
+        toast.innerHTML = `
+            <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+            <span style="font-size: 0.9rem;">${message}</span>
+            <button type="button" class="btn-soft" style="padding: 0.25rem 0.5rem;" onclick="this.parentElement.remove()">
+                <i class="fas fa-times"></i>
+            </button>
+        `;
+        
+        document.body.appendChild(toast);
+        
+        setTimeout(() => {
+            toast.remove();
+        }, 5000);
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,928 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    {% if form.instance.pk %}
+        Modifier {{ form.instance.employe }} - Moniteur KALANSSO
+    {% else %}
+        Nouveau moniteur - KALANSSO
+    {% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<style>
+:root {
+    --primary: #0f172a;
+    --primary-soft: #f1f5f9;
+    --accent: #3b82f6;
+    --accent-light: #eff6ff;
+    --success: #0b6e4f;
+    --success-light: #e7f3ef;
+    --warning: #b45309;
+    --danger: #b91c1c;
+    --danger-light: #fef2f2;
+    --info: #0891b2;
+    --info-light: #e0f2fe;
+    --text-dark: #0f172a;
+    --text-medium: #334155;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+    --radius: 16px;
+    --radius-sm: 10px;
+    --shadow: 0 4px 12px rgba(0,0,0,0.08);
+    --transition: 0.2s ease;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: #f8fafc;
+    color: var(--text-dark);
+}
+
+/* ------------------------------------------------
+   BREADCRUMB COMPACT
+------------------------------------------------ */
+.breadcrumb-custom {
+    margin-bottom: 0.5rem;
+}
+.breadcrumb-custom .breadcrumb {
+    background: transparent;
+    padding: 0;
+    margin: 0;
+}
+.breadcrumb-custom .breadcrumb-item + .breadcrumb-item::before {
+    content: "·";
+    color: var(--text-muted);
+    padding: 0 0.4rem;
+}
+.breadcrumb-custom .breadcrumb-item a {
+    text-decoration: none;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    transition: var(--transition);
+}
+.breadcrumb-custom .breadcrumb-item a:hover {
+    color: var(--primary);
+}
+.breadcrumb-custom .breadcrumb-item.active {
+    color: var(--text-medium);
+    font-size: 0.8rem;
+}
+
+/* ------------------------------------------------
+   HEADER COMPACT
+------------------------------------------------ */
+.page-header {
+    margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.page-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 0.2rem;
+    letter-spacing: -0.02em;
+}
+.page-subtitle {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+/* ------------------------------------------------
+   BOUTONS COMPACTS
+------------------------------------------------ */
+.btn-outline, .btn-soft, .btn-accent {
+    border-radius: 30px;
+    padding: 0.45rem 1.2rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    transition: 0.2s;
+    text-decoration: none !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    border: none;
+    cursor: pointer;
+    justify-content: center;
+}
+.btn-outline {
+    background: #fff;
+    border: 1px solid var(--border);
+    color: var(--text-medium);
+}
+.btn-outline:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    box-shadow: var(--shadow);
+    transform: translateY(-1px);
+}
+.btn-soft {
+    background: var(--primary-soft);
+    color: var(--text-medium);
+    border: 1px solid transparent;
+}
+.btn-soft:hover {
+    background: #fff;
+    border: 1px solid var(--border);
+    transform: translateY(-1px);
+}
+.btn-accent {
+    background: var(--accent);
+    color: #fff !important;
+    border-radius: 30px;
+    padding: 0.45rem 1.4rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border: none;
+}
+.btn-accent:hover {
+    background: #2563eb;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    transform: translateY(-1px);
+}
+.btn-sm {
+    padding: 0.35rem 1rem;
+    font-size: 0.75rem;
+}
+
+/* ------------------------------------------------
+   FORMULAIRE CARD
+------------------------------------------------ */
+.form-container {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.form-card {
+    background: #fff;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+}
+
+/* Header carte compact */
+.card-header-custom {
+    background: #fff;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.header-icon {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, var(--primary), #1e2a3a);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 1.1rem;
+}
+
+.header-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 0.1rem;
+}
+
+.header-subtitle {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+}
+
+/* Body carte compact */
+.card-body-custom {
+    padding: 1.5rem;
+}
+
+/* Grille dense - 4 colonnes */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.form-group.span-2 {
+    grid-column: span 2;
+}
+
+.form-group.span-3 {
+    grid-column: span 3;
+}
+
+.form-group.span-4 {
+    grid-column: span 4;
+}
+
+/* Label compact */
+.form-label {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    margin-bottom: 0;
+}
+
+.form-label i {
+    color: var(--accent);
+    font-size: 0.9rem;
+    width: 12px;
+}
+
+.required-star {
+    color: var(--danger);
+    margin-left: 2px;
+    font-size: 0.6rem;
+}
+
+/* Inputs compacts */
+.form-control, .form-select {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.6rem 0.9rem;
+    font-size: 0.9rem;
+    transition: var(--transition);
+    background: #fff;
+    width: 100%;
+    font-family: 'Inter', sans-serif;
+    height: 38px;
+}
+
+.form-control:hover, .form-select:hover {
+    border-color: var(--text-muted);
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    outline: none;
+}
+
+textarea.form-control {
+    height: auto;
+    min-height: 70px;
+}
+
+/* Select compact */
+.form-select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.8rem center;
+    background-size: 12px;
+    padding-right: 2rem;
+}
+
+/* Checkbox compact */
+.form-check {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.2rem 0;
+    height: 38px;
+}
+
+.form-check-input {
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid var(--border);
+    border-radius: 4px;
+    cursor: pointer;
+    accent-color: var(--accent);
+}
+
+.form-check-label {
+    font-size: 0.9rem;
+    color: var(--text-medium);
+    cursor: pointer;
+}
+
+/* Help text compact */
+.help-text {
+    font-size: 0.55rem;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    margin-top: 0.15rem;
+    background: var(--primary-soft);
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    line-height: 1.2;
+}
+
+.help-text i {
+    color: var(--accent);
+    font-size: 0.55rem;
+}
+
+/* Error compact */
+.error-feedback {
+    color: var(--danger);
+    font-size: 0.55rem;
+    font-weight: 500;
+    margin-top: 0.15rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    background: var(--danger-light);
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+}
+
+.error-feedback i {
+    color: var(--danger);
+    font-size: 0.55rem;
+}
+
+/* Sections horizontales */
+.form-section {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: var(--primary-soft);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+}
+
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.section-icon {
+    width: 28px;
+    height: 28px;
+    background: #fff;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent);
+    font-size: 0.8rem;
+}
+
+.section-title h6 {
+    font-size: 0.9rem;
+    font-weight: 700;
+    margin-bottom: 0;
+}
+
+.section-title p {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-bottom: 0;
+    margin-left: 0.5rem;
+}
+
+/* Tags spécialités */
+.specialites-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.specialite-tag {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 0.3rem 1rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text-medium);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: var(--transition);
+    cursor: pointer;
+}
+.specialite-tag:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-light);
+}
+.specialite-tag i {
+    color: var(--accent);
+    font-size: 0.6rem;
+}
+.specialite-tag.selected {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+.specialite-tag.selected i {
+    color: #fff;
+}
+
+/* Grille pour les spécialités */
+.specialites-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+}
+
+/* Footer compact */
+.card-footer-custom {
+    background: #fff;
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.action-hint {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.hint-item {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    background: var(--primary-soft);
+    padding: 0.2rem 0.7rem;
+    border-radius: 20px;
+}
+
+.hint-item i {
+    color: var(--accent);
+    font-size: 0.55rem;
+}
+
+.form-actions {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+/* ------------------------------------------------
+   RESPONSIVE
+------------------------------------------------ */
+@media (max-width: 992px) {
+    .form-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .form-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .card-header-custom {
+        padding: 1rem;
+    }
+    
+    .card-body-custom {
+        padding: 1rem;
+    }
+    
+    .form-section {
+        padding: 0.75rem;
+    }
+    
+    .specialites-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 576px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .form-group.span-2,
+    .form-group.span-3,
+    .form-group.span-4 {
+        grid-column: span 1;
+    }
+    
+    .specialites-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .card-footer-custom {
+        flex-direction: column-reverse;
+        align-items: stretch;
+    }
+    
+    .action-hint {
+        justify-content: center;
+    }
+    
+    .form-actions {
+        flex-direction: column-reverse;
+    }
+    
+    .btn-outline, .btn-accent {
+        width: 100%;
+    }
+}
+
+/* ------------------------------------------------
+   ANIMATIONS
+------------------------------------------------ */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.form-card {
+    animation: slideIn 0.3s ease-out;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4 py-4">
+    <!-- Header compact -->
+    <div class="page-header">
+        <div>
+            <nav class="breadcrumb-custom">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'personnel:hub_section' 'moniteur' %}">Moniteurs</a></li>
+                    <li class="breadcrumb-item active">
+                        {% if form.instance.pk %}Modifier{% else %}Nouveau moniteur{% endif %}
+                    </li>
+                </ol>
+            </nav>
+            <h1 class="page-title">
+                {% if form.instance.pk %}
+                    {{ form.instance.employe.prenom }} {{ form.instance.employe.nom }}
+                {% else %}
+                    Nouveau moniteur
+                {% endif %}
+            </h1>
+            <p class="page-subtitle">
+                {% if form.instance.pk %}
+                    Modifiez les informations du moniteur
+                {% else %}
+                    Ajoutez un nouveau moniteur à l'équipe
+                {% endif %}
+            </p>
+        </div>
+        <a href="{% url 'personnel:hub_section' 'moniteur' %}" class="btn-soft btn-sm">
+            <i class="fas fa-arrow-left"></i> Retour
+        </a>
+    </div>
+
+    <!-- Formulaire -->
+    <div class="form-container">
+        <form method="POST" class="form-card" id="moniteurForm">
+            {% csrf_token %}
+            
+            <!-- Header carte -->
+            <div class="card-header-custom">
+                <div class="header-icon">
+                    <i class="fas {% if form.instance.pk %}fa-user-edit{% else %}fa-user-plus{% endif %}"></i>
+                </div>
+                <div>
+                    <div class="header-title">
+                        {% if form.instance.pk %}Fiche moniteur{% else %}Création moniteur{% endif %}
+                    </div>
+                    <div class="header-subtitle">
+                        <span class="required-star">*</span> Champs obligatoires
+                    </div>
+                </div>
+            </div>
+
+            <!-- Body -->
+            <div class="card-body-custom">
+                {% if form.non_field_errors %}
+                <div class="alert alert-danger" style="background: var(--danger-light); border-left: 3px solid var(--danger); padding: 0.75rem 1rem; border-radius: var(--radius-sm); margin-bottom: 1.5rem; font-size: 0.8rem;">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    {{ form.non_field_errors }}
+                </div>
+                {% endif %}
+
+                <!-- Section Employé lié (information) -->
+                {% if form.instance.pk %}
+                <div class="form-section" style="background: var(--info-light);">
+                    <div class="section-title">
+                        <div class="section-icon" style="background: var(--info-light);">
+                            <i class="fas fa-info-circle" style="color: var(--info);"></i>
+                        </div>
+                        <h6>Information</h6>
+                        <p>Moniteur rattaché à {{ form.instance.employe.prenom }} {{ form.instance.employe.nom }}</p>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Section Employé (choix de l'employé) -->
+                {% for field in form %}
+                    {% if field.name == 'employe' %}
+                    <div class="form-section">
+                        <div class="section-title">
+                            <div class="section-icon">
+                                <i class="fas fa-user-tie"></i>
+                            </div>
+                            <h6>Rattachement</h6>
+                            <p>Sélectionner l'employé</p>
+                        </div>
+                        
+                        <div class="form-grid">
+                            <div class="form-group span-4">
+                                <label class="form-label" for="{{ field.id_for_label }}">
+                                    <i class="fas fa-user"></i> {{ field.label }} {% if field.field.required %}<span class="required-star">*</span>{% endif %}
+                                </label>
+                                {{ field }}
+                                {% if field.help_text %}
+                                <div class="help-text">
+                                    <i class="fas fa-info-circle"></i> {{ field.help_text }}
+                                </div>
+                                {% endif %}
+                                {% for error in field.errors %}
+                                <div class="error-feedback">
+                                    <i class="fas fa-exclamation-circle"></i> {{ error }}
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                {% endfor %}
+
+                <!-- Section Informations professionnelles -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <div class="section-icon">
+                            <i class="fas fa-id-card"></i>
+                        </div>
+                        <h6>Informations professionnelles</h6>
+                        <p>Agrément et tarifs</p>
+                    </div>
+                    
+                    <div class="form-grid">
+                        {% for field in form %}
+                            {% if field.name == 'numero_agrement' %}
+                            <div class="form-group span-2">
+                                <label class="form-label" for="{{ field.id_for_label }}">
+                                    <i class="fas fa-id-card"></i> N° agrément {% if field.field.required %}<span class="required-star">*</span>{% endif %}
+                                </label>
+                                {{ field }}
+                                {% if field.help_text %}
+                                <div class="help-text">{{ field.help_text }}</div>
+                                {% endif %}
+                                {% for error in field.errors %}
+                                <div class="error-feedback">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            
+                            {% if field.name == 'taux_horaire' %}
+                            <div class="form-group span-2">
+                                <label class="form-label" for="{{ field.id_for_label }}">
+                                    <i class="fas fa-euro-sign"></i> Taux horaire {% if field.field.required %}<span class="required-star">*</span>{% endif %}
+                                </label>
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    {{ field }}
+                                    <span style="font-size: 0.8rem; color: var(--text-muted);">FCFA</span>
+                                </div>
+                                {% for error in field.errors %}
+                                <div class="error-feedback">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Section Spécialités -->
+                {% for field in form %}
+                    {% if field.name == 'specialites' %}
+                    <div class="form-section">
+                        <div class="section-title">
+                            <div class="section-icon">
+                                <i class="fas fa-certificate"></i>
+                            </div>
+                            <h6>Spécialités</h6>
+                            <p>Types de permis enseignés</p>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="{{ field.id_for_label }}">
+                                <i class="fas fa-tags"></i> {{ field.label }}
+                            </label>
+                            
+                            {% if field.field.queryset %}
+                            <div class="specialites-grid">
+                                {% for choix in field.field.queryset %}
+                                <div class="specialite-tag {% if choix.id in field.value %}selected{% endif %}" 
+                                     onclick="toggleSpecialite('{{ choix.id }}')">
+                                    <i class="fas fa-motorcycle"></i>
+                                    {{ choix.code }} - {{ choix.libelle }}
+                                </div>
+                                {% endfor %}
+                            </div>
+                            
+                            <!-- Checkboxes cachées -->
+                            <div id="specialites-hidden">
+                                {% for valeur in field.value %}
+                                <input type="hidden" name="specialites" value="{{ valeur }}" id="specialite-{{ valeur }}">
+                                {% endfor %}
+                            </div>
+                            
+                            <script>
+                            function toggleSpecialite(id) {
+                                const input = document.getElementById('specialite-' + id);
+                                const tag = event.currentTarget;
+                                
+                                if (input) {
+                                    input.remove();
+                                    tag.classList.remove('selected');
+                                } else {
+                                    const hiddenDiv = document.getElementById('specialites-hidden');
+                                    const newInput = document.createElement('input');
+                                    newInput.type = 'hidden';
+                                    newInput.name = 'specialites';
+                                    newInput.value = id;
+                                    newInput.id = 'specialite-' + id;
+                                    hiddenDiv.appendChild(newInput);
+                                    tag.classList.add('selected');
+                                }
+                            }
+                            </script>
+                            {% else %}
+                                <div class="help-text">Aucune spécialité disponible</div>
+                            {% endif %}
+                            
+                            {% if field.help_text %}
+                            <div class="help-text">
+                                <i class="fas fa-info-circle"></i> {{ field.help_text }}
+                            </div>
+                            {% endif %}
+                            
+                            {% for error in field.errors %}
+                            <div class="error-feedback">
+                                <i class="fas fa-exclamation-circle"></i> {{ error }}
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                {% endfor %}
+
+                <!-- Section Informations complémentaires -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <div class="section-icon">
+                            <i class="fas fa-sticky-note"></i>
+                        </div>
+                        <h6>Informations complémentaires</h6>
+                        <p>Notes et remarques</p>
+                    </div>
+                    
+                    <div class="form-grid">
+                        {% for field in form %}
+                            {% if field.name == 'date_debut' %}
+                            <div class="form-group">
+                                <label class="form-label" for="{{ field.id_for_label }}">
+                                    <i class="fas fa-calendar-alt"></i> Date début
+                                </label>
+                                {{ field }}
+                                {% for error in field.errors %}
+                                <div class="error-feedback">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            
+                            {% if field.name == 'date_fin' %}
+                            <div class="form-group">
+                                <label class="form-label" for="{{ field.id_for_label }}">
+                                    <i class="fas fa-calendar-alt"></i> Date fin
+                                </label>
+                                {{ field }}
+                                {% for error in field.errors %}
+                                <div class="error-feedback">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            
+                            {% if field.name == 'actif' %}
+                            <div class="form-group">
+                                <label class="form-label" for="{{ field.id_for_label }}">
+                                    <i class="fas fa-toggle-on"></i> Statut
+                                </label>
+                                <div class="form-check">
+                                    {{ field }}
+                                    <label class="form-check-label" for="{{ field.id_for_label }}">Moniteur actif</label>
+                                </div>
+                                {% for error in field.errors %}
+                                <div class="error-feedback">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            
+                            {% if field.name == 'notes' %}
+                            <div class="form-group span-4">
+                                <label class="form-label" for="{{ field.id_for_label }}">
+                                    <i class="fas fa-comment"></i> Notes
+                                </label>
+                                {{ field }}
+                                {% for error in field.errors %}
+                                <div class="error-feedback">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer compact -->
+            <div class="card-footer-custom">
+                <div class="action-hint">
+                    <span class="hint-item">
+                        <i class="fas fa-shield-alt"></i> Données sécurisées
+                    </span>
+                    <span class="hint-item">
+                        <i class="fas fa-clock"></i> {% now "d/m/Y" %}
+                    </span>
+                </div>
+                
+                <div class="form-actions">
+                    <a href="{% url 'personnel:hub_section' 'moniteur' %}" class="btn-outline btn-sm">
+                        <i class="fas fa-times"></i> Annuler
+                    </a>
+                    <button type="submit" class="btn-accent btn-sm">
+                        <i class="fas fa-save"></i>
+                        {% if form.instance.pk %}Mettre à jour{% else %}Créer{% endif %}
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('moniteurForm');
+    let formChanged = false;
+    
+    // Détection des modifications
+    const formInputs = form.querySelectorAll('input, select, textarea');
+    formInputs.forEach(input => {
+        if (input.type !== 'hidden') {
+            input.addEventListener('change', () => formChanged = true);
+            if (input.type === 'text' || input.tagName === 'TEXTAREA') {
+                input.addEventListener('keyup', () => formChanged = true);
+            }
+        }
+    });
+    
+    // Confirmation avant annulation
+    const cancelBtn = document.querySelector('a[href*="moniteur"]');
+    if (cancelBtn) {
+        cancelBtn.addEventListener('click', function(e) {
+            if (formChanged && !confirm('Modifications non enregistrées. Quitter ?')) {
+                e.preventDefault();
+            }
+        });
+    }
+    
+    // Validation du taux horaire
+    const tauxInput = document.getElementById('{{ form.taux_horaire.id_for_label }}');
+    if (tauxInput) {
+        tauxInput.addEventListener('input', function() {
+            let value = this.value.replace(/[^0-9]/g, '');
+            if (value) {
+                this.value = parseInt(value);
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

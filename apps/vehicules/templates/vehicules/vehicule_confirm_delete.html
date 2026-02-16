@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Supprimer Véhicule{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h2>Supprimer le véhicule : {{ vehicule }}</h2>
+    <p>Êtes-vous sûr de vouloir supprimer ce véhicule ?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Oui, supprimer</button>
+        <a href="{% url 'vehicules:vehicule_list' %}" class="btn btn-secondary">Annuler</a>
+    </form>
+</div>
+{% endblock %}

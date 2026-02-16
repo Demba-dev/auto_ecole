@@ -1,0 +1,799 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    Parc Automobile - KALANSSO
+{% endblock %}
+
+{% block extra_css %}
+<style>
+:root {
+    --primary: #0f172a;
+    --primary-soft: #f1f5f9;
+    --primary-light: #1e293b;
+    --accent: #3b82f6;
+    --accent-light: #eff6ff;
+    --success: #0b6e4f;
+    --success-light: #e7f3ef;
+    --warning: #b45309;
+    --warning-light: #fffbeb;
+    --danger: #b91c1c;
+    --danger-light: #fef2f2;
+    --info: #0891b2;
+    --info-light: #e0f2fe;
+    --text-dark: #0f172a;
+    --text-medium: #334155;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+    --border-light: #f1f5f9;
+    --radius: 16px;
+    --radius-sm: 12px;
+    --radius-lg: 20px;
+    --shadow: 0 4px 12px rgba(0,0,0,0.08);
+    --shadow-lg: 0 12px 30px rgba(0,0,0,0.06);
+    --transition: 0.2s ease;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: #f8fafc;
+    color: var(--text-dark);
+}
+
+/* ------------------------------------------------
+   BREADCRUMB
+------------------------------------------------ */
+.breadcrumb-custom .breadcrumb {
+    background: transparent;
+    padding: 0;
+    margin-bottom: 0.5rem;
+}
+.breadcrumb-custom .breadcrumb-item + .breadcrumb-item::before {
+    content: "·";
+    color: var(--text-muted);
+    font-size: 0.8rem;
+}
+.breadcrumb-custom .breadcrumb-item a {
+    text-decoration: none;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    transition: var(--transition);
+}
+.breadcrumb-custom .breadcrumb-item a:hover {
+    color: var(--primary);
+}
+.breadcrumb-custom .breadcrumb-item.active {
+    color: var(--text-medium);
+    font-size: 0.8rem;
+}
+
+/* ------------------------------------------------
+   PAGE HEADER
+------------------------------------------------ */
+.page-header {
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.page-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 0.2rem;
+    letter-spacing: -0.02em;
+}
+.page-subtitle {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+/* ------------------------------------------------
+   BOUTONS
+------------------------------------------------ */
+.btn-outline, .btn-soft, .btn-accent {
+    border-radius: 30px;
+    padding: 0.45rem 1.2rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    transition: 0.2s;
+    text-decoration: none !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    border: none;
+    cursor: pointer;
+}
+.btn-outline {
+    background: #fff;
+    border: 1px solid var(--border);
+    color: var(--text-medium);
+}
+.btn-outline:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    box-shadow: var(--shadow);
+    transform: translateY(-1px);
+}
+.btn-soft {
+    background: var(--primary-soft);
+    color: var(--text-medium);
+    border: 1px solid transparent;
+}
+.btn-soft:hover {
+    background: #fff;
+    border: 1px solid var(--border);
+    transform: translateY(-1px);
+}
+.btn-accent {
+    background: var(--accent);
+    color: #fff !important;
+    border-radius: 30px;
+    padding: 0.45rem 1.4rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border: none;
+}
+.btn-accent:hover {
+    background: #2563eb;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    transform: translateY(-1px);
+}
+.btn-sm {
+    padding: 0.35rem 1rem;
+    font-size: 0.7rem;
+}
+
+/* Actions buttons */
+.btn-action {
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    transition: var(--transition);
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--text-muted);
+}
+.btn-action:hover {
+    transform: translateY(-2px);
+}
+.btn-action-edit:hover {
+    background: var(--warning-light);
+    color: var(--warning);
+    border-color: var(--warning);
+}
+.btn-action-delete:hover {
+    background: var(--danger-light);
+    color: var(--danger);
+    border-color: var(--danger);
+}
+.btn-action-maintenance:hover {
+    background: var(--info-light);
+    color: var(--info);
+    border-color: var(--info);
+}
+
+/* ------------------------------------------------
+   CARD PRINCIPALE
+------------------------------------------------ */
+.content-card {
+    background: #fff;
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+}
+.content-card:hover {
+    box-shadow: var(--shadow-lg);
+}
+
+.card-header-custom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.card-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.card-title i {
+    color: var(--accent);
+}
+
+/* ------------------------------------------------
+   FILTRES
+------------------------------------------------ */
+.filters-bar {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.filter-group {
+    display: flex;
+    align-items: center;
+    background: var(--primary-soft);
+    border-radius: 30px;
+    padding: 0.2rem;
+    border: 1px solid var(--border);
+}
+
+.filter-btn {
+    padding: 0.35rem 1rem;
+    border-radius: 30px;
+    font-size: 0.7rem;
+    font-weight: 500;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: var(--transition);
+}
+.filter-btn.active {
+    background: #fff;
+    color: var(--accent);
+    box-shadow: var(--shadow);
+}
+.filter-btn:hover:not(.active) {
+    color: var(--text-medium);
+}
+
+.search-box {
+    display: flex;
+    align-items: center;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 30px;
+    padding: 0.2rem;
+    min-width: 250px;
+}
+.search-input {
+    border: none;
+    background: transparent;
+    padding: 0.35rem 1rem;
+    font-size: 0.8rem;
+    width: 100%;
+}
+.search-input:focus {
+    outline: none;
+}
+.search-btn {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 30px;
+    padding: 0.35rem 1rem;
+    font-size: 0.7rem;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    cursor: pointer;
+}
+
+/* ------------------------------------------------
+   TABLEAU
+------------------------------------------------ */
+.table-responsive {
+    border-radius: var(--radius-sm);
+    overflow-x: auto;
+}
+
+.table-custom {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+}
+
+.table-custom th {
+    background: var(--primary-soft);
+    color: var(--text-medium);
+    font-weight: 600;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 1rem 1.25rem;
+    text-align: left;
+}
+
+.table-custom td {
+    padding: 1.25rem;
+    border-bottom: 1px solid var(--border-light);
+    vertical-align: middle;
+}
+
+.table-custom tr:last-child td {
+    border-bottom: none;
+}
+
+.table-custom tbody tr {
+    transition: var(--transition);
+}
+.table-custom tbody tr:hover {
+    background: var(--primary-soft);
+}
+
+/* Badge immatriculation */
+.immat-badge {
+    background: var(--primary-soft);
+    color: var(--text-dark);
+    padding: 0.4rem 0.8rem;
+    border-radius: 8px;
+    font-family: 'Courier New', monospace;
+    font-weight: 600;
+    font-size: 0.8rem;
+    display: inline-block;
+    border: 1px solid var(--border);
+}
+
+/* Badges statut */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 1rem;
+    border-radius: 30px;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+.status-disponible {
+    background: var(--success-light);
+    color: var(--success);
+}
+.status-occupe {
+    background: var(--info-light);
+    color: var(--info);
+}
+.status-maintenance {
+    background: var(--warning-light);
+    color: var(--warning);
+}
+.status-indisponible {
+    background: var(--danger-light);
+    color: var(--danger);
+}
+
+/* Tags énergie/boîte */
+.tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.2rem 0.6rem;
+    background: var(--primary-soft);
+    border-radius: 20px;
+    font-size: 0.65rem;
+    color: var(--text-medium);
+}
+.tag i {
+    color: var(--accent);
+    font-size: 0.6rem;
+}
+
+/* Véhicule info */
+.vehicule-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+.vehicule-avatar {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 1.2rem;
+}
+.vehicule-details h6 {
+    font-size: 0.9rem;
+    font-weight: 700;
+    margin-bottom: 0.2rem;
+}
+.vehicule-details small {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Kilométrage */
+.kilometrage {
+    font-weight: 600;
+    color: var(--text-dark);
+}
+.kilometrage small {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    font-weight: normal;
+    margin-left: 0.25rem;
+}
+
+/* Actions group */
+.actions-group {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+}
+
+/* ------------------------------------------------
+   EMPTY STATE
+------------------------------------------------ */
+.empty-state {
+    text-align: center;
+    padding: 3rem 2rem;
+    color: var(--text-muted);
+}
+.empty-state i {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: var(--border);
+}
+.empty-state h5 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 0.5rem;
+}
+.empty-state p {
+    font-size: 0.75rem;
+    margin-bottom: 1.5rem;
+    max-width: 300px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* ------------------------------------------------
+   RESPONSIVE
+------------------------------------------------ */
+@media (max-width: 992px) {
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .filters-bar {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .search-box {
+        width: 100%;
+    }
+    
+    .vehicule-info {
+        flex-direction: column;
+        text-align: center;
+    }
+}
+
+@media (max-width: 768px) {
+    .content-card {
+        padding: 1rem;
+    }
+    
+    .table-custom th,
+    .table-custom td {
+        padding: 0.75rem;
+    }
+    
+    .vehicule-avatar {
+        width: 36px;
+        height: 36px;
+        font-size: 1rem;
+    }
+    
+    .actions-group {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 576px) {
+    .filter-group {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .filter-btn {
+        flex: 1;
+        text-align: center;
+    }
+}
+
+/* ------------------------------------------------
+   ANIMATIONS
+------------------------------------------------ */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.content-card {
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+.status-maintenance {
+    animation: pulse 2s infinite;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4 py-4">
+    <!-- Header avec breadcrumb -->
+    <div class="page-header">
+        <div>
+            <nav class="breadcrumb-custom" aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'vehicules:vehicules_hub' %}">Véhicules</a></li>
+                    <li class="breadcrumb-item active">Parc Automobile</li>
+                </ol>
+            </nav>
+            <h1 class="page-title">Parc Automobile</h1>
+            <p class="page-subtitle">{{ vehicules|length }} véhicule{{ vehicules|pluralize }} enregistré{{ vehicules|pluralize }}</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{% url 'vehicules:maintenance_create' %}" class="btn-soft btn-sm">
+                <i class="fas fa-tools"></i> Maintenance
+            </a>
+            <a href="{% url 'vehicules:vehicule_create' %}" class="btn-accent btn-sm">
+                <i class="fas fa-plus"></i> Nouveau véhicule
+            </a>
+        </div>
+    </div>
+
+    <!-- Filtres -->
+    <div class="filters-bar">
+        <div class="filter-group">
+            <button class="filter-btn active" data-filter="all">Tous</button>
+            <button class="filter-btn" data-filter="disponible">Disponibles</button>
+            <button class="filter-btn" data-filter="occupe">Occupés</button>
+            <button class="filter-btn" data-filter="maintenance">Maintenance</button>
+        </div>
+        <div class="search-box">
+            <input type="text" class="search-input" placeholder="Rechercher (immatriculation, marque, modèle...)">
+            <button class="search-btn">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Carte principale -->
+    <div class="content-card">
+        <div class="card-header-custom">
+            <h5 class="card-title">
+                <i class="fas fa-car-side"></i>
+                Liste des véhicules
+            </h5>
+            <span class="text-muted small">
+                <i class="fas fa-info-circle"></i> Cliquez sur un véhicule pour plus de détails
+            </span>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table-custom" id="vehiculesTable">
+                <thead>
+                    <tr>
+                        <th>Véhicule</th>
+                        <th>Immatriculation</th>
+                        <th>Caractéristiques</th>
+                        <th>Kilométrage</th>
+                        <th>Statut</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for v in vehicules %}
+                    <tr class="vehicule-row" data-statut="{{ v.statut }}">
+                        <td>
+                            <div class="vehicule-info">
+                                <div class="vehicule-avatar">
+                                    <i class="fas fa-car"></i>
+                                </div>
+                                <div class="vehicule-details">
+                                    <h6>{{ v.marque }} {{ v.modele }}</h6>
+                                    <small>
+                                        <i class="fas fa-calendar-alt"></i> {{ v.date_mise_circulation|date:"d/m/Y"|default:"Date inconnue" }}
+                                    </small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="immat-badge">{{ v.immatriculation }}</span>
+                        </td>
+                        <td>
+                            <div style="display: flex; flex-wrap: wrap; gap: 0.25rem;">
+                                <span class="tag">
+                                    <i class="fas fa-cog"></i>
+                                    {{ v.get_type_boite_display|slice:":3" }}
+                                </span>
+                                <span class="tag">
+                                    <i class="fas fa-gas-pump"></i>
+                                    {{ v.get_energie_display }}
+                                </span>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="kilometrage">
+                                {{ v.kilometrage_initial }} <small>km</small>
+                            </span>
+                        </td>
+                        <td>
+                            {% if v.statut == 'DISPONIBLE' %}
+                                <span class="status-badge status-disponible">
+                                    <i class="fas fa-check-circle"></i> Disponible
+                                </span>
+                            {% elif v.statut == 'OCCUPE' %}
+                                <span class="status-badge status-occupe">
+                                    <i class="fas fa-clock"></i> Occupé
+                                </span>
+                            {% elif v.statut == 'MAINTENANCE' %}
+                                <span class="status-badge status-maintenance">
+                                    <i class="fas fa-tools"></i> Maintenance
+                                </span>
+                            {% else %}
+                                <span class="status-badge status-indisponible">
+                                    <i class="fas fa-ban"></i> Indisponible
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end">
+                            <div class="actions-group">
+                                <a href="{% url 'vehicules:vehicule_update' v.pk %}" class="btn-action btn-action-edit" title="Modifier">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{% url 'vehicules:maintenance_create' %}?vehicule={{ v.pk }}" class="btn-action btn-action-maintenance" title="Planifier maintenance">
+                                    <i class="fas fa-tools"></i>
+                                </a>
+                                <a href="{% url 'vehicules:vehicule_delete' v.pk %}" class="btn-action btn-action-delete" title="Supprimer" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce véhicule ?')">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6">
+                            <div class="empty-state">
+                                <i class="fas fa-car-side"></i>
+                                <h5>Aucun véhicule dans le parc</h5>
+                                <p>Commencez par ajouter votre premier véhicule.</p>
+                                <a href="{% url 'vehicules:vehicule_create' %}" class="btn-accent btn-sm">
+                                    <i class="fas fa-plus"></i> Ajouter un véhicule
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Footer du tableau -->
+        {% if vehicules %}
+        <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-light);">
+            <div class="d-flex justify-content-between align-items-center">
+                <small class="text-muted">
+                    <i class="fas fa-car me-1"></i> 
+                    {{ vehicules|length }} véhicule{{ vehicules|pluralize }} au total
+                </small>
+                <div class="d-flex gap-3">
+                    <span class="d-flex align-items-center gap-2">
+                        <span style="width: 10px; height: 10px; background: var(--success); border-radius: 50%;"></span>
+                        <small>Disponible</small>
+                    </span>
+                    <span class="d-flex align-items-center gap-2">
+                        <span style="width: 10px; height: 10px; background: var(--info); border-radius: 50%;"></span>
+                        <small>Occupé</small>
+                    </span>
+                    <span class="d-flex align-items-center gap-2">
+                        <span style="width: 10px; height: 10px; background: var(--warning); border-radius: 50%;"></span>
+                        <small>Maintenance</small>
+                    </span>
+                    <span class="d-flex align-items-center gap-2">
+                        <span style="width: 10px; height: 10px; background: var(--danger); border-radius: 50%;"></span>
+                        <small>Indisponible</small>
+                    </span>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Filtres
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const searchInput = document.querySelector('.search-input');
+    const rows = document.querySelectorAll('.vehicule-row');
+    
+    let currentFilter = 'all';
+    let searchTerm = '';
+    
+    function filterTable() {
+        rows.forEach(row => {
+            let show = true;
+            
+            // Filtre par statut
+            if (currentFilter !== 'all') {
+                const statut = row.dataset.statut.toLowerCase();
+                if (statut !== currentFilter) {
+                    show = false;
+                }
+            }
+            
+            // Filtre par recherche
+            if (show && searchTerm) {
+                const text = row.textContent.toLowerCase();
+                if (!text.includes(searchTerm)) {
+                    show = false;
+                }
+            }
+            
+            row.style.display = show ? '' : 'none';
+        });
+        
+        // Mise à jour du compteur
+        const visibleCount = Array.from(rows).filter(row => row.style.display !== 'none').length;
+        // Vous pouvez afficher le compteur si vous voulez
+    }
+    
+    // Event listeners pour les filtres
+    filterButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            filterButtons.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            currentFilter = this.dataset.filter;
+            filterTable();
+        });
+    });
+    
+    // Recherche avec debounce
+    if (searchInput) {
+        searchInput.addEventListener('input', function(e) {
+            searchTerm = e.target.value.toLowerCase();
+            filterTable();
+        });
+    }
+    
+    // Confirmation de suppression
+    const deleteLinks = document.querySelectorAll('a[onclick*="confirm"]');
+    deleteLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            if (!confirm('Êtes-vous sûr de vouloir supprimer ce véhicule ?')) {
+                e.preventDefault();
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

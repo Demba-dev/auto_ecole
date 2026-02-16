@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Affectations - KALANSSO{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --primary: #0f172a;
+        --accent: #3b82f6;
+        --border: #e2e8f0;
+        --radius: 16px;
+        --shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    .page-header { margin-bottom: 2rem; }
+    .page-title { font-size: 1.8rem; font-weight: 700; color: var(--primary); }
+    
+    .card-custom {
+        background: #fff;
+        border-radius: var(--radius);
+        border: none;
+        box-shadow: var(--shadow);
+        overflow: hidden;
+    }
+
+    .table thead th {
+        background: #f8fafc;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.05em;
+        color: #64748b;
+        padding: 1rem;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .table td { padding: 1rem; vertical-align: middle; }
+
+    .status-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.7rem;
+        font-weight: 600;
+    }
+    .status-active { background: #e7f3ef; color: #0b6e4f; }
+    .status-inactive { background: #f1f5f9; color: #64748b; }
+
+    .btn-action {
+        width: 32px; height: 32px;
+        display: inline-flex; align-items: center; justify-content: center;
+        border-radius: 8px;
+        transition: 0.2s;
+        text-decoration: none !important;
+    }
+    .btn-edit { background: #fef3c7; color: #d97706; }
+    .btn-delete { background: #fee2e2; color: #dc2626; }
+    
+    .btn-add {
+        background: var(--accent);
+        color: white !important;
+        border-radius: 30px;
+        padding: 0.6rem 1.5rem;
+        font-weight: 600;
+        text-decoration: none !important;
+    }
+
+    .entity-link {
+        color: var(--primary);
+        font-weight: 600;
+        text-decoration: none;
+    }
+    .entity-link:hover { color: var(--accent); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4 py-4">
+    <div class="page-header d-flex justify-content-between align-items-center">
+        <div>
+            <h1 class="page-title">Affectations</h1>
+            <p class="text-muted mb-0">Suivi des duos Apprenants ↔ Moniteurs</p>
+        </div>
+        <a href="{% url 'personnel:affectation_create' %}" class="btn-add">
+            <i class="fas fa-link me-2"></i> Nouvelle affectation
+        </a>
+    </div>
+
+    <div class="card-custom">
+        <div class="table-responsive">
+            <table class="table mb-0">
+                <thead>
+                    <tr>
+                        <th>Apprenant</th>
+                        <th>Moniteur</th>
+                        <th>Date de début</th>
+                        <th>Statut</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for a in affectations %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'detail_apprenant' a.apprenant.id %}" class="entity-link">
+                                <i class="fas fa-user-graduate me-2 opacity-50"></i>
+                                {{ a.apprenant.prenom }} {{ a.apprenant.nom }}
+                            </a>
+                        </td>
+                        <td>
+                            <div class="fw-medium text-dark">
+                                <i class="fas fa-chalkboard-teacher me-2 opacity-50"></i>
+                                {{ a.moniteur.prenom }} {{ a.moniteur.nom }}
+                            </div>
+                        </td>
+                        <td>
+                            <div class="small">
+                                <i class="far fa-calendar-alt me-1 text-muted"></i>
+                                {{ a.date_debut|date:"d/m/Y" }}
+                            </div>
+                        </td>
+                        <td>
+                            {% if a.actif %}
+                                <span class="status-badge status-active">Actif</span>
+                            {% else %}
+                                <span class="status-badge status-inactive">Terminé</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end">
+                            <div class="d-flex justify-content-end gap-2">
+                                <a href="{% url 'personnel:affectation_update' a.id %}" class="btn-action btn-edit" title="Modifier">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{% url 'personnel:affectation_delete' a.id %}" class="btn-action btn-delete" title="Supprimer">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center py-5 text-muted">
+                            <i class="fas fa-link fa-3x mb-3 opacity-25"></i>
+                            <p>Aucune affectation active</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

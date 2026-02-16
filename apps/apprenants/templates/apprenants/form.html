@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>
+    {% if form.instance.pk %}
+        Modifier un apprenant
+    {% else %}
+        Ajouter un apprenant
+    {% endif %}
+</h1>
+
+<a href="{% url 'liste_apprenants' %}" class="btn btn-secondary mb-3">Retour à la liste</a>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-success">
+        {% if form.instance.pk %}Enregistrer{% else %}Ajouter{% endif %}
+    </button>
+</form>
+{% endblock %}

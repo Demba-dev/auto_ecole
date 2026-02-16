@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Personnel - KALANSSO{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --primary: #0f172a;
+        --accent: #3b82f6;
+        --border: #e2e8f0;
+        --radius: 16px;
+        --shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    .page-header { margin-bottom: 2rem; }
+    .page-title { font-size: 1.8rem; font-weight: 700; color: var(--primary); }
+    
+    .card-custom {
+        background: #fff;
+        border-radius: var(--radius);
+        border: none;
+        box-shadow: var(--shadow);
+        overflow: hidden;
+    }
+
+    .table thead th {
+        background: #f8fafc;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.05em;
+        color: #64748b;
+        padding: 1rem;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .table td { padding: 1rem; vertical-align: middle; }
+
+    .avatar-circle {
+        width: 40px; height: 40px;
+        background: linear-gradient(135deg, var(--accent), #2563eb);
+        color: white;
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-weight: 600;
+    }
+
+    .type-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+    .badge-moniteur { background: #eff6ff; color: #1d4ed8; }
+    .badge-admin { background: #f0fdf4; color: #15803d; }
+    .badge-direction { background: #fff7ed; color: #c2410c; }
+
+    .status-badge {
+        width: 8px; height: 8px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 0.5rem;
+    }
+    .status-active { background: #22c55e; }
+    .status-inactive { background: #94a3b8; }
+
+    .btn-action {
+        width: 32px; height: 32px;
+        display: inline-flex; align-items: center; justify-content: center;
+        border-radius: 8px;
+        transition: 0.2s;
+        text-decoration: none !important;
+    }
+    .btn-edit { background: #fef3c7; color: #d97706; }
+    .btn-delete { background: #fee2e2; color: #dc2626; }
+    
+    .btn-add {
+        background: var(--accent);
+        color: white !important;
+        border-radius: 30px;
+        padding: 0.6rem 1.5rem;
+        font-weight: 600;
+        text-decoration: none !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4 py-4">
+    <div class="page-header d-flex justify-content-between align-items-center">
+        <div>
+            <h1 class="page-title">Personnel</h1>
+            <p class="text-muted mb-0">Gestion des employés et de l'équipe administrative</p>
+        </div>
+        <a href="{% url 'personnel:employe_create' %}" class="btn-add">
+            <i class="fas fa-user-plus me-2"></i> Ajouter un employé
+        </a>
+    </div>
+
+    <div class="card-custom">
+        <div class="table-responsive">
+            <table class="table mb-0">
+                <thead>
+                    <tr>
+                        <th>Employé</th>
+                        <th>Rôle</th>
+                        <th>Contact</th>
+                        <th>Statut</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for e in employes %}
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="avatar-circle">
+                                    {{ e.prenom|first|upper }}{{ e.nom|first|upper }}
+                                </div>
+                                <div>
+                                    <div class="fw-bold">{{ e.prenom }} {{ e.nom }}</div>
+                                    <small class="text-muted">{{ e.email|default:"Pas d'email" }}</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="type-badge badge-{{ e.type_employe|lower }}">
+                                {{ e.get_type_employe_display }}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="small fw-medium">
+                                <i class="fas fa-phone me-1 text-muted"></i> {{ e.telephone }}
+                            </div>
+                        </td>
+                        <td>
+                            {% if e.actif %}
+                                <span class="status-badge status-active"></span> Actif
+                            {% else %}
+                                <span class="status-badge status-inactive"></span> Inactif
+                            {% endif %}
+                        </td>
+                        <td class="text-end">
+                            <div class="d-flex justify-content-end gap-2">
+                                <a href="{% url 'personnel:employe_update' e.id %}" class="btn-action btn-edit" title="Modifier">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{% url 'personnel:employe_delete' e.id %}" class="btn-action btn-delete" title="Supprimer">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center py-5 text-muted">
+                            <i class="fas fa-users fa-3x mb-3 opacity-25"></i>
+                            <p>Aucun employé enregistré</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

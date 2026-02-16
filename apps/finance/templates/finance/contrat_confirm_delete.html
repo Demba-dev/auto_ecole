@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Supprimer contrat - KALANSSO{% endblock %}
+
+{% block extra_css %}
+<style>
+:root {
+    --danger: #b91c1c;
+    --danger-light: #fef2f2;
+    --text-dark: #0f172a;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+    --radius: 16px;
+    --shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.delete-container {
+    max-width: 500px;
+    margin: 4rem auto;
+}
+
+.delete-card {
+    background: #fff;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    text-align: center;
+    padding: 2rem;
+}
+
+.delete-icon {
+    width: 64px;
+    height: 64px;
+    background: var(--danger-light);
+    color: var(--danger);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin: 0 auto 1.5rem;
+}
+
+.delete-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 0.5rem;
+}
+
+.delete-text {
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+    font-size: 0.9rem;
+}
+
+.btn-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.btn-cancel, .btn-confirm {
+    border-radius: 30px;
+    padding: 0.6rem 1.5rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none !important;
+    transition: 0.2s;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-cancel {
+    background: #f1f5f9;
+    color: #475569;
+}
+
+.btn-confirm {
+    background: var(--danger);
+    color: #fff;
+}
+
+.btn-cancel:hover {
+    background: #e2e8f0;
+}
+
+.btn-confirm:hover {
+    background: #991b1b;
+    box-shadow: 0 4px 12px rgba(185, 28, 28, 0.2);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="delete-container">
+        <div class="delete-card">
+            <div class="delete-icon">
+                <i class="fas fa-file-contract"></i>
+            </div>
+            <h2 class="delete-title">Confirmer la suppression</h2>
+            <p class="delete-text">
+                Êtes-vous sûr de vouloir supprimer le contrat de <strong>{{ contrat.apprenant }}</strong> 
+                (Forfait: {{ contrat.tarif.libelle }}) ?
+                <br>
+                <small class="text-danger">Tous les paiements associés seront également supprimés.</small>
+            </p>
+            
+            <form method="POST">
+                {% csrf_token %}
+                <div class="btn-actions">
+                    <a href="{% url 'finance:hub_section' 'contrat' %}" class="btn-cancel">
+                        Annuler
+                    </a>
+                    <button type="submit" class="btn-confirm">
+                        Supprimer le contrat
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

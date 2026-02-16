@@ -1,0 +1,1009 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    {% if form.instance.pk %}
+        Modifier {{ form.instance.libelle }} - Tarifs KALANSSO
+    {% else %}
+        Nouveau tarif - KALANSSO
+    {% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<style>
+:root {
+    --primary: #0f172a;
+    --primary-soft: #f1f5f9;
+    --primary-light: #1e293b;
+    --accent: #3b82f6;
+    --accent-light: #eff6ff;
+    --success: #0b6e4f;
+    --success-light: #e7f3ef;
+    --warning: #b45309;
+    --warning-light: #fffbeb;
+    --danger: #b91c1c;
+    --danger-light: #fef2f2;
+    --info: #0891b2;
+    --info-light: #e0f2fe;
+    --text-dark: #0f172a;
+    --text-medium: #334155;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+    --border-light: #f1f5f9;
+    --radius: 16px;
+    --radius-sm: 12px;
+    --shadow: 0 4px 12px rgba(0,0,0,0.08);
+    --shadow-lg: 0 12px 30px rgba(0,0,0,0.06);
+    --transition: 0.2s ease;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: #f8fafc;
+    color: var(--text-dark);
+}
+
+/* ------------------------------------------------
+   BREADCRUMB COMPACT
+------------------------------------------------ */
+.breadcrumb-custom .breadcrumb {
+    background: transparent;
+    padding: 0;
+    margin-bottom: 0.5rem;
+}
+.breadcrumb-custom .breadcrumb-item + .breadcrumb-item::before {
+    content: "·";
+    color: var(--text-muted);
+    font-size: 0.8rem;
+}
+.breadcrumb-custom .breadcrumb-item a {
+    text-decoration: none;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    transition: var(--transition);
+}
+.breadcrumb-custom .breadcrumb-item a:hover {
+    color: var(--primary);
+}
+.breadcrumb-custom .breadcrumb-item.active {
+    color: var(--text-medium);
+    font-size: 0.8rem;
+}
+
+/* ------------------------------------------------
+   PAGE HEADER COMPACT
+------------------------------------------------ */
+.page-header {
+    margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.page-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 0.2rem;
+    letter-spacing: -0.02em;
+}
+.page-subtitle {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+/* ------------------------------------------------
+   BOUTONS COMPACTS
+------------------------------------------------ */
+.btn-outline, .btn-soft, .btn-accent {
+    border-radius: 30px;
+    padding: 0.45rem 1.2rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    transition: 0.2s;
+    text-decoration: none !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    border: none;
+    cursor: pointer;
+    justify-content: center;
+}
+.btn-outline {
+    background: #fff;
+    border: 1px solid var(--border);
+    color: var(--text-medium);
+}
+.btn-outline:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    box-shadow: var(--shadow);
+    transform: translateY(-1px);
+}
+.btn-soft {
+    background: var(--primary-soft);
+    color: var(--text-medium);
+    border: 1px solid transparent;
+}
+.btn-soft:hover {
+    background: #fff;
+    border: 1px solid var(--border);
+    transform: translateY(-1px);
+}
+.btn-accent {
+    background: var(--accent);
+    color: #fff !important;
+    border-radius: 30px;
+    padding: 0.45rem 1.4rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border: none;
+}
+.btn-accent:hover {
+    background: #2563eb;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    transform: translateY(-1px);
+}
+.btn-sm {
+    padding: 0.35rem 1rem;
+    font-size: 0.75rem;
+}
+
+/* ------------------------------------------------
+   FORMULAIRE CARD
+------------------------------------------------ */
+.form-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.form-card {
+    background: #fff;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.form-card:hover {
+    box-shadow: var(--shadow-lg);
+}
+
+/* Header carte compact */
+.card-header-custom {
+    background: #fff;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.header-icon {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, var(--primary), #1e2a3a);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 1.1rem;
+}
+
+.header-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 0.1rem;
+}
+
+.header-subtitle {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+}
+
+/* Body carte compact */
+.card-body-custom {
+    padding: 1.5rem;
+}
+
+/* Grille dense - 2 colonnes pour tarif */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.form-group.full-width {
+    grid-column: span 2;
+}
+
+/* Label compact */
+.form-label {
+    font-size: 0.6rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    margin-bottom: 0;
+}
+
+.form-label i {
+    color: var(--accent);
+    font-size: 0.6rem;
+    width: 14px;
+}
+
+.required-star {
+    color: var(--danger);
+    margin-left: 2px;
+    font-size: 0.6rem;
+}
+
+/* Inputs compacts */
+.form-control, .form-select {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.7rem 1rem;
+    font-size: 0.85rem;
+    transition: var(--transition);
+    background: #fff;
+    width: 100%;
+    font-family: 'Inter', sans-serif;
+    height: 42px;
+}
+
+.form-control:hover, .form-select:hover {
+    border-color: var(--text-muted);
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    outline: none;
+}
+
+textarea.form-control {
+    height: auto;
+    min-height: 80px;
+}
+
+/* Select compact */
+.form-select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 12px;
+    padding-right: 2.5rem;
+}
+
+/* Input avec devise */
+.input-group-custom {
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    transition: var(--transition);
+    background: #fff;
+}
+.input-group-custom:hover {
+    border-color: var(--text-muted);
+}
+.input-group-custom:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.input-group-text {
+    background: var(--primary-soft);
+    border: none;
+    padding: 0 1rem;
+    display: flex;
+    align-items: center;
+    color: var(--text-medium);
+    font-size: 0.9rem;
+    font-weight: 500;
+    height: 42px;
+    border-right: 1px solid var(--border);
+}
+.input-group-text i {
+    color: var(--accent);
+    margin-right: 0.3rem;
+}
+
+.input-group-custom .form-control {
+    border: none;
+    border-radius: 0;
+    height: 42px;
+}
+.input-group-custom .form-control:focus {
+    box-shadow: none;
+}
+
+/* Checkbox compact */
+.form-check {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.3rem 0;
+    height: 42px;
+}
+
+.form-check-input {
+    width: 1.1rem;
+    height: 1.1rem;
+    border: 2px solid var(--border);
+    border-radius: 4px;
+    cursor: pointer;
+    accent-color: var(--accent);
+    transition: var(--transition);
+}
+.form-check-input:checked {
+    background-color: var(--accent);
+    border-color: var(--accent);
+}
+
+.form-check-label {
+    font-size: 0.8rem;
+    color: var(--text-medium);
+    cursor: pointer;
+}
+
+/* Help text compact */
+.help-text {
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    margin-top: 0.2rem;
+    background: var(--primary-soft);
+    padding: 0.25rem 0.6rem;
+    border-radius: 4px;
+    line-height: 1.3;
+}
+
+.help-text i {
+    color: var(--accent);
+    font-size: 0.9rem;
+}
+
+/* Error compact */
+.error-feedback {
+    color: var(--danger);
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-top: 0.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    background: var(--danger-light);
+    padding: 0.25rem 0.6rem;
+    border-radius: 4px;
+}
+
+.error-feedback i {
+    color: var(--danger);
+    font-size: 0.8rem;
+}
+
+/* Sections */
+.form-section {
+    margin-bottom: 1.5rem;
+    padding: 1.2rem;
+    background: var(--primary-soft);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+}
+
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.section-icon {
+    width: 28px;
+    height: 28px;
+    background: #fff;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent);
+    font-size: 0.8rem;
+}
+
+.section-title h6 {
+    font-size: 0.8rem;
+    font-weight: 700;
+    margin-bottom: 0;
+    color: var(--text-dark);
+}
+
+.section-title p {
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    margin-bottom: 0;
+    margin-left: 0.5rem;
+}
+
+/* Aperçu tarif */
+.preview-card {
+    background: #fff;
+    border-radius: var(--radius-sm);
+    padding: 1rem;
+    margin-top: 1rem;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.preview-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.preview-badge {
+    width: 40px;
+    height: 40px;
+    background: var(--accent-light);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent);
+    font-size: 1.2rem;
+}
+
+.preview-details h6 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.2rem;
+}
+
+.preview-details small {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.preview-price {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--success);
+}
+
+/* Footer compact */
+.card-footer-custom {
+    background: #fff;
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.action-hint {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.hint-item {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    background: var(--primary-soft);
+    padding: 0.2rem 0.7rem;
+    border-radius: 20px;
+}
+
+.hint-item i {
+    color: var(--accent);
+    font-size: 0.8rem;
+}
+
+.form-actions {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+/* Alertes */
+.alert-info {
+    background: var(--info-light);
+    border-left: 3px solid var(--info);
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+.alert-info i {
+    color: var(--info);
+    font-size: 0.9rem;
+}
+
+/* ------------------------------------------------
+   RESPONSIVE
+------------------------------------------------ */
+@media (max-width: 768px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .form-group.full-width {
+        grid-column: span 1;
+    }
+    
+    .card-header-custom {
+        padding: 1rem;
+    }
+    
+    .card-body-custom {
+        padding: 1rem;
+    }
+    
+    .form-section {
+        padding: 1rem;
+    }
+    
+    .preview-card {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+    
+    .preview-info {
+        flex-direction: column;
+        text-align: center;
+    }
+}
+
+@media (max-width: 576px) {
+    .card-footer-custom {
+        flex-direction: column-reverse;
+        align-items: stretch;
+    }
+    
+    .action-hint {
+        justify-content: center;
+    }
+    
+    .form-actions {
+        flex-direction: column-reverse;
+    }
+    
+    .btn-outline, .btn-accent {
+        width: 100%;
+    }
+    
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+}
+
+/* ------------------------------------------------
+   ANIMATIONS
+------------------------------------------------ */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.form-card {
+    animation: slideIn 0.3s ease-out;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4 py-4">
+    <!-- Header compact -->
+    <div class="page-header">
+        <div>
+            <nav class="breadcrumb-custom">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'finance:hub_section' 'tarif' %}">Tarifs</a></li>
+                    <li class="breadcrumb-item active">
+                        {% if form.instance.pk %}Modifier{% else %}Nouveau tarif{% endif %}
+                    </li>
+                </ol>
+            </nav>
+            <h1 class="page-title">
+                {% if form.instance.pk %}
+                    {{ form.instance.libelle }}
+                {% else %}
+                    Nouveau tarif
+                {% endif %}
+            </h1>
+            <p class="page-subtitle">
+                {% if form.instance.pk %}
+                    Modifier les informations du tarif
+                {% else %}
+                    Créer une nouvelle grille tarifaire
+                {% endif %}
+            </p>
+        </div>
+        <a href="{% url 'finance:hub_section' 'tarif' %}" class="btn-soft">
+            <i class="fas fa-arrow-left"></i> Retour
+        </a>
+    </div>
+
+    <!-- Formulaire -->
+    <div class="form-container">
+        <form method="POST" class="form-card" id="tarifForm">
+            {% csrf_token %}
+            
+            <!-- Header carte -->
+            <div class="card-header-custom">
+                <div class="header-icon">
+                    <i class="fas {% if form.instance.pk %}fa-edit{% else %}fa-tag{% endif %}"></i>
+                </div>
+                <div>
+                    <div class="header-title">
+                        {% if form.instance.pk %}Modification tarif{% else %}Création tarif{% endif %}
+                    </div>
+                    <div class="header-subtitle">
+                        <span class="required-star">*</span> Champs obligatoires
+                    </div>
+                </div>
+            </div>
+
+            <!-- Body -->
+            <div class="card-body-custom">
+                {% if form.non_field_errors %}
+                <div class="alert-info" style="background: var(--danger-light); border-left-color: var(--danger);">
+                    <i class="fas fa-exclamation-triangle" style="color: var(--danger);"></i>
+                    <div>{{ form.non_field_errors }}</div>
+                </div>
+                {% endif %}
+
+                <!-- Section Informations générales -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <div class="section-icon">
+                            <i class="fas fa-info-circle"></i>
+                        </div>
+                        <h6>Informations générales</h6>
+                        <p>Détails du tarif</p>
+                    </div>
+                    
+                    <div class="form-grid">
+                        {% for field in form %}
+                            {% if field.name == 'type_permis' %}
+                            <div class="form-group">
+                                <label class="form-label" for="{{ field.id_for_label }}">
+                                    <i class="fas fa-motorcycle"></i> Type permis {% if field.field.required %}<span class="required-star">*</span>{% endif %}
+                                </label>
+                                {{ field }}
+                                {% if field.help_text %}
+                                <div class="help-text">
+                                    <i class="fas fa-info-circle"></i> {{ field.help_text }}
+                                </div>
+                                {% endif %}
+                                {% for error in field.errors %}
+                                <div class="error-feedback">
+                                    <i class="fas fa-exclamation-circle"></i> {{ error }}
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            
+                            {% if field.name == 'libelle' %}
+                            <div class="form-group">
+                                <label class="form-label" for="{{ field.id_for_label }}">
+                                    <i class="fas fa-tag"></i> Libellé {% if field.field.required %}<span class="required-star">*</span>{% endif %}
+                                </label>
+                                {{ field }}
+                                {% if field.help_text %}
+                                <div class="help-text">{{ field.help_text }}</div>
+                                {% endif %}
+                                {% for error in field.errors %}
+                                <div class="error-feedback">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Section Tarification -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <div class="section-icon">
+                            <i class="fas fa-coins"></i>
+                        </div>
+                        <h6>Tarification</h6>
+                        <p>Montant et prestations</p>
+                    </div>
+                    
+                    <div class="form-grid">
+                        {% for field in form %}
+                            {% if field.name == 'montant' %}
+                            <div class="form-group">
+                                <label class="form-label" for="{{ field.id_for_label }}">
+                                    <i class="fas fa-money-bill"></i> Montant {% if field.field.required %}<span class="required-star">*</span>{% endif %}
+                                </label>
+                                <div class="input-group-custom">
+                                    <span class="input-group-text">
+                                        <i class="fas fa-coins"></i> FCFA
+                                    </span>
+                                    {{ field }}
+                                </div>
+                                {% if field.help_text %}
+                                <div class="help-text">{{ field.help_text }}</div>
+                                {% endif %}
+                                {% for error in field.errors %}
+                                <div class="error-feedback">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            
+                            {% if field.name == 'heures_inclues' %}
+                            <div class="form-group">
+                                <label class="form-label" for="{{ field.id_for_label }}">
+                                    <i class="fas fa-clock"></i> Heures incluses {% if field.field.required %}<span class="required-star">*</span>{% endif %}
+                                </label>
+                                <div class="input-group-custom">
+                                    <span class="input-group-text">
+                                        <i class="fas fa-hourglass"></i>
+                                    </span>
+                                    {{ field }}
+                                    <span class="input-group-text">heures</span>
+                                </div>
+                                {% if field.help_text %}
+                                <div class="help-text">{{ field.help_text }}</div>
+                                {% endif %}
+                                {% for error in field.errors %}
+                                <div class="error-feedback">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                        
+                        {% for field in form %}
+                            {% if field.name == 'actif' %}
+                            <div class="form-group full-width">
+                                <label class="form-label" for="{{ field.id_for_label }}">
+                                    <i class="fas fa-toggle-on"></i> Statut
+                                </label>
+                                <div class="form-check">
+                                    {{ field }}
+                                    <label class="form-check-label" for="{{ field.id_for_label }}">
+                                        Tarif actif (visible dans les contrats)
+                                    </label>
+                                </div>
+                                {% if field.help_text %}
+                                <div class="help-text">{{ field.help_text }}</div>
+                                {% endif %}
+                                {% for error in field.errors %}
+                                <div class="error-feedback">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Section Description -->
+                {% for field in form %}
+                    {% if field.name == 'description' %}
+                    <div class="form-section">
+                        <div class="section-title">
+                            <div class="section-icon">
+                                <i class="fas fa-align-left"></i>
+                            </div>
+                            <h6>Description</h6>
+                            <p>Détails et informations complémentaires</p>
+                        </div>
+                        
+                        <div class="form-grid">
+                            <div class="form-group full-width">
+                                <label class="form-label" for="{{ field.id_for_label }}">
+                                    <i class="fas fa-file-alt"></i> {{ field.label }}
+                                </label>
+                                {{ field }}
+                                {% if field.help_text %}
+                                <div class="help-text">{{ field.help_text }}</div>
+                                {% endif %}
+                                {% for error in field.errors %}
+                                <div class="error-feedback">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                {% endfor %}
+
+                <!-- Aperçu du tarif -->
+                {% if form.instance.pk %}
+                <div class="preview-card">
+                    <div class="preview-info">
+                        <div class="preview-badge">
+                            <i class="fas fa-tag"></i>
+                        </div>
+                        <div class="preview-details">
+                            <h6>{{ form.instance.libelle }}</h6>
+                            <small>
+                                <i class="fas fa-motorcycle"></i> {{ form.instance.type_permis.code }}
+                                <i class="fas fa-clock ms-2"></i> {{ form.instance.heures_inclues }}h
+                            </small>
+                        </div>
+                    </div>
+                    <div class="preview-price">
+                        {{ form.instance.montant }} FCFA
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Footer compact -->
+            <div class="card-footer-custom">
+                <div class="action-hint">
+                    <span class="hint-item">
+                        <i class="fas fa-shield-alt"></i> Données sécurisées
+                    </span>
+                    <span class="hint-item">
+                        <i class="fas fa-clock"></i> {% now "d/m/Y" %}
+                    </span>
+                </div>
+                
+                <div class="form-actions">
+                    <a href="{% url 'finance:hub_section' 'tarif' %}" class="btn-outline">
+                        <i class="fas fa-times"></i> Annuler
+                    </a>
+                    <button type="submit" class="btn-accent">
+                        <i class="fas fa-save"></i>
+                        {% if form.instance.pk %}Mettre à jour{% else %}Créer{% endif %}
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('tarifForm');
+    let formChanged = false;
+    
+    // Détection des modifications
+    const formInputs = form.querySelectorAll('input, select, textarea');
+    formInputs.forEach(input => {
+        if (input.type !== 'hidden') {
+            input.addEventListener('change', () => formChanged = true);
+            if (input.type === 'text' || input.tagName === 'TEXTAREA') {
+                input.addEventListener('input', () => formChanged = true);
+            }
+        }
+    });
+    
+    // Confirmation avant annulation
+    const cancelBtn = document.querySelector('a[href*="tarif"]');
+    if (cancelBtn) {
+        cancelBtn.addEventListener('click', function(e) {
+            if (formChanged && !confirm('Modifications non enregistrées. Quitter ?')) {
+                e.preventDefault();
+            }
+        });
+    }
+    
+    // Formatage du montant (chiffres uniquement)
+    const montantInput = document.getElementById('{{ form.montant.id_for_label }}');
+    if (montantInput) {
+        montantInput.addEventListener('input', function() {
+            this.value = this.value.replace(/[^0-9]/g, '');
+        });
+    }
+    
+    // Formatage des heures (chiffres uniquement)
+    const heuresInput = document.getElementById('{{ form.heures_inclues.id_for_label }}');
+    if (heuresInput) {
+        heuresInput.addEventListener('input', function() {
+            this.value = this.value.replace(/[^0-9]/g, '');
+        });
+    }
+    
+    // Validation du formulaire
+    form.addEventListener('submit', function(e) {
+        let hasError = false;
+        
+        // Vérifier montant > 0
+        if (montantInput && montantInput.value && parseInt(montantInput.value) <= 0) {
+            e.preventDefault();
+            hasError = true;
+            
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-feedback';
+            errorDiv.innerHTML = '<i class="fas fa-exclamation-circle"></i> Le montant doit être supérieur à 0';
+            
+            montantInput.closest('.form-group').appendChild(errorDiv);
+            montantInput.closest('.input-group-custom').style.borderColor = 'var(--danger)';
+            
+            setTimeout(() => {
+                errorDiv.remove();
+                montantInput.closest('.input-group-custom').style.borderColor = '';
+            }, 4000);
+        }
+        
+        // Vérifier heures > 0
+        if (heuresInput && heuresInput.value && parseInt(heuresInput.value) <= 0) {
+            e.preventDefault();
+            hasError = true;
+            
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-feedback';
+            errorDiv.innerHTML = '<i class="fas fa-exclamation-circle"></i> Les heures doivent être supérieures à 0';
+            
+            heuresInput.closest('.form-group').appendChild(errorDiv);
+            heuresInput.closest('.input-group-custom').style.borderColor = 'var(--danger)';
+            
+            setTimeout(() => {
+                errorDiv.remove();
+                heuresInput.closest('.input-group-custom').style.borderColor = '';
+            }, 4000);
+        }
+        
+        if (hasError) {
+            e.preventDefault();
+        }
+    });
+    
+    // Mise à jour de l'aperçu en temps réel (optionnel)
+    const libelleInput = document.getElementById('{{ form.libelle.id_for_label }}');
+    const typePermisSelect = document.getElementById('{{ form.type_permis.id_for_label }}');
+    const previewTitle = document.querySelector('.preview-details h6');
+    const previewSubtitle = document.querySelector('.preview-details small');
+    
+    if (previewTitle && libelleInput) {
+        libelleInput.addEventListener('input', function() {
+            previewTitle.textContent = this.value || 'Nouveau tarif';
+        });
+    }
+    
+    if (previewSubtitle && typePermisSelect) {
+        typePermisSelect.addEventListener('change', function() {
+            const selected = this.options[this.selectedIndex];
+            if (selected && selected.value) {
+                const code = selected.text.split(' ')[0];
+                previewSubtitle.innerHTML = `<i class="fas fa-motorcycle"></i> ${code} <i class="fas fa-clock ms-2"></i> ${heuresInput?.value || '0'}h`;
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

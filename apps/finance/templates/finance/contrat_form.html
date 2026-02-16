@@ -1,0 +1,1212 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    {% if form.instance.pk %}
+        Modifier contrat #{{ form.instance.id }} - {{ form.instance.apprenant }} - KALANSSO
+    {% else %}
+        Nouveau contrat - KALANSSO
+    {% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<style>
+:root {
+    --primary: #0f172a;
+    --primary-soft: #f1f5f9;
+    --primary-light: #1e293b;
+    --accent: #3b82f6;
+    --accent-light: #eff6ff;
+    --success: #0b6e4f;
+    --success-light: #e7f3ef;
+    --warning: #b45309;
+    --warning-light: #fffbeb;
+    --danger: #b91c1c;
+    --danger-light: #fef2f2;
+    --info: #0891b2;
+    --info-light: #e0f2fe;
+    --text-dark: #0f172a;
+    --text-medium: #334155;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+    --border-light: #f1f5f9;
+    --radius: 16px;
+    --radius-sm: 10px;
+    --shadow: 0 4px 12px rgba(0,0,0,0.08);
+    --shadow-lg: 0 12px 30px rgba(0,0,0,0.06);
+    --transition: 0.2s ease;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: #f8fafc;
+    color: var(--text-dark);
+    font-size: 0.9rem;
+}
+
+/* ------------------------------------------------
+   BREADCRUMB
+------------------------------------------------ */
+.breadcrumb-custom .breadcrumb {
+    background: transparent;
+    padding: 0;
+    margin-bottom: 0.5rem;
+}
+.breadcrumb-custom .breadcrumb-item + .breadcrumb-item::before {
+    content: "·";
+    color: var(--text-muted);
+    font-size: 0.8rem;
+}
+.breadcrumb-custom .breadcrumb-item a {
+    text-decoration: none;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    transition: var(--transition);
+}
+.breadcrumb-custom .breadcrumb-item a:hover {
+    color: var(--primary);
+}
+.breadcrumb-custom .breadcrumb-item.active {
+    color: var(--text-medium);
+    font-size: 0.8rem;
+}
+
+/* ------------------------------------------------
+   PAGE HEADER
+------------------------------------------------ */
+.page-header {
+    margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.page-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 0.2rem;
+    letter-spacing: -0.02em;
+}
+.page-subtitle {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+/* ------------------------------------------------
+   BOUTONS (taille 0.8-0.9rem)
+------------------------------------------------ */
+.btn-outline, .btn-soft, .btn-accent {
+    border-radius: 30px;
+    padding: 0.45rem 1.2rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    transition: 0.2s;
+    text-decoration: none !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    border: none;
+    cursor: pointer;
+    justify-content: center;
+}
+.btn-outline {
+    background: #fff;
+    border: 1px solid var(--border);
+    color: var(--text-medium);
+}
+.btn-outline:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    box-shadow: var(--shadow);
+    transform: translateY(-1px);
+}
+.btn-soft {
+    background: var(--primary-soft);
+    color: var(--text-medium);
+    border: 1px solid transparent;
+}
+.btn-soft:hover {
+    background: #fff;
+    border: 1px solid var(--border);
+    transform: translateY(-1px);
+}
+.btn-accent {
+    background: var(--accent);
+    color: #fff !important;
+    border-radius: 30px;
+    padding: 0.45rem 1.4rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border: none;
+}
+.btn-accent:hover {
+    background: #2563eb;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    transform: translateY(-1px);
+}
+.btn-sm {
+    padding: 0.35rem 1rem;
+    font-size: 0.7rem;
+}
+
+/* ------------------------------------------------
+   FORMULAIRE CARD
+------------------------------------------------ */
+.form-container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.form-card {
+    background: #fff;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.form-card:hover {
+    box-shadow: var(--shadow-lg);
+}
+
+/* Header carte */
+.card-header-custom {
+    background: #fff;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.header-icon {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, var(--primary), #1e2a3a);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 1.1rem;
+}
+
+.header-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 0.1rem;
+}
+
+.header-subtitle {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+}
+
+/* Body carte */
+.card-body-custom {
+    padding: 1.5rem;
+}
+
+/* Grille - 2 colonnes */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.form-group.full-width {
+    grid-column: span 2;
+}
+
+/* Label (taille 0.85rem) */
+.form-label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    margin-bottom: 0;
+}
+
+.form-label i {
+    color: var(--accent);
+    font-size: 0.7rem;
+    width: 14px;
+}
+
+.required-star {
+    color: var(--danger);
+    margin-left: 2px;
+    font-size: 0.9rem;
+}
+
+/* Inputs (taille 0.85rem) */
+.form-control, .form-select {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.7rem 1rem;
+    font-size: 0.9rem;
+    transition: var(--transition);
+    background: #fff;
+    width: 100%;
+    font-family: 'Inter', sans-serif;
+    height: 42px;
+}
+
+.form-control:hover, .form-select:hover {
+    border-color: var(--text-muted);
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    outline: none;
+}
+
+textarea.form-control {
+    height: auto;
+    min-height: 80px;
+}
+
+/* Select compact */
+.form-select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 12px;
+    padding-right: 2.5rem;
+}
+
+/* Input avec devise */
+.input-group-custom {
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    transition: var(--transition);
+    background: #fff;
+}
+.input-group-custom:hover {
+    border-color: var(--text-muted);
+}
+.input-group-custom:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.input-group-text {
+    background: var(--primary-soft);
+    border: none;
+    padding: 0 1rem;
+    display: flex;
+    align-items: center;
+    color: var(--text-medium);
+    font-size: 0.9rem;
+    font-weight: 500;
+    height: 42px;
+    border-right: 1px solid var(--border);
+}
+.input-group-text i {
+    color: var(--accent);
+    margin-right: 0.3rem;
+    font-size: 0.9rem;
+}
+
+.input-group-custom .form-control {
+    border: none;
+    border-radius: 0;
+    height: 42px;
+}
+.input-group-custom .form-control:focus {
+    box-shadow: none;
+}
+
+/* Help text (taille 0.65rem) */
+.help-text {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    margin-top: 0.2rem;
+    background: var(--primary-soft);
+    padding: 0.25rem 0.6rem;
+    border-radius: 4px;
+    line-height: 1.3;
+}
+
+.help-text i {
+    color: var(--accent);
+    font-size: 0.9rem;
+}
+
+/* Error (taille 0.65rem) */
+.error-feedback {
+    color: var(--danger);
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-top: 0.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    background: var(--danger-light);
+    padding: 0.25rem 0.6rem;
+    border-radius: 4px;
+}
+
+.error-feedback i {
+    color: var(--danger);
+    font-size: 0.9rem;
+}
+
+/* Sections */
+.form-section {
+    margin-bottom: 1.5rem;
+    padding: 1.2rem;
+    background: var(--primary-soft);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+}
+
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.section-icon {
+    width: 28px;
+    height: 28px;
+    background: #fff;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent);
+    font-size: 0.8rem;
+}
+
+.section-title h6 {
+    font-size: 0.9rem;
+    font-weight: 700;
+    margin-bottom: 0;
+    color: var(--text-dark);
+}
+
+.section-title p {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-bottom: 0;
+    margin-left: 0.5rem;
+}
+
+/* Cartes apprenant/tarif */
+.entity-card {
+    background: #fff;
+    border-radius: var(--radius-sm);
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 0.5rem;
+    transition: var(--transition);
+}
+.entity-card:hover {
+    border-color: var(--accent);
+    background: var(--accent-light);
+}
+
+.entity-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--primary), #1e2a3a);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.entity-info h6 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.2rem;
+}
+
+.entity-info small {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.entity-info small i {
+    color: var(--accent);
+    font-size: 0.7rem;
+}
+
+/* Résumé contrat */
+.summary-card {
+    background: #fff;
+    border-radius: var(--radius-sm);
+    padding: 1rem;
+    border: 1px solid var(--border);
+    margin-top: 1rem;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px dashed var(--border-light);
+}
+.summary-row:last-child {
+    border-bottom: none;
+}
+
+.summary-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+.summary-label i {
+    color: var(--accent);
+    font-size: 0.75rem;
+}
+
+.summary-value {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-dark);
+}
+.summary-value.total {
+    font-size: 1rem;
+    color: var(--success);
+}
+
+/* Badges */
+.badge-custom {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem 0.8rem;
+    border-radius: 30px;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+.badge-info {
+    background: var(--info-light);
+    color: var(--info);
+}
+.badge-success {
+    background: var(--success-light);
+    color: var(--success);
+}
+
+/* Footer */
+.card-footer-custom {
+    background: #fff;
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.action-hint {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.hint-item {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    background: var(--primary-soft);
+    padding: 0.2rem 0.7rem;
+    border-radius: 20px;
+}
+
+.hint-item i {
+    color: var(--accent);
+    font-size: 0.6rem;
+}
+
+.form-actions {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+/* Alertes */
+.alert-info {
+    background: var(--info-light);
+    border-left: 3px solid var(--info);
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+.alert-info i {
+    color: var(--info);
+    font-size: 0.9rem;
+}
+
+/* ------------------------------------------------
+   RESPONSIVE
+------------------------------------------------ */
+@media (max-width: 768px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .form-group.full-width {
+        grid-column: span 1;
+    }
+    
+    .card-header-custom {
+        padding: 1rem;
+    }
+    
+    .card-body-custom {
+        padding: 1rem;
+    }
+    
+    .form-section {
+        padding: 1rem;
+    }
+    
+    .entity-card {
+        flex-direction: column;
+        text-align: center;
+    }
+}
+
+@media (max-width: 576px) {
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .card-footer-custom {
+        flex-direction: column-reverse;
+        align-items: stretch;
+    }
+    
+    .action-hint {
+        justify-content: center;
+    }
+    
+    .form-actions {
+        flex-direction: column-reverse;
+    }
+    
+    .btn-outline, .btn-accent {
+        width: 100%;
+    }
+}
+
+/* ------------------------------------------------
+   ANIMATIONS
+------------------------------------------------ */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.form-card {
+    animation: slideIn 0.3s ease-out;
+}
+
+/* Indicateur de progression */
+.step-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    padding: 0 1rem;
+}
+
+.step-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    z-index: 1;
+    background: #fff;
+    padding: 0 0.5rem;
+}
+
+.step-number {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--primary-soft);
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.85rem;
+    border: 2px solid var(--border);
+    transition: var(--transition);
+}
+
+.step-item.active .step-number {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px var(--accent-light);
+}
+
+.step-item.completed .step-number {
+    background: var(--success);
+    color: #fff;
+    border-color: var(--success);
+}
+
+.step-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.step-item.active .step-label {
+    color: var(--accent);
+}
+
+.step-line {
+    position: absolute;
+    top: 16px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--border);
+    z-index: 0;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4 py-4">
+    <!-- Header -->
+    <div class="page-header">
+        <div>
+            <nav class="breadcrumb-custom">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'finance:hub_section' 'contrat' %}">Contrats</a></li>
+                    <li class="breadcrumb-item active">
+                        {% if form.instance.pk %}Modifier contrat #{{ form.instance.id }}{% else %}Nouveau contrat{% endif %}
+                    </li>
+                </ol>
+            </nav>
+            <h1 class="page-title">
+                {% if form.instance.pk %}
+                    Contrat #{{ form.instance.id }} - {{ form.instance.apprenant }}
+                {% else %}
+                    Nouveau contrat
+                {% endif %}
+            </h1>
+            <p class="page-subtitle">
+                {% if form.instance.pk %}
+                    Modifier les informations du contrat
+                {% else %}
+                    Créer un nouveau contrat d'apprentissage
+                {% endif %}
+            </p>
+        </div>
+        <a href="{% url 'finance:hub_section' 'contrat' %}" class="btn-soft">
+            <i class="fas fa-arrow-left"></i> Retour
+        </a>
+    </div>
+
+    <!-- Formulaire -->
+    <div class="form-container">
+        <form method="POST" class="form-card" id="contratForm">
+            {% csrf_token %}
+            
+            <!-- Header carte -->
+            <div class="card-header-custom">
+                <div class="header-icon">
+                    <i class="fas {% if form.instance.pk %}fa-edit{% else %}fa-file-contract{% endif %}"></i>
+                </div>
+                <div>
+                    <div class="header-title">
+                        {% if form.instance.pk %}Modification contrat{% else %}Création contrat{% endif %}
+                    </div>
+                    <div class="header-subtitle">
+                        <span class="required-star">*</span> Champs obligatoires
+                    </div>
+                </div>
+            </div>
+
+            <!-- Body -->
+            <div class="card-body-custom">
+                <!-- Indicateur de progression -->
+                <div class="step-indicator mb-4">
+                    <div class="step-item active" id="step-1-indicator">
+                        <div class="step-number">1</div>
+                        <div class="step-label">Informations de base</div>
+                    </div>
+                    <div class="step-line"></div>
+                    <div class="step-item" id="step-2-indicator">
+                        <div class="step-number">2</div>
+                        <div class="step-label">Détails & Statut</div>
+                    </div>
+                </div>
+
+                {% if form.non_field_errors %}
+                <div class="alert-info" style="background: var(--danger-light); border-left-color: var(--danger);">
+                    <i class="fas fa-exclamation-triangle" style="color: var(--danger);"></i>
+                    <div>{{ form.non_field_errors }}</div>
+                </div>
+                {% endif %}
+
+                <!-- Étape 1 -->
+                <div id="step-1-content">
+                    <!-- Section Apprenant -->
+                    <div class="form-section">
+                        <div class="section-title">
+                            <div class="section-icon">
+                                <i class="fas fa-user-graduate"></i>
+                            </div>
+                            <h6>Apprenant</h6>
+                            <p>Sélectionner l'apprenant</p>
+                        </div>
+                        
+                        <div class="form-grid">
+                            {% for field in form %}
+                                {% if field.name == 'apprenant' %}
+                                <div class="form-group full-width">
+                                    <label class="form-label" for="{{ field.id_for_label }}">
+                                        <i class="fas fa-user"></i> {{ field.label }} {% if field.field.required %}<span class="required-star">*</span>{% endif %}
+                                    </label>
+                                    {{ field }}
+                                    
+                                    {% if form.instance.apprenant %}
+                                    <div class="entity-card">
+                                        <div class="entity-avatar">
+                                            {{ form.instance.apprenant.prenom|first|upper }}{{ form.instance.apprenant.nom|first|upper }}
+                                        </div>
+                                        <div class="entity-info">
+                                            <h6>{{ form.instance.apprenant.prenom }} {{ form.instance.apprenant.nom }}</h6>
+                                            <small>
+                                                <i class="fas fa-phone"></i> {{ form.instance.apprenant.telephone }}
+                                                <i class="fas fa-envelope ms-2"></i> {{ form.instance.apprenant.email|default:"Email non renseigné" }}
+                                            </small>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                    
+                                    {% if field.help_text %}
+                                    <div class="help-text">
+                                        <i class="fas fa-info-circle"></i> {{ field.help_text }}
+                                    </div>
+                                    {% endif %}
+                                    {% for error in field.errors %}
+                                    <div class="error-feedback">
+                                        <i class="fas fa-exclamation-circle"></i> {{ error }}
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Section Tarif -->
+                    <div class="form-section">
+                        <div class="section-title">
+                            <div class="section-icon">
+                                <i class="fas fa-tag"></i>
+                            </div>
+                            <h6>Forfait</h6>
+                            <p>Sélectionner le tarif</p>
+                        </div>
+                        
+                        <div class="form-grid">
+                            {% for field in form %}
+                                {% if field.name == 'tarif' %}
+                                <div class="form-group full-width">
+                                    <label class="form-label" for="{{ field.id_for_label }}">
+                                        <i class="fas fa-file-invoice"></i> {{ field.label }} {% if field.field.required %}<span class="required-star">*</span>{% endif %}
+                                    </label>
+                                    {{ field }}
+                                    
+                                    {% if form.instance.tarif %}
+                                    <div class="entity-card">
+                                        <div class="entity-avatar" style="background: var(--accent-light); color: var(--accent);">
+                                            <i class="fas fa-tag"></i>
+                                        </div>
+                                        <div class="entity-info">
+                                            <h6>{{ form.instance.tarif.libelle }}</h6>
+                                            <small>
+                                                <i class="fas fa-motorcycle"></i> {{ form.instance.tarif.type_permis.code }}
+                                                <i class="fas fa-clock ms-2"></i> {{ form.instance.tarif.heures_inclues }}h
+                                                <span class="badge-custom badge-info ms-2">{{ form.instance.tarif.montant }} FCFA</span>
+                                            </small>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                    
+                                    {% if field.help_text %}
+                                    <div class="help-text">{{ field.help_text }}</div>
+                                    {% endif %}
+                                    {% for error in field.errors %}
+                                    <div class="error-feedback">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Section Montants -->
+                    <div class="form-section">
+                        <div class="section-title">
+                            <div class="section-icon">
+                                <i class="fas fa-coins"></i>
+                            </div>
+                            <h6>Montants</h6>
+                            <p>Informations financières</p>
+                        </div>
+                        
+                        <div class="form-grid">
+                            {% for field in form %}
+                                {% if field.name == 'montant_total' %}
+                                <div class="form-group">
+                                    <label class="form-label" for="{{ field.id_for_label }}">
+                                        <i class="fas fa-money-bill"></i> Montant total {% if field.field.required %}<span class="required-star">*</span>{% endif %}
+                                    </label>
+                                    <div class="input-group-custom">
+                                        <span class="input-group-text">
+                                            <i class="fas fa-coins"></i> FCFA
+                                        </span>
+                                        {{ field }}
+                                    </div>
+                                    {% if field.help_text %}
+                                    <div class="help-text">{{ field.help_text }}</div>
+                                    {% endif %}
+                                    {% for error in field.errors %}
+                                    <div class="error-feedback">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                                
+                                {% if field.name == 'heures_inclues' %}
+                                <div class="form-group">
+                                    <label class="form-label" for="{{ field.id_for_label }}">
+                                        <i class="fas fa-clock"></i> Heures incluses
+                                    </label>
+                                    <div class="input-group-custom">
+                                        {{ field }}
+                                        <span class="input-group-text">heures</span>
+                                    </div>
+                                    {% for error in field.errors %}
+                                    <div class="error-feedback">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+
+                                {% if field.name == 'heures_effectuees' %}
+                                <div class="form-group">
+                                    <label class="form-label" for="{{ field.id_for_label }}">
+                                        <i class="fas fa-hourglass-start"></i> Heures effectuées
+                                    </label>
+                                    <div class="input-group-custom">
+                                        {{ field }}
+                                        <span class="input-group-text">heures</span>
+                                    </div>
+                                    {% for error in field.errors %}
+                                    <div class="error-feedback">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Étape 2 -->
+                <div id="step-2-content" style="display: none;">
+                    <!-- Section Dates -->
+                    <div class="form-section">
+                        <div class="section-title">
+                            <div class="section-icon">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            <h6>Dates</h6>
+                            <p>Période du contrat</p>
+                        </div>
+                        
+                        <div class="form-grid">
+                            {% for field in form %}
+                                {% if field.name == 'date_debut' %}
+                                <div class="form-group">
+                                    <label class="form-label" for="{{ field.id_for_label }}">
+                                        <i class="fas fa-calendar-plus"></i> Date début
+                                    </label>
+                                    {{ field }}
+                                    {% if field.help_text %}
+                                    <div class="help-text">{{ field.help_text }}</div>
+                                    {% endif %}
+                                    {% for error in field.errors %}
+                                    <div class="error-feedback">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                                
+                                {% if field.name == 'date_fin' %}
+                                <div class="form-group">
+                                    <label class="form-label" for="{{ field.id_for_label }}">
+                                        <i class="fas fa-calendar-times"></i> Date fin
+                                    </label>
+                                    {{ field }}
+                                    {% if field.help_text %}
+                                    <div class="help-text">{{ field.help_text }}</div>
+                                    {% endif %}
+                                    {% for error in field.errors %}
+                                    <div class="error-feedback">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Section Statut -->
+                    <div class="form-section">
+                        <div class="section-title">
+                            <div class="section-icon">
+                                <i class="fas fa-toggle-on"></i>
+                            </div>
+                            <h6>Statut</h6>
+                            <p>Activation du contrat</p>
+                        </div>
+                        
+                        <div class="form-grid">
+                            {% for field in form %}
+                                {% if field.name == 'actif' %}
+                                <div class="form-group">
+                                    <div class="form-check" style="height: auto; padding: 0.5rem 0;">
+                                        {{ field }}
+                                        <label class="form-check-label" for="{{ field.id_for_label }}" style="font-size: 0.85rem;">
+                                            Contrat actif
+                                        </label>
+                                    </div>
+                                    <div class="help-text">
+                                        <i class="fas fa-info-circle"></i> Désactiver pour suspendre le contrat
+                                    </div>
+                                    {% for error in field.errors %}
+                                    <div class="error-feedback">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Section Notes -->
+                    {% for field in form %}
+                        {% if field.name == 'notes' %}
+                        <div class="form-section">
+                            <div class="section-title">
+                                <div class="section-icon">
+                                    <i class="fas fa-sticky-note"></i>
+                                </div>
+                                <h6>Notes</h6>
+                                <p>Informations complémentaires</p>
+                            </div>
+                            
+                            <div class="form-grid">
+                                <div class="form-group full-width">
+                                    <label class="form-label" for="{{ field.id_for_label }}">
+                                        <i class="fas fa-comment"></i> {{ field.label }}
+                                    </label>
+                                    {{ field }}
+                                    {% if field.help_text %}
+                                    <div class="help-text">{{ field.help_text }}</div>
+                                    {% endif %}
+                                    {% for error in field.errors %}
+                                    <div class="error-feedback">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+
+                    <!-- Résumé du contrat (en modification) -->
+                    {% if form.instance.pk %}
+                    <div class="summary-card">
+                        <h6 style="font-size: 0.8rem; margin-bottom: 0.75rem; color: var(--text-medium);">
+                            <i class="fas fa-chart-pie me-2" style="color: var(--accent);"></i>Résumé financier
+                        </h6>
+                        <div class="summary-row">
+                            <span class="summary-label"><i class="fas fa-money-bill"></i> Montant total</span>
+                            <span class="summary-value">{{ form.instance.montant_total }} FCFA</span>
+                        </div>
+                        <div class="summary-row">
+                            <span class="summary-label"><i class="fas fa-check-circle" style="color: var(--success);"></i> Montant payé</span>
+                            <span class="summary-value" style="color: var(--success);">{{ form.instance.montant_paye|default:"0" }} FCFA</span>
+                        </div>
+                        <div class="summary-row">
+                            <span class="summary-label"><i class="fas fa-hourglass-half" style="color: var(--warning);"></i> Montant restant</span>
+                            <span class="summary-value" style="color: var(--warning);">{{ form.instance.montant_restant }} FCFA</span>
+                        </div>
+                        <div class="summary-row">
+                            <span class="summary-label"><i class="fas fa-clock"></i> Heures incluses</span>
+                            <span class="summary-value">{{ form.instance.tarif.heures_inclues }}h</span>
+                        </div>
+                        <div class="summary-row">
+                            <span class="summary-label"><i class="fas fa-hourglass-start"></i> Solde heures</span>
+                            <span class="summary-value total">{{ form.instance.solde_heures }}h</span>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="card-footer-custom">
+                <div class="action-hint">
+                    <span class="hint-item">
+                        <i class="fas fa-shield-alt"></i> Données sécurisées
+                    </span>
+                    <span class="hint-item">
+                        <i class="fas fa-clock"></i> {% now "d/m/Y" %}
+                    </span>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn-outline" id="btn-prev" style="display: none;">
+                        <i class="fas fa-arrow-left"></i> Précédent
+                    </button>
+                    <a href="{% url 'finance:hub_section' 'contrat' %}" class="btn-outline" id="btn-cancel">
+                        <i class="fas fa-times"></i> Annuler
+                    </a>
+                    <button type="button" class="btn-accent" id="btn-next">
+                        Suivant <i class="fas fa-arrow-right"></i>
+                    </button>
+                    <button type="submit" class="btn-accent" id="btn-submit" style="display: none;">
+                        <i class="fas fa-save"></i>
+                        {% if form.instance.pk %}Mettre à jour{% else %}Créer{% endif %}
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('contratForm');
+    const step1Content = document.getElementById('step-1-content');
+    const step2Content = document.getElementById('step-2-content');
+    const step1Indicator = document.getElementById('step-1-indicator');
+    const step2Indicator = document.getElementById('step-2-indicator');
+    const btnNext = document.getElementById('btn-next');
+    const btnPrev = document.getElementById('btn-prev');
+    const btnSubmit = document.getElementById('btn-submit');
+    const btnCancel = document.getElementById('btn-cancel');
+
+    let currentStep = 1;
+    let formChanged = false;
+
+    // Gestion des étapes
+    function updateSteps() {
+        if (currentStep === 1) {
+            step1Content.style.display = 'block';
+            step2Content.style.display = 'none';
+            step1Indicator.classList.add('active');
+            step1Indicator.classList.remove('completed');
+            step2Indicator.classList.remove('active');
+            btnPrev.style.display = 'none';
+            btnNext.style.display = 'inline-flex';
+            btnSubmit.style.display = 'none';
+            btnCancel.style.display = 'inline-flex';
+        } else {
+            step1Content.style.display = 'none';
+            step2Content.style.display = 'block';
+            step1Indicator.classList.remove('active');
+            step1Indicator.classList.add('completed');
+            step2Indicator.classList.add('active');
+            btnPrev.style.display = 'inline-flex';
+            btnNext.style.display = 'none';
+            btnSubmit.style.display = 'inline-flex';
+            btnCancel.style.display = 'none';
+        }
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    btnNext.addEventListener('click', () => {
+        currentStep = 2;
+        updateSteps();
+    });
+
+    btnPrev.addEventListener('click', () => {
+        currentStep = 1;
+        updateSteps();
+    });
+    
+    // Détection des modifications
+    const formInputs = form.querySelectorAll('input, select, textarea');
+    formInputs.forEach(input => {
+        if (input.type !== 'hidden') {
+            input.addEventListener('change', () => formChanged = true);
+            if (input.type === 'text' || input.tagName === 'TEXTAREA') {
+                input.addEventListener('input', () => formChanged = true);
+            }
+        }
+    });
+    
+    // Confirmation avant annulation
+    if (btnCancel) {
+        btnCancel.addEventListener('click', function(e) {
+            if (formChanged && !confirm('Modifications non enregistrées. Quitter ?')) {
+                e.preventDefault();
+            }
+        });
+    }
+    
+    // Le reste de votre logique (AJAX, formatage, etc.)
+    // ...
+});
+</script>
+{% endblock %}

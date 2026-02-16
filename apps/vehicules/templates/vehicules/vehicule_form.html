@@ -1,0 +1,422 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    {% if form.instance.pk %}
+        Modifier {{ form.instance.marque }} {{ form.instance.modele }} - KALANSSO
+    {% else %}
+        Nouveau véhicule - KALANSSO
+    {% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<style>
+:root {
+    --primary: #0f172a;
+    --primary-soft: #f1f5f9;
+    --primary-light: #1e293b;
+    --accent: #3b82f6;
+    --accent-light: #eff6ff;
+    --success: #0b6e4f;
+    --success-light: #e7f3ef;
+    --warning: #b45309;
+    --warning-light: #fffbeb;
+    --danger: #b91c1c;
+    --danger-light: #fef2f2;
+    --info: #0891b2;
+    --info-light: #e0f2fe;
+    --text-dark: #0f172a;
+    --text-medium: #334155;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+    --border-light: #f1f5f9;
+    --radius: 16px;
+    --radius-sm: 12px;
+    --shadow: 0 4px 12px rgba(0,0,0,0.08);
+    --shadow-lg: 0 12px 30px rgba(0,0,0,0.06);
+    --transition: 0.2s ease;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: #f8fafc;
+    color: var(--text-dark);
+    font-size: 0.95rem;
+}
+
+/* BREADCRUMB */
+.breadcrumb-custom .breadcrumb {
+    background: transparent;
+    padding: 0;
+    margin-bottom: 0.5rem;
+}
+.breadcrumb-custom .breadcrumb-item + .breadcrumb-item::before {
+    content: "·";
+    color: var(--text-muted);
+    font-size: 0.8rem;
+}
+.breadcrumb-custom .breadcrumb-item a {
+    text-decoration: none;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+}
+.breadcrumb-custom .breadcrumb-item a:hover { color: var(--primary); }
+.breadcrumb-custom .breadcrumb-item.active { color: var(--text-medium); font-size: 0.8rem; }
+
+/* PAGE HEADER */
+.page-header {
+    margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.page-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 0.2rem;
+    letter-spacing: -0.02em;
+}
+
+/* BOUTONS */
+.btn-outline, .btn-soft, .btn-accent {
+    border-radius: 30px;
+    padding: 0.6rem 1.5rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: 0.2s;
+    text-decoration: none !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: none;
+    cursor: pointer;
+    justify-content: center;
+}
+.btn-outline { background: #fff; border: 1px solid var(--border); color: var(--text-medium); }
+.btn-outline:hover { border-color: var(--accent); color: var(--accent); box-shadow: var(--shadow); transform: translateY(-1px); }
+.btn-soft { background: var(--primary-soft); color: var(--text-medium); }
+.btn-soft:hover { background: #fff; border: 1px solid var(--border); transform: translateY(-1px); }
+.btn-accent { background: var(--accent); color: #fff !important; }
+.btn-accent:hover { background: #2563eb; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3); transform: translateY(-1px); }
+
+/* FORMULAIRE CARD */
+.form-container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+.form-card {
+    background: #fff;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+}
+.card-header-custom {
+    background: #fff;
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+}
+.header-icon {
+    width: 44px;
+    height: 44px;
+    background: linear-gradient(135deg, var(--primary), #1e2a3a);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 1.2rem;
+}
+.header-title { font-size: 1.1rem; font-weight: 700; color: var(--text-dark); }
+
+/* Wizard Styles */
+.form-step { display: none; }
+.form-step.active { display: block; animation: fadeIn 0.4s ease-out; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+.step-indicator {
+    display: flex;
+    justify-content: space-between;
+    margin: 0 4rem 3rem 4rem;
+    position: relative;
+}
+.step-indicator::before {
+    content: '';
+    position: absolute;
+    top: 20px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--border);
+    z-index: 1;
+}
+.step-dot {
+    width: 40px;
+    height: 40px;
+    background: #fff;
+    border: 2px solid var(--border);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    z-index: 2;
+    transition: 0.3s;
+    color: var(--text-muted);
+    position: relative;
+}
+.step-dot.active {
+    border-color: var(--accent);
+    background: var(--accent);
+    color: #fff;
+    box-shadow: 0 0 0 6px rgba(59, 130, 246, 0.15);
+}
+.step-dot.completed {
+    border-color: var(--success);
+    background: var(--success);
+    color: #fff;
+}
+.step-label {
+    position: absolute;
+    top: 48px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: var(--text-muted);
+}
+.step-dot.active + .step-label { color: var(--accent); }
+
+/* Enlarged Labels & Inputs */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.75rem;
+}
+.form-group { display: flex; flex-direction: column; gap: 0.5rem; }
+.form-label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+.form-label i { color: var(--accent); }
+.form-control, .form-select {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.85rem 1.25rem;
+    font-size: 1rem;
+    height: 50px;
+}
+.form-control:focus, .form-select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+    outline: none;
+}
+
+.input-group-custom { display: flex; align-items: center; }
+.input-group-text {
+    background: #f8fafc;
+    border: 1px solid var(--border);
+    padding: 0 1.25rem;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    color: var(--text-muted);
+    font-weight: 600;
+    border-radius: 0 10px 10px 0;
+    border-left: none;
+}
+.input-group-custom .form-control { border-radius: 10px 0 0 10px; }
+
+.card-footer-custom {
+    background: #fff;
+    padding: 1.5rem 2rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+@media (max-width: 768px) {
+    .form-grid { grid-template-columns: 1fr; }
+    .step-indicator { margin: 0 1rem 3rem 1rem; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4 py-4">
+    <div class="max-width-800 mx-auto mb-4" style="max-width: 900px;">
+        <nav class="breadcrumb-custom">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'vehicules:vehicules_hub' %}">Véhicules</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'vehicules:vehicules_hub_section' 'vehicules' %}">Parc</a></li>
+                <li class="breadcrumb-item active">{% if form.instance.pk %}Modifier{% else %}Nouveau{% endif %}</li>
+            </ol>
+        </nav>
+        <h1 class="page-title">{% if form.instance.pk %}{{ form.instance.marque }} {{ form.instance.modele }}{% else %}Nouveau véhicule{% endif %}</h1>
+    </div>
+
+    <div class="form-container">
+        <form method="post" class="form-card" id="vehiculeForm">
+            {% csrf_token %}
+            
+            <div class="card-header-custom">
+                <div class="header-icon">
+                    <i class="fas fa-car-side"></i>
+                </div>
+                <div>
+                    <div class="header-title">Fiche d'identification du véhicule</div>
+                    <div class="text-muted small">Remplissez les informations en deux étapes</div>
+                </div>
+            </div>
+
+            <div class="card-body-custom">
+                <!-- Step Indicator -->
+                <div class="step-indicator">
+                    <div class="step-dot active" data-step="1">1
+                        <span class="step-label">Identification</span>
+                    </div>
+                    <div class="step-dot" data-step="2">2
+                        <span class="step-label">Technique</span>
+                    </div>
+                </div>
+
+                <!-- STEP 1: Identification -->
+                <div class="form-step active" id="step1">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label" for="{{ form.immatriculation.id_for_label }}">
+                                <i class="fas fa-qrcode"></i> Immatriculation
+                            </label>
+                            {{ form.immatriculation }}
+                            {% for error in form.immatriculation.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="{{ form.statut.id_for_label }}">
+                                <i class="fas fa-toggle-on"></i> Statut actuel
+                            </label>
+                            {{ form.statut }}
+                            {% for error in form.statut.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="{{ form.marque.id_for_label }}">
+                                <i class="fas fa-trademark"></i> Marque
+                            </label>
+                            {{ form.marque }}
+                            {% for error in form.marque.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="{{ form.modele.id_for_label }}">
+                                <i class="fas fa-car"></i> Modèle
+                            </label>
+                            {{ form.modele }}
+                            {% for error in form.modele.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 2: Technique -->
+                <div class="form-step" id="step2">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label" for="{{ form.type_boite.id_for_label }}">
+                                <i class="fas fa-cog"></i> Boîte de vitesse
+                            </label>
+                            {{ form.type_boite }}
+                            {% for error in form.type_boite.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="{{ form.energie.id_for_label }}">
+                                <i class="fas fa-gas-pump"></i> Énergie
+                            </label>
+                            {{ form.energie }}
+                            {% for error in form.energie.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="{{ form.kilometrage_initial.id_for_label }}">
+                                <i class="fas fa-tachometer-alt"></i> Kilométrage initial
+                            </label>
+                            <div class="input-group-custom">
+                                {{ form.kilometrage_initial }}
+                                <span class="input-group-text">km</span>
+                            </div>
+                            {% for error in form.kilometrage_initial.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="{{ form.date_mise_circulation.id_for_label }}">
+                                <i class="fas fa-calendar-alt"></i> Mise en circulation
+                            </label>
+                            {{ form.date_mise_circulation }}
+                            {% for error in form.date_mise_circulation.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer-custom">
+                <a href="{% url 'vehicules:vehicules_hub_section' 'vehicules' %}" class="btn-soft">Annuler</a>
+                <div class="d-flex gap-2">
+                    <button type="button" class="btn-outline" id="prevBtn" style="display: none;">Précédent</button>
+                    <button type="button" class="btn-accent" id="nextBtn">Suivant</button>
+                    <button type="submit" class="btn-accent" id="submitBtn" style="display: none;">Enregistrer le véhicule</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('vehiculeForm');
+    const steps = document.querySelectorAll('.form-step');
+    const dots = document.querySelectorAll('.step-dot');
+    const nextBtn = document.getElementById('nextBtn');
+    const prevBtn = document.getElementById('prevBtn');
+    const submitBtn = document.getElementById('submitBtn');
+    let currentStep = 0;
+
+    function updateWizard() {
+        steps.forEach((step, index) => {
+            step.classList.toggle('active', index === currentStep);
+        });
+        
+        dots.forEach((dot, index) => {
+            dot.classList.toggle('active', index === currentStep);
+            dot.classList.toggle('completed', index < currentStep);
+        });
+
+        prevBtn.style.display = currentStep === 0 ? 'none' : 'inline-flex';
+        if (currentStep === steps.length - 1) {
+            nextBtn.style.display = 'none';
+            submitBtn.style.display = 'inline-flex';
+        } else {
+            nextBtn.style.display = 'inline-flex';
+            submitBtn.style.display = 'none';
+        }
+    }
+
+    nextBtn.addEventListener('click', () => {
+        if (currentStep < steps.length - 1) {
+            currentStep++;
+            updateWizard();
+        }
+    });
+
+    prevBtn.addEventListener('click', () => {
+        if (currentStep > 0) {
+            currentStep--;
+            updateWizard();
+        }
+    });
+});
+</script>
+{% endblock %}

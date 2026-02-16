@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Supprimer Maintenance{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h2>Supprimer la maintenance : {{ maintenance }}</h2>
+    <p>Êtes-vous sûr de vouloir supprimer cette maintenance ? Cette action est irréversible.</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Oui, supprimer</button>
+        <a href="{% url 'vehicules:maintenance_list' %}" class="btn btn-secondary">Annuler</a>
+    </form>
+</div>
+{% endblock %}

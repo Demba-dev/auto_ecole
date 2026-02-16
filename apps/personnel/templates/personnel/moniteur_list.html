@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Moniteurs - KALANSSO{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --primary: #0f172a;
+        --accent: #3b82f6;
+        --border: #e2e8f0;
+        --radius: 16px;
+        --shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    .page-header { margin-bottom: 2rem; }
+    .page-title { font-size: 1.8rem; font-weight: 700; color: var(--primary); }
+    
+    .card-custom {
+        background: #fff;
+        border-radius: var(--radius);
+        border: none;
+        box-shadow: var(--shadow);
+        overflow: hidden;
+    }
+
+    .table thead th {
+        background: #f8fafc;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.05em;
+        color: #64748b;
+        padding: 1rem;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .table td { padding: 1rem; vertical-align: middle; }
+
+    .avatar-circle {
+        width: 40px; height: 40px;
+        background: linear-gradient(135deg, var(--accent), #2563eb);
+        color: white;
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-weight: 600;
+    }
+
+    .specialite-badge {
+        background: #eff6ff;
+        color: var(--accent);
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        margin-right: 0.25rem;
+    }
+
+    .btn-action {
+        width: 32px; height: 32px;
+        display: inline-flex; align-items: center; justify-content: center;
+        border-radius: 8px;
+        transition: 0.2s;
+        text-decoration: none !important;
+    }
+    .btn-edit { background: #fef3c7; color: #d97706; }
+    .btn-delete { background: #fee2e2; color: #dc2626; }
+    
+    .btn-add {
+        background: var(--accent);
+        color: white !important;
+        border-radius: 30px;
+        padding: 0.6rem 1.5rem;
+        font-weight: 600;
+        text-decoration: none !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4 py-4">
+    <div class="page-header d-flex justify-content-between align-items-center">
+        <div>
+            <h1 class="page-title">Moniteurs</h1>
+            <p class="text-muted mb-0">Gestion des formateurs et de leurs spécialités</p>
+        </div>
+        <a href="{% url 'personnel:moniteur_create' %}" class="btn-add">
+            <i class="fas fa-plus me-2"></i> Ajouter un moniteur
+        </a>
+    </div>
+
+    <div class="card-custom">
+        <div class="table-responsive">
+            <table class="table mb-0">
+                <thead>
+                    <tr>
+                        <th>Moniteur</th>
+                        <th>N° Agrément</th>
+                        <th>Spécialités</th>
+                        <th>Taux Horaire</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for m in moniteurs %}
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="avatar-circle">
+                                    {{ m.employe.prenom|first|upper }}{{ m.employe.nom|first|upper }}
+                                </div>
+                                <div>
+                                    <div class="fw-bold">{{ m.employe.prenom }} {{ m.employe.nom }}</div>
+                                    <small class="text-muted">{{ m.employe.email|default:"" }}</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td><code class="fw-bold text-dark">{{ m.numero_agrement }}</code></td>
+                        <td>
+                            {% for s in m.specialites.all %}
+                                <span class="specialite-badge">{{ s.code }}</span>
+                            {% empty %}
+                                <span class="text-muted small">Aucune</span>
+                            {% endfor %}
+                        </td>
+                        <td class="fw-bold text-success">{{ m.taux_horaire }} FCFA</td>
+                        <td class="text-end">
+                            <div class="d-flex justify-content-end gap-2">
+                                <a href="{% url 'personnel:moniteur_update' m.id %}" class="btn-action btn-edit" title="Modifier">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{% url 'personnel:moniteur_delete' m.id %}" class="btn-action btn-delete" title="Supprimer">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center py-5 text-muted">
+                            <i class="fas fa-user-tie fa-3x mb-3 opacity-25"></i>
+                            <p>Aucun moniteur enregistré</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

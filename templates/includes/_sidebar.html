@@ -1,0 +1,126 @@
+<!-- Sidebar -->
+<div class="d-flex flex-column sidebar-dark" id="sidebar" style="width: 288px; min-height: 100vh; background: linear-gradient(to bottom, #0f172a, #1e293b); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1000;">
+    
+    <!-- Logo -->
+    <div class="d-flex align-items-center justify-content-between px-4 py-4 border-bottom" style="border-color: rgba(51, 65, 85, 0.5) !important;">
+        <div class="d-flex align-items-center gap-3">
+            <div class="d-flex align-items-center justify-content-center rounded-3 shadow" style="width: 44px; height: 44px; background: linear-gradient(to bottom right, #3b82f6, #2563eb); box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.5);">
+                <i class="fas fa-car text-white" style="font-size: 24px;"></i>
+            </div>
+            <div>
+                <h5 class="mb-0 fw-bold text-white" style="font-size: 18px;">KALANSSO</h5>
+                <p class="mb-0 text-muted" style="font-size: 12px; color: #94a3b8 !important;">Auto-École</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="flex-fill px-3 py-4 overflow-auto sidebar-dark" style="scrollbar-width: thin;">
+        
+        <!-- Section Principal -->
+        <div class="mb-5">
+            <p class="px-3 mb-3 text-uppercase fw-semibold" style="font-size: 11px; letter-spacing: 0.05em; color: #64748b;">
+                Principal
+            </p>
+            <div class="d-flex flex-column gap-1">
+                <a href="/" class="nav-link d-flex align-items-center gap-3 px-3 py-3 rounded-3 text-decoration-none {% if request.resolver_match.url_name == 'dashboard' %}active-link{% else %}inactive-link{% endif %}">
+                    <i class="fas fa-tachometer-alt" style="width: 20px; font-size: 18px;"></i>
+                    <span class="fw-medium flex-fill">Tableau de bord</span>
+                    {% if request.resolver_match.url_name == 'dashboard' %}
+                    <i class="fas fa-chevron-right" style="font-size: 14px;"></i>
+                    {% endif %}
+                </a>
+                
+                <a href="{% url 'liste_apprenants' %}" class="nav-link d-flex align-items-center gap-3 px-3 py-3 rounded-3 text-decoration-none {% if request.resolver_match.app_name == 'apprenants' %}active-link{% else %}inactive-link{% endif %}">
+                    <i class="fas fa-users" style="width: 20px; font-size: 18px;"></i>
+                    <span class="fw-medium flex-fill">Apprenants</span>
+                    {% if request.resolver_match.app_name == 'apprenants' %}
+                    <i class="fas fa-chevron-right" style="font-size: 14px;"></i>
+                    {% endif %}
+                </a>
+                
+                <a href="#" class="nav-link d-flex align-items-center gap-3 px-3 py-3 rounded-3 text-decoration-none inactive-link">
+                    <i class="fas fa-calendar-alt" style="width: 20px; font-size: 18px;"></i>
+                    <span class="fw-medium flex-fill">Planning</span>
+                </a>
+                
+                <a href="#" class="nav-link d-flex align-items-center gap-3 px-3 py-3 rounded-3 text-decoration-none inactive-link">
+                    <i class="fas fa-graduation-cap" style="width: 20px; font-size: 18px;"></i>
+                    <span class="fw-medium flex-fill">Examens</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Section Ressources -->
+        <div class="mb-5">
+            <p class="px-3 mb-3 text-uppercase fw-semibold" style="font-size: 11px; letter-spacing: 0.05em; color: #64748b;">
+                Ressources
+            </p>
+            <div class="d-flex flex-column gap-1">
+                <a href="{% url 'vehicules:vehicules_hub' %}" class="nav-link d-flex align-items-center gap-3 px-3 py-3 rounded-3 text-decoration-none {% if request.resolver_match.app_name == 'vehicules' %}active-link{% else %}inactive-link{% endif %}">
+                    <i class="fas fa-car" style="width: 20px; font-size: 18px;"></i>
+                    <span class="fw-medium flex-fill">Véhicules</span>
+                </a>
+                
+                <a href="{% url 'personnel:hub_section' 'employe' %}" class="nav-link d-flex align-items-center gap-3 px-3 py-3 rounded-3 text-decoration-none {% if request.resolver_match.app_name == 'personnel' %}active-link{% else %}inactive-link{% endif %}">
+                    <i class="fas fa-user-tie" style="width: 20px; font-size: 18px;"></i>
+                    <span class="fw-medium flex-fill">Personnel</span>
+                </a>
+                
+                <a href="{% url 'finance:hub_section' 'tarif' %}" class="nav-link d-flex align-items-center gap-3 px-3 py-3 rounded-3 text-decoration-none {% if request.resolver_match.app_name == 'finance' %}active-link{% else %}inactive-link{% endif %}">
+                    <i class="fas fa-money-bill-wave" style="width: 20px; font-size: 18px;"></i>
+                    <span class="fw-medium flex-fill">Finance</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Section Système -->
+        <div class="mb-4">
+            <p class="px-3 mb-3 text-uppercase fw-semibold" style="font-size: 11px; letter-spacing: 0.05em; color: #64748b;">
+                Système
+            </p>
+            <div class="d-flex flex-column gap-1">
+                <a href="#" class="nav-link d-flex align-items-center gap-3 px-3 py-3 rounded-3 text-decoration-none inactive-link">
+                    <i class="fas fa-file-alt" style="width: 20px; font-size: 18px;"></i>
+                    <span class="fw-medium flex-fill">Documents</span>
+                </a>
+                
+                <a href="#" class="nav-link d-flex align-items-center gap-3 px-3 py-3 rounded-3 text-decoration-none inactive-link">
+                    <i class="fas fa-history" style="width: 20px; font-size: 18px;"></i>
+                    <span class="fw-medium flex-fill">Audit</span>
+                </a>
+                
+                <a href="#" class="nav-link d-flex align-items-center gap-3 px-3 py-3 rounded-3 text-decoration-none inactive-link">
+                    <i class="fas fa-cog" style="width: 20px; font-size: 18px;"></i>
+                    <span class="fw-medium flex-fill">Paramètres</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Footer / User Profile -->
+    <div class="px-3 pb-4">
+        <hr class="my-4" style="border-color: #334155; opacity: 0.5;">
+        <div class="px-3 py-3 rounded-3" style="background: rgba(51, 65, 85, 0.5); border: 1px solid rgba(71, 85, 105, 0.5);">
+            <div class="d-flex align-items-center gap-3">
+                <div class="position-relative">
+                    <div class="d-flex align-items-center justify-content-center rounded-3 fw-bold text-white" style="width: 40px; height: 40px; background: linear-gradient(to bottom right, #3b82f6, #2563eb);">
+                        {{ user.username|slice:":2"|upper }}
+                    </div>
+                    <div class="position-absolute bg-success rounded-circle" style="width: 12px; height: 12px; bottom: -4px; right: -4px; border: 2px solid #1e293b;"></div>
+                </div>
+                <div class="flex-fill" style="min-width: 0;">
+                    <p class="mb-0 fw-semibold text-white text-truncate" style="font-size: 14px;">{{ user.get_full_name|default:user.username }}</p>
+                    <p class="mb-0 text-truncate" style="font-size: 12px; color: #94a3b8;">{{ user.email }}</p>
+                </div>
+            </div>
+            <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="btn logout-btn w-100 mt-3 d-flex align-items-center justify-content-center gap-2" style="background: transparent; color: #cbd5e1; border: none; font-size: 14px;">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Déconnexion
+                </button>
+            </form>
+        </div>
+    </div>
+</div>

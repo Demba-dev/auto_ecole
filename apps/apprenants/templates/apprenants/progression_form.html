@@ -1,0 +1,780 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    Suivi des heures - {{ apprenant.prenom }} {{ apprenant.nom }} - KALANSSO
+{% endblock %}
+
+{% block extra_css %}
+<style>
+:root {
+    --primary: #0f172a;
+    --primary-soft: #f1f5f9;
+    --accent: #3b82f6;
+    --success: #0b6e4f;
+    --success-light: #e7f3ef;
+    --warning: #b45309;
+    --danger: #b91c1c;
+    --text-dark: #0f172a;
+    --text-medium: #334155;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+    --radius: 16px;
+    --radius-sm: 12px;
+    --shadow: 0 4px 12px rgba(0,0,0,0.08);
+    --transition: 0.2s ease;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: #f8fafc;
+    color: var(--text-dark);
+}
+
+/* ------------------------------------------------
+   BREADCRUMB (style existant)
+------------------------------------------------ */
+.breadcrumb-custom .breadcrumb {
+    background: transparent;
+    padding: 0;
+    margin-bottom: 0.5rem;
+}
+.breadcrumb-custom .breadcrumb-item + .breadcrumb-item::before {
+    content: "·";
+    color: var(--text-muted);
+}
+.breadcrumb-custom .breadcrumb-item a {
+    text-decoration: none;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    transition: var(--transition);
+}
+.breadcrumb-custom .breadcrumb-item a:hover {
+    color: var(--primary);
+}
+.breadcrumb-custom .breadcrumb-item.active {
+    color: var(--text-medium);
+    font-size: 0.85rem;
+}
+
+/* ------------------------------------------------
+   PAGE HEADER (style existant)
+------------------------------------------------ */
+.page-header {
+    margin-bottom: 2rem;
+}
+.page-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 0.3rem;
+}
+.page-subtitle {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+/* ------------------------------------------------
+   BOUTONS (strictement identiques)
+------------------------------------------------ */
+.btn-outline, .btn-soft, .btn-accent, .btn-success-custom {
+    border-radius: 30px;
+    padding: 0.5rem 1.2rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: 0.2s;
+    text-decoration: none !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: none;
+    cursor: pointer;
+    justify-content: center;
+}
+.btn-outline {
+    background: #fff;
+    border: 1px solid var(--border);
+    color: var(--text-medium);
+}
+.btn-outline:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    box-shadow: var(--shadow);
+    transform: translateY(-1px);
+}
+.btn-soft {
+    background: var(--primary-soft);
+    color: var(--text-medium);
+    border: 1px solid transparent;
+}
+.btn-soft:hover {
+    background: #fff;
+    border: 1px solid var(--border);
+    transform: translateY(-1px);
+}
+.btn-accent {
+    background: var(--accent);
+    color: #fff !important;
+    border-radius: 30px;
+    padding: 0.5rem 1.5rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border: none;
+}
+.btn-accent:hover {
+    background: #2563eb;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    transform: translateY(-1px);
+}
+.btn-success-custom {
+    background: var(--success);
+    color: #fff !important;
+    border-radius: 30px;
+    padding: 0.75rem 1.5rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border: none;
+    width: 100%;
+}
+.btn-success-custom:hover {
+    background: #0a5c3f;
+    box-shadow: 0 4px 12px rgba(11, 110, 79, 0.25);
+    transform: translateY(-1px);
+}
+
+/* ------------------------------------------------
+   CARD PRINCIPALE (style detail-card)
+------------------------------------------------ */
+.suivi-card {
+    background: #fff;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    transition: transform 0.2s;
+    max-width: 600px;
+    margin: 0 auto;
+    overflow: hidden;
+}
+.suivi-card:hover {
+    transform: translateY(-2px);
+}
+
+.card-header-custom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid var(--border);
+    background: #fff;
+}
+
+.card-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+.card-title i {
+    color: var(--success);
+}
+
+.card-body-custom {
+    padding: 2rem;
+}
+
+/* ------------------------------------------------
+   MINI CARTE APPRENANT (style profile-card adapté)
+------------------------------------------------ */
+.apprenant-mini-card {
+    background: var(--primary-soft);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    border: 1px solid var(--border);
+    transition: var(--transition);
+}
+.apprenant-mini-card:hover {
+    background: #fff;
+    box-shadow: var(--shadow);
+}
+
+.avatar-circle {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: linear-gradient(145deg, var(--primary), #1e2a3a);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: #fff;
+    font-weight: 600;
+    transition: transform 0.2s;
+}
+.avatar-circle:hover {
+    transform: scale(1.05);
+}
+
+.apprenant-info h6 {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 0.25rem;
+}
+.apprenant-info h4 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 0.25rem;
+}
+.apprenant-meta {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.8rem;
+    color: var(--text-medium);
+}
+.apprenant-meta i {
+    color: var(--success);
+    margin-right: 0.35rem;
+}
+
+/* ------------------------------------------------
+   STATISTIQUES DE PROGRESSION (style progress-custom)
+------------------------------------------------ */
+.progress-stats {
+    background: var(--primary-soft);
+    border-radius: var(--radius-sm);
+    padding: 1.25rem;
+    margin-bottom: 2rem;
+}
+
+.stats-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.stats-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.stats-label i {
+    color: var(--success);
+}
+
+.stats-value {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+.progress-custom {
+    height: 8px;
+    background: #e2e8f0;
+    border-radius: 20px;
+    overflow: hidden;
+    margin: 0.75rem 0;
+}
+.progress-bar-custom {
+    height: 100%;
+    width: 0%;
+    background: var(--success);
+    border-radius: 20px;
+    transition: width 0.4s ease-in-out;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.stat-box {
+    text-align: center;
+    padding: 0.75rem;
+    border-radius: 12px;
+    background: #fff;
+    border: 1px solid var(--border);
+}
+.stat-box-label {
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 0.25rem;
+}
+.stat-box-value {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+.stat-box-sub {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+}
+
+/* ------------------------------------------------
+   FORMULAIRE (style adapté)
+------------------------------------------------ */
+.form-section {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+.form-label i {
+    color: var(--success);
+}
+
+.input-group-custom {
+    display: flex;
+    align-items: stretch;
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    transition: var(--transition);
+    background: #fff;
+}
+.input-group-custom:hover {
+    border-color: var(--text-muted);
+}
+.input-group-custom:focus-within {
+    border-color: var(--success);
+    box-shadow: 0 0 0 3px rgba(11, 110, 79, 0.1);
+}
+
+.input-group-text {
+    background: var(--primary-soft);
+    border: none;
+    padding: 0 1rem;
+    display: flex;
+    align-items: center;
+    color: var(--text-muted);
+    border-right: 1px solid var(--border);
+}
+.input-group-text i {
+    color: var(--success);
+    font-size: 1rem;
+}
+
+.form-control {
+    border: none;
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    width: 100%;
+    background: transparent;
+}
+.form-control:focus {
+    outline: none;
+}
+
+/* Style spécifique pour input number */
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Info supplémentaire */
+.help-text {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+.help-text i {
+    color: var(--success);
+}
+
+.error-feedback {
+    color: var(--danger);
+    font-size: 0.65rem;
+    font-weight: 500;
+    margin-top: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+/* ------------------------------------------------
+   ALERTES (style adapté)
+------------------------------------------------ */
+.alert-warning-custom {
+    background: #fffbeb;
+    border-left: 4px solid var(--warning);
+    border-radius: var(--radius-sm);
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+.alert-warning-custom i {
+    color: var(--warning);
+    font-size: 1rem;
+}
+.alert-warning-custom span {
+    font-size: 0.85rem;
+    color: var(--text-medium);
+    font-weight: 500;
+}
+
+/* ------------------------------------------------
+   FOOTER DU FORMULAIRE
+------------------------------------------------ */
+.form-footer {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.dossier-info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+.info-chip {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: var(--primary-soft);
+    padding: 0.35rem 0.75rem;
+    border-radius: 20px;
+}
+.info-chip i {
+    color: var(--success);
+}
+
+/* ------------------------------------------------
+   RESPONSIVE
+------------------------------------------------ */
+@media (max-width: 576px) {
+    .card-header-custom {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 1.25rem;
+    }
+    
+    .card-body-custom {
+        padding: 1.5rem;
+    }
+    
+    .apprenant-mini-card {
+        flex-direction: column;
+        text-align: center;
+        padding: 1.25rem;
+    }
+    
+    .apprenant-meta {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ------------------------------------------------
+   ANIMATIONS
+------------------------------------------------ */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.suivi-card {
+    animation: slideIn 0.3s ease-out;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4 py-4">
+    <!-- Header avec breadcrumb - style identique au profil -->
+    <div class="page-header">
+        <nav class="breadcrumb-custom" aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'liste_apprenants' %}">Apprenants</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'detail_apprenant' apprenant.id %}">{{ apprenant.prenom }} {{ apprenant.nom }}</a></li>
+                <li class="breadcrumb-item active">Suivi des heures</li>
+            </ol>
+        </nav>
+        
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="page-title">
+                    Suivi de progression
+                </h1>
+                <p class="page-subtitle">
+                    Gestion des heures de conduite · {{ apprenant.prenom }} {{ apprenant.nom }}
+                </p>
+            </div>
+            <a href="{% url 'detail_apprenant' apprenant.id %}" class="btn-soft">
+                <i class="fas fa-arrow-left"></i> Retour au profil
+            </a>
+        </div>
+    </div>
+
+    <!-- Carte principale de suivi -->
+    <div class="suivi-card">
+        <!-- Header de la carte -->
+        <div class="card-header-custom">
+            <div class="card-title">
+                <i class="fas fa-car"></i>
+                Formation pratique
+            </div>
+            <span class="info-chip">
+                <i class="fas fa-clock"></i>
+                {% now "d/m/Y" %}
+            </span>
+        </div>
+
+        <!-- Body de la carte -->
+        <div class="card-body-custom">
+            <!-- Mini carte apprenant -->
+            <div class="apprenant-mini-card">
+                <div class="avatar-circle">
+                    {{ apprenant.prenom|first|upper }}{{ apprenant.nom|first|upper }}
+                </div>
+                <div class="apprenant-info">
+                    <h6>Apprenant</h6>
+                    <h4>{{ apprenant.prenom }} {{ apprenant.nom }}</h4>
+                    <div class="apprenant-meta">
+                        <span><i class="fas fa-calendar-alt"></i> {{ apprenant.age }} ans</span>
+                        <span><i class="fas fa-id-card"></i> 
+                            {% for permis in apprenant.types_permis.all %}
+                                {{ permis.code }}{% if not forloop.last %}, {% endif %}
+                            {% empty %}
+                                Aucun permis
+                            {% endfor %}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistiques de progression -->
+            {% with prog=apprenant.progression_conduite %}
+            {% if prog %}
+            <div class="progress-stats">
+                <div class="stats-row">
+                    <span class="stats-label">
+                        <i class="fas fa-chart-line"></i> Progression
+                    </span>
+                    <span class="stats-value">{{ prog.pourcentage_progression|floatformat:0 }}%</span>
+                </div>
+                
+                <div class="progress-custom">
+                    <div class="progress-bar-custom" style="width: {{ prog.pourcentage_progression|floatformat:0 }}%;"></div>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-box-label">Forfait</div>
+                        <div class="stat-box-value">{{ prog.heures_achetees }}</div>
+                        <div class="stat-box-sub">heures achetées</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-box-label">Effectuées</div>
+                        <div class="stat-box-value">{{ prog.heures_effectuees }}</div>
+                        <div class="stat-box-sub">heures</div>
+                    </div>
+                </div>
+                
+                <div class="stats-row" style="margin-top: 0.75rem; margin-bottom: 0;">
+                    <span class="stats-label">
+                        <i class="fas fa-hourglass-half"></i> Heures restantes
+                    </span>
+                    <span class="stats-value" style="color: {% if prog.heures_restantes <= 5 %}var(--warning){% else %}var(--success){% endif %};">
+                        {{ prog.heures_restantes }}h
+                    </span>
+                </div>
+            </div>
+
+            <!-- Alerte si heures restantes faibles -->
+            {% if prog.heures_restantes <= 5 %}
+            <div class="alert-warning-custom">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span>L'apprenant a épuisé 75% de son forfait. Prévoyez un renouvellement.</span>
+            </div>
+            {% endif %}
+            {% endif %}
+            {% endwith %}
+
+            <!-- Formulaire de mise à jour -->
+            <form method="post" id="suiviForm">
+                {% csrf_token %}
+                
+                <div class="form-section">
+                    <label class="form-label">
+                        <i class="fas fa-clock"></i> Heures de conduite
+                    </label>
+                    
+                    <div class="row g-4">
+                        {% for field in form %}
+                        <div class="col-12">
+                            <div class="form-label">
+                                <i class="fas {% if 'achetees' in field.name %}fa-shopping-cart{% else %}fa-check-circle{% endif %}"></i>
+                                {{ field.label }}
+                            </div>
+                            
+                            <div class="input-group-custom">
+                                <span class="input-group-text">
+                                    <i class="fas fa-clock"></i>
+                                </span>
+                                {{ field }}
+                                <span class="input-group-text">heures</span>
+                            </div>
+                            
+                            {% if field.help_text %}
+                            <div class="help-text">
+                                <i class="fas fa-info-circle"></i> {{ field.help_text }}
+                            </div>
+                            {% endif %}
+                            
+                            {% for error in field.errors %}
+                            <div class="error-feedback">
+                                <i class="fas fa-exclamation-circle"></i> {{ error }}
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Footer avec actions -->
+                <div class="form-footer">
+                    <div class="dossier-info">
+                        <span class="info-chip">
+                            <i class="fas fa-folder"></i>
+                            {% if apprenant.dossier %}
+                                {{ apprenant.dossier.numero_dossier }}
+                            {% else %}
+                                Dossier en attente
+                            {% endif %}
+                        </span>
+                        <span class="info-chip">
+                            <i class="fas fa-user"></i>
+                            {{ apprenant.prenom }} {{ apprenant.nom }}
+                        </span>
+                    </div>
+                    
+                    <button type="submit" class="btn-success-custom">
+                        <i class="fas fa-save"></i> Mettre à jour la progression
+                    </button>
+                    
+                    <a href="{% url 'detail_apprenant' apprenant.id %}" class="btn-outline w-100">
+                        <i class="fas fa-times"></i> Annuler
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Validation du formulaire
+    const form = document.getElementById('suiviForm');
+    const heuresAchetees = document.getElementById('{{ form.heures_achetees.id_for_label }}');
+    const heuresEffectuees = document.getElementById('{{ form.heures_effectuees.id_for_label }}');
+    
+    form.addEventListener('submit', function(e) {
+        let hasError = false;
+        
+        // Validation: heures effectuées ne peut pas dépasser heures achetées
+        if (heuresEffectuees && heuresAchetees) {
+            const effectuees = parseInt(heuresEffectuees.value) || 0;
+            const achetees = parseInt(heuresAchetees.value) || 0;
+            
+            if (effectuees > achetees) {
+                e.preventDefault();
+                hasError = true;
+                
+                // Afficher l'erreur
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'error-feedback';
+                errorDiv.innerHTML = '<i class="fas fa-exclamation-circle"></i> Les heures effectuées ne peuvent pas dépasser les heures achetées';
+                
+                heuresEffectuees.closest('.col-12').appendChild(errorDiv);
+                
+                // Mettre en évidence le champ
+                heuresEffectuees.closest('.input-group-custom').style.borderColor = 'var(--danger)';
+                
+                setTimeout(() => {
+                    errorDiv.remove();
+                    heuresEffectuees.closest('.input-group-custom').style.borderColor = 'var(--border)';
+                }, 4000);
+            }
+        }
+    });
+    
+    // Validation en temps réel
+    if (heuresEffectuees && heuresAchetees) {
+        heuresEffectuees.addEventListener('input', function() {
+            const effectuees = parseInt(this.value) || 0;
+            const achetees = parseInt(heuresAchetees.value) || 0;
+            
+            if (effectuees > achetees) {
+                this.closest('.input-group-custom').style.borderColor = 'var(--danger)';
+            } else {
+                this.closest('.input-group-custom').style.borderColor = 'var(--success)';
+            }
+        });
+        
+        heuresAchetees.addEventListener('input', function() {
+            const effectuees = parseInt(heuresEffectuees.value) || 0;
+            const achetees = parseInt(this.value) || 0;
+            
+            if (effectuees > achetees) {
+                heuresEffectuees.closest('.input-group-custom').style.borderColor = 'var(--danger)';
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

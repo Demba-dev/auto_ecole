@@ -1,0 +1,956 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    Planning - {{ apprenant.prenom }} {{ apprenant.nom }} - KALANSSO
+{% endblock %}
+
+{% block extra_css %}
+<style>
+:root {
+    --primary: #0f172a;
+    --primary-soft: #f1f5f9;
+    --accent: #3b82f6;
+    --success: #0b6e4f;
+    --success-light: #e7f3ef;
+    --warning: #b45309;
+    --warning-light: #fffbeb;
+    --danger: #b91c1c;
+    --danger-light: #fef2f2;
+    --info: #0891b2;
+    --info-light: #e0f2fe;
+    --text-dark: #0f172a;
+    --text-medium: #334155;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+    --border-light: #f1f5f9;
+    --radius: 16px;
+    --radius-sm: 12px;
+    --shadow: 0 4px 12px rgba(0,0,0,0.08);
+    --shadow-lg: 0 12px 30px rgba(0,0,0,0.06);
+    --transition: 0.2s ease;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: #f8fafc;
+    color: var(--text-dark);
+}
+
+/* ------------------------------------------------
+   BREADCRUMB
+------------------------------------------------ */
+.breadcrumb-custom .breadcrumb {
+    background: transparent;
+    padding: 0;
+    margin-bottom: 0.5rem;
+}
+.breadcrumb-custom .breadcrumb-item + .breadcrumb-item::before {
+    content: "·";
+    color: var(--text-muted);
+}
+.breadcrumb-custom .breadcrumb-item a {
+    text-decoration: none;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    transition: var(--transition);
+}
+.breadcrumb-custom .breadcrumb-item a:hover {
+    color: var(--primary);
+}
+.breadcrumb-custom .breadcrumb-item.active {
+    color: var(--text-medium);
+    font-size: 0.85rem;
+}
+
+/* ------------------------------------------------
+   PAGE HEADER
+------------------------------------------------ */
+.page-header {
+    margin-bottom: 2rem;
+}
+.page-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 0.3rem;
+    letter-spacing: -0.02em;
+}
+.page-subtitle {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+/* ------------------------------------------------
+   BOUTONS
+------------------------------------------------ */
+.btn-outline, .btn-soft, .btn-accent {
+    border-radius: 30px;
+    padding: 0.5rem 1.2rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: 0.2s;
+    text-decoration: none !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: none;
+    cursor: pointer;
+}
+.btn-outline {
+    background: #fff;
+    border: 1px solid var(--border);
+    color: var(--text-medium);
+}
+.btn-outline:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    box-shadow: var(--shadow);
+    transform: translateY(-1px);
+}
+.btn-soft {
+    background: var(--primary-soft);
+    color: var(--text-medium);
+    border: 1px solid transparent;
+}
+.btn-soft:hover {
+    background: #fff;
+    border: 1px solid var(--border);
+    transform: translateY(-1px);
+}
+.btn-accent {
+    background: var(--accent);
+    color: #fff !important;
+    border-radius: 30px;
+    padding: 0.5rem 1.5rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border: none;
+}
+.btn-accent:hover {
+    background: #2563eb;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    transform: translateY(-1px);
+}
+
+/* ------------------------------------------------
+   CARD PRINCIPALE
+------------------------------------------------ */
+.planning-card {
+    background: #fff;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    transition: transform 0.2s, box-shadow 0.2s;
+    overflow: hidden;
+}
+.planning-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.card-header-custom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid var(--border);
+    background: #fff;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.card-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+.card-title i {
+    color: var(--accent);
+}
+
+.card-body-custom {
+    padding: 2rem;
+}
+
+/* ------------------------------------------------
+   MINI CARTE APPRENANT
+------------------------------------------------ */
+.apprenant-mini-card {
+    background: var(--primary-soft);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    border: 1px solid var(--border);
+    transition: var(--transition);
+}
+.apprenant-mini-card:hover {
+    background: #fff;
+    box-shadow: var(--shadow);
+}
+
+.avatar-circle {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: linear-gradient(145deg, var(--primary), #1e2a3a);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: #fff;
+    font-weight: 600;
+    transition: transform 0.2s;
+}
+.avatar-circle:hover {
+    transform: scale(1.05);
+}
+
+.apprenant-info h6 {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 0.25rem;
+}
+.apprenant-info h4 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 0.25rem;
+}
+.apprenant-meta {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.8rem;
+    color: var(--text-medium);
+    flex-wrap: wrap;
+}
+.apprenant-meta i {
+    color: var(--accent);
+    margin-right: 0.35rem;
+}
+
+/* ------------------------------------------------
+   FILTRES ET OUTILS
+------------------------------------------------ */
+.toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.filters {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.filter-select {
+    border: 1px solid var(--border);
+    border-radius: 30px;
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+    color: var(--text-medium);
+    background: #fff;
+    transition: var(--transition);
+    cursor: pointer;
+}
+.filter-select:hover {
+    border-color: var(--accent);
+}
+.filter-select:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.view-toggle {
+    display: flex;
+    gap: 0.5rem;
+    background: var(--primary-soft);
+    padding: 0.25rem;
+    border-radius: 30px;
+}
+.view-btn {
+    border: none;
+    background: transparent;
+    padding: 0.5rem 1rem;
+    border-radius: 30px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    transition: var(--transition);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.view-btn.active {
+    background: #fff;
+    color: var(--accent);
+    box-shadow: var(--shadow);
+}
+.view-btn:hover:not(.active) {
+    color: var(--text-medium);
+}
+
+/* ------------------------------------------------
+   TABLEAU PLANNING
+------------------------------------------------ */
+.table-responsive {
+    border-radius: var(--radius-sm);
+    overflow-x: auto;
+}
+
+.planning-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.planning-table th {
+    background: var(--primary);
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 1rem 1.25rem;
+    text-align: left;
+}
+
+.planning-table td {
+    padding: 1.25rem;
+    border-bottom: 1px solid var(--border-light);
+    vertical-align: middle;
+}
+
+.planning-table tr:last-child td {
+    border-bottom: none;
+}
+
+.planning-table tbody tr {
+    transition: var(--transition);
+}
+.planning-table tbody tr:hover {
+    background: var(--primary-soft);
+}
+
+/* ------------------------------------------------
+   BADGES STATUT
+------------------------------------------------ */
+.badge-custom {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 30px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    width: fit-content;
+}
+.badge-custom i {
+    font-size: 0.7rem;
+}
+
+.badge-prevu {
+    background: var(--info-light);
+    color: var(--info);
+}
+.badge-realise {
+    background: var(--success-light);
+    color: var(--success);
+}
+.badge-annule {
+    background: var(--danger-light);
+    color: var(--danger);
+}
+.badge-reporte {
+    background: var(--warning-light);
+    color: var(--warning);
+}
+
+/* ------------------------------------------------
+   TYPE DE SEANCE
+------------------------------------------------ */
+.seance-type {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+.type-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 12px;
+    background: var(--primary-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent);
+    transition: var(--transition);
+}
+.planning-table tr:hover .type-icon {
+    background: #fff;
+    border: 1px solid var(--border);
+}
+
+/* ------------------------------------------------
+   MONITEUR
+------------------------------------------------ */
+.moniteur-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+.moniteur-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--primary-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-dark);
+}
+.moniteur-name {
+    font-weight: 500;
+    color: var(--text-dark);
+}
+.moniteur-role {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+}
+
+/* ------------------------------------------------
+   HEURE
+------------------------------------------------ */
+.heure-badge {
+    background: var(--primary-soft);
+    padding: 0.35rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-medium);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+.heure-badge i {
+    color: var(--accent);
+}
+
+/* ------------------------------------------------
+   EMPTY STATE
+------------------------------------------------ */
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--text-muted);
+}
+.empty-state i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: var(--border);
+}
+.empty-state h5 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 0.5rem;
+}
+.empty-state p {
+    font-size: 0.85rem;
+    margin-bottom: 1.5rem;
+}
+
+/* ------------------------------------------------
+   CALENDRIER VUE (préparé pour extension)
+------------------------------------------------ */
+.calendar-view {
+    display: none;
+}
+.calendar-view.active {
+    display: block;
+}
+
+/* ------------------------------------------------
+   RESPONSIVE
+------------------------------------------------ */
+@media (max-width: 768px) {
+    .card-header-custom {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 1.25rem;
+    }
+    
+    .card-body-custom {
+        padding: 1.5rem;
+    }
+    
+    .apprenant-mini-card {
+        flex-direction: column;
+        text-align: center;
+        padding: 1.25rem;
+    }
+    
+    .apprenant-meta {
+        justify-content: center;
+    }
+    
+    .toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .filters {
+        justify-content: space-between;
+    }
+    
+    .filter-select {
+        flex: 1;
+    }
+    
+    .planning-table th {
+        padding: 0.75rem;
+    }
+    
+    .planning-table td {
+        padding: 1rem;
+    }
+    
+    .seance-type {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .filters {
+        flex-direction: column;
+    }
+    
+    .view-toggle {
+        width: 100%;
+    }
+    
+    .view-btn {
+        flex: 1;
+        justify-content: center;
+    }
+}
+
+/* ------------------------------------------------
+   ANIMATIONS
+------------------------------------------------ */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.planning-card {
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+.seance-coming {
+    animation: pulse 2s infinite;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4 py-4">
+    <!-- Header avec breadcrumb -->
+    <div class="page-header">
+        <nav class="breadcrumb-custom" aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'liste_apprenants' %}">Apprenants</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'detail_apprenant' apprenant.id %}">{{ apprenant.prenom }} {{ apprenant.nom }}</a></li>
+                <li class="breadcrumb-item active">Planning</li>
+            </ol>
+        </nav>
+        
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="page-title">
+                    Planning des séances
+                </h1>
+                <p class="page-subtitle">
+                    Gestion des rendez-vous et séances de conduite
+                </p>
+            </div>
+            <div class="d-flex gap-2">
+                <a href="{% url 'detail_apprenant' apprenant.id %}" class="btn-soft">
+                    <i class="fas fa-arrow-left"></i> Retour
+                </a>
+                <a href="#" class="btn-accent">
+                    <i class="fas fa-plus"></i> Nouvelle séance
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Carte principale -->
+    <div class="planning-card">
+        <!-- Header carte -->
+        <div class="card-header-custom">
+            <div class="card-title">
+                <i class="fas fa-calendar-alt"></i>
+                Séances de {{ apprenant.prenom }} {{ apprenant.nom }}
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                <span class="info-chip">
+                    <i class="fas fa-clock"></i>
+                    {% now "l d F Y" %}
+                </span>
+            </div>
+        </div>
+
+        <!-- Body carte -->
+        <div class="card-body-custom">
+            <!-- Mini carte apprenant -->
+            <div class="apprenant-mini-card">
+                <div class="avatar-circle">
+                    {{ apprenant.prenom|first|upper }}{{ apprenant.nom|first|upper }}
+                </div>
+                <div class="apprenant-info">
+                    <h6>Apprenant</h6>
+                    <h4>{{ apprenant.prenom }} {{ apprenant.nom }}</h4>
+                    <div class="apprenant-meta">
+                        <span><i class="fas fa-calendar-alt"></i> {{ apprenant.age }} ans</span>
+                        <span><i class="fas fa-phone"></i> {{ apprenant.telephone }}</span>
+                        <span><i class="fas fa-envelope"></i> {{ apprenant.email|default:"Non renseigné" }}</span>
+                        <span><i class="fas fa-id-card"></i> 
+                            {% for permis in apprenant.types_permis.all %}
+                                {{ permis.code }}{% if not forloop.last %}, {% endif %}
+                            {% empty %}
+                                Aucun permis
+                            {% endfor %}
+                        </span>
+                    </div>
+                </div>
+                {% with prog=apprenant.progression_conduite %}
+                {% if prog %}
+                <div class="ms-auto d-none d-lg-block">
+                    <div class="text-end">
+                        <small class="text-muted d-block">Progression</small>
+                        <strong class="h5 mb-0">{{ prog.pourcentage_progression|floatformat:0 }}%</strong>
+                        <small class="text-muted ms-1">({{ prog.heures_effectuees }}/{{ prog.heures_achetees }}h)</small>
+                    </div>
+                </div>
+                {% endif %}
+                {% endwith %}
+            </div>
+
+            <!-- Barre d'outils -->
+            <div class="toolbar">
+                <div class="filters">
+                    <select class="filter-select" id="statutFilter">
+                        <option value="all">Tous les statuts</option>
+                        <option value="PREVU">À venir</option>
+                        <option value="REALISE">Réalisés</option>
+                        <option value="ANNULE">Annulés</option>
+                    </select>
+                    <select class="filter-select" id="typeFilter">
+                        <option value="all">Tous les types</option>
+                        <option value="CONDUITE">Conduite</option>
+                        <option value="CODE">Code</option>
+                        <option value="EXAMEN">Examen</option>
+                    </select>
+                </div>
+                <div class="view-toggle">
+                    <button class="view-btn active" id="tableViewBtn">
+                        <i class="fas fa-table"></i> Tableau
+                    </button>
+                    <button class="view-btn" id="calendarViewBtn">
+                        <i class="fas fa-calendar"></i> Calendrier
+                    </button>
+                </div>
+            </div>
+
+            <!-- Vue Tableau -->
+            <div id="tableView" class="table-responsive">
+                <table class="planning-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Horaire</th>
+                            <th>Séance</th>
+                            <th>Moniteur</th>
+                            <th>Statut</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for seance in seances %}
+                        <tr class="seance-row" data-statut="{{ seance.statut }}" data-type="{{ seance.type_seance }}">
+                            <td>
+                                <div style="font-weight: 600; color: var(--text-dark);">
+                                    {{ seance.date|date:"d/m/Y" }}
+                                </div>
+                                <small class="text-muted">{{ seance.date|date:"l"|capfirst }}</small>
+                            </td>
+                            <td>
+                                <span class="heure-badge">
+                                    <i class="fas fa-clock"></i>
+                                    {{ seance.heure_debut|time:"H:i" }}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="seance-type">
+                                    <div class="type-icon">
+                                        {% if seance.type_seance == 'CONDUITE' %}
+                                            <i class="fas fa-car"></i>
+                                        {% elif seance.type_seance == 'CODE' %}
+                                            <i class="fas fa-book"></i>
+                                        {% elif seance.type_seance == 'EXAMEN' %}
+                                            <i class="fas fa-graduation-cap"></i>
+                                        {% else %}
+                                            <i class="fas fa-clock"></i>
+                                        {% endif %}
+                                    </div>
+                                    <div>
+                                        <div style="font-weight: 500;">{{ seance.get_type_seance_display }}</div>
+                                        {% if seance.type_seance == 'CONDUITE' %}
+                                            <small class="text-muted">Leçon pratique</small>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="moniteur-info">
+                                    <div class="moniteur-avatar">
+                                        {{ seance.moniteur.first_name|first|upper }}{{ seance.moniteur.last_name|first|upper }}
+                                    </div>
+                                    <div>
+                                        <div class="moniteur-name">
+                                            {{ seance.moniteur.get_full_name|default:seance.moniteur.username }}
+                                        </div>
+                                        <div class="moniteur-role">Moniteur</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                {% if seance.statut == 'PREVU' %}
+                                    <span class="badge-custom badge-prevu">
+                                        <i class="fas fa-clock"></i> Prévu
+                                    </span>
+                                    {% if seance.date == today %}
+                                        <small class="d-block text-muted mt-1">Aujourd'hui</small>
+                                    {% endif %}
+                                {% elif seance.statut == 'REALISE' %}
+                                    <span class="badge-custom badge-realise">
+                                        <i class="fas fa-check-circle"></i> Réalisé
+                                    </span>
+                                {% elif seance.statut == 'ANNULE' %}
+                                    <span class="badge-custom badge-annule">
+                                        <i class="fas fa-times-circle"></i> Annulé
+                                    </span>
+                                {% elif seance.statut == 'REPORTE' %}
+                                    <span class="badge-custom badge-reporte">
+                                        <i class="fas fa-calendar-exclamation"></i> Reporté
+                                    </span>
+                                {% else %}
+                                    <span class="badge-custom" style="background: var(--primary-soft); color: var(--text-medium);">
+                                        {{ seance.get_statut_display }}
+                                    </span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5">
+                                <div class="empty-state">
+                                    <i class="fas fa-calendar-times"></i>
+                                    <h5>Aucune séance planifiée</h5>
+                                    <p>Cet apprenant n'a pas encore de séances programmées.</p>
+                                    <a href="#" class="btn-accent">
+                                        <i class="fas fa-plus"></i> Planifier une séance
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Vue Calendrier (préparée pour extension future) -->
+            <div id="calendarView" class="calendar-view">
+                <div class="text-center py-5">
+                    <i class="fas fa-calendar-alt" style="font-size: 3rem; color: var(--border);"></i>
+                    <p class="mt-3 text-muted">Vue calendrier disponible prochainement</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer carte -->
+        <div class="card-footer-custom" style="padding: 1rem 2rem; border-top: 1px solid var(--border); background: var(--primary-soft);">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex gap-3">
+                    <span class="d-flex align-items-center gap-2">
+                        <span style="width: 12px; height: 12px; background: var(--info); border-radius: 4px;"></span>
+                        <small>Prévu</small>
+                    </span>
+                    <span class="d-flex align-items-center gap-2">
+                        <span style="width: 12px; height: 12px; background: var(--success); border-radius: 4px;"></span>
+                        <small>Réalisé</small>
+                    </span>
+                    <span class="d-flex align-items-center gap-2">
+                        <span style="width: 12px; height: 12px; background: var(--danger); border-radius: 4px;"></span>
+                        <small>Annulé</small>
+                    </span>
+                </div>
+                <small class="text-muted">
+                    <i class="fas fa-info-circle"></i> 
+                    {{ seances|length }} séance{{ seances|pluralize }} au total
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Statistiques rapides -->
+<div class="row mt-4 g-4">
+    <div class="col-md-3">
+        <div class="detail-card p-3">
+            <div class="d-flex align-items-center gap-3">
+                <div class="info-icon">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                <div>
+                    <div class="info-label">Séances à venir</div>
+                    <div class="stat-box-value">{{ seances|dictsortreversed:"date"|slice:":5"|length }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="detail-card p-3">
+            <div class="d-flex align-items-center gap-3">
+                <div class="info-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div>
+                    <div class="info-label">Réalisées</div>
+                    <div class="stat-box-value">{{ seances|dictsort:"statut"|length }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="detail-card p-3">
+            <div class="d-flex align-items-center gap-3">
+                <div class="info-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div>
+                    <div class="info-label">Progression</div>
+                    <div class="stat-box-value">{{ apprenant.progression_conduite.pourcentage_progression|floatformat:0 }}%</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="detail-card p-3">
+            <div class="d-flex align-items-center gap-3">
+                <div class="info-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div>
+                    <div class="info-label">Moniteurs</div>
+                    <div class="stat-box-value">{{ seances|dictsort:"moniteur"|length }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Filtres
+    const statutFilter = document.getElementById('statutFilter');
+    const typeFilter = document.getElementById('typeFilter');
+    const rows = document.querySelectorAll('.seance-row');
+    
+    function filterTable() {
+        const statut = statutFilter.value;
+        const type = typeFilter.value;
+        
+        rows.forEach(row => {
+            let show = true;
+            
+            if (statut !== 'all' && row.dataset.statut !== statut) {
+                show = false;
+            }
+            if (type !== 'all' && row.dataset.type !== type) {
+                show = false;
+            }
+            
+            row.style.display = show ? '' : 'none';
+        });
+    }
+    
+    if (statutFilter && typeFilter) {
+        statutFilter.addEventListener('change', filterTable);
+        typeFilter.addEventListener('change', filterTable);
+    }
+    
+    // Switch Tableau/Calendrier
+    const tableView = document.getElementById('tableView');
+    const calendarView = document.getElementById('calendarView');
+    const tableViewBtn = document.getElementById('tableViewBtn');
+    const calendarViewBtn = document.getElementById('calendarViewBtn');
+    
+    if (tableViewBtn && calendarViewBtn) {
+        tableViewBtn.addEventListener('click', function() {
+            tableView.classList.add('active');
+            calendarView.classList.remove('active');
+            tableViewBtn.classList.add('active');
+            calendarViewBtn.classList.remove('active');
+        });
+        
+        calendarViewBtn.addEventListener('click', function() {
+            calendarView.classList.add('active');
+            tableView.classList.remove('active');
+            calendarViewBtn.classList.add('active');
+            tableViewBtn.classList.remove('active');
+        });
+    }
+    
+    // Marquer les séances du jour
+    const today = new Date().toISOString().split('T')[0];
+    rows.forEach(row => {
+        const dateCell = row.cells[0]?.innerText;
+        if (dateCell && dateCell.includes(today.replace(/-/g, '/'))) {
+            row.classList.add('seance-coming');
+        }
+    });
+});
+</script>
+{% endblock %}

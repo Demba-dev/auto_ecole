@@ -1,0 +1,272 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Paiement {{ paiement.reference }} - KALANSSO{% endblock %}
+
+{% block extra_css %}
+<style>
+:root {
+    --primary: #0f172a;
+    --primary-soft: #f1f5f9;
+    --accent: #3b82f6;
+    --success: #0b6e4f;
+    --success-light: #e7f3ef;
+    --text-dark: #0f172a;
+    --text-medium: #334155;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+    --radius: 16px;
+    --shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+body { font-family: 'Inter', sans-serif; background: #f8fafc; color: var(--text-dark); }
+
+/* TITRES & BREADCRUMB */
+.page-header { margin-bottom: 2rem; }
+.page-title { font-size: 1.8rem; font-weight: 700; color: var(--text-dark); margin-bottom: 0.3rem; }
+.section-subtitle { font-size: 0.85rem; color: var(--text-muted); }
+.breadcrumb-custom .breadcrumb-item + .breadcrumb-item::before { content: "·"; color: var(--text-muted); }
+.breadcrumb-custom .breadcrumb-item a { text-decoration: none; color: var(--text-muted); transition: 0.2s; }
+.breadcrumb-custom .breadcrumb-item a:hover { color: var(--primary); }
+
+/* BOUTONS */
+.btn-outline { 
+    border-radius: 30px; 
+    padding: 0.5rem 1.2rem; 
+    font-size: 0.9rem; 
+    font-weight: 500; 
+    transition: 0.2s; 
+    text-decoration: none !important; 
+    display: inline-flex; 
+    align-items: center; 
+    gap: 0.5rem;
+    background: #fff; border: 1px solid var(--border); color: var(--text-medium);
+}
+.btn-outline:hover { border-color: var(--accent); color: var(--accent); box-shadow: var(--shadow); transform: translateY(-1px); }
+
+/* DETAIL CARD */
+.detail-card { background:#fff; border-radius:var(--radius); padding:2rem; box-shadow:var(--shadow); margin-bottom: 2rem; }
+
+.receipt-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding-bottom: 2rem;
+    border-bottom: 2px dashed var(--border);
+    margin-bottom: 2rem;
+}
+
+.receipt-logo {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+.logo-icon {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, var(--accent), #2563eb);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 1.5rem;
+}
+
+.receipt-info { text-align: right; }
+.receipt-number { font-size: 1.2rem; font-weight: 700; color: var(--text-dark); }
+.receipt-date { color: var(--text-muted); font-size: 0.9rem; }
+
+/* GRID */
+.info-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; }
+.info-section h6 {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.info-section h6 i { color: var(--accent); }
+
+.info-box {
+    background: var(--primary-soft);
+    border-radius: 12px;
+    padding: 1.25rem;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+}
+.info-row:last-child { margin-bottom: 0; }
+.info-label { color: var(--text-muted); font-size: 0.9rem; }
+.info-value { font-weight: 600; color: var(--text-dark); text-align: right; }
+
+.amount-box {
+    margin-top: 2rem;
+    background: var(--success-light);
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.amount-label { font-weight: 700; color: var(--success); font-size: 1.1rem; }
+.amount-value { font-size: 1.5rem; font-weight: 800; color: var(--success); }
+
+@media print {
+    .no-print { display: none !important; }
+    .detail-card { box-shadow: none; border: 1px solid #eee; }
+    body { background: #fff; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Breadcrumb & Header -->
+    <div class="page-header no-print">
+        <nav aria-label="breadcrumb" class="breadcrumb-custom">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'finance:hub' %}">Finance</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'finance:hub_section' 'paiement' %}">Paiements</a></li>
+                <li class="breadcrumb-item active">{{ paiement.reference }}</li>
+            </ol>
+        </nav>
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="page-title">Détails du paiement</h1>
+                <p class="section-subtitle">Consultez les informations détaillées de cette transaction.</p>
+            </div>
+            <div class="d-flex gap-2">
+                <button onclick="window.print()" class="btn-outline">
+                    <i class="fas fa-print"></i> Imprimer le reçu
+                </button>
+                <a href="{% url 'finance:hub_section' 'paiement' %}" class="btn-outline">
+                    <i class="fas fa-arrow-left"></i> Retour
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="detail-card">
+                <!-- Header Reçu -->
+                <div class="receipt-header">
+                    <div class="receipt-logo">
+                        <div class="logo-icon">
+                            <i class="fas fa-car"></i>
+                        </div>
+                        <div>
+                            <h4 class="mb-0 fw-bold">KALANSSO</h4>
+                            <p class="mb-0 text-muted small">Auto-École Professionnelle</p>
+                        </div>
+                    </div>
+                    <div class="receipt-info">
+                        <div class="receipt-number">REÇU #{{ paiement.reference }}</div>
+                        <div class="receipt-date">Date: {{ paiement.date_paiement|date:"d F Y" }} à {{ paiement.date_paiement|date:"H:i" }}</div>
+                    </div>
+                </div>
+
+                <!-- Info Grid -->
+                <div class="info-grid">
+                    <!-- Apprenant -->
+                    <div class="info-section">
+                        <h6><i class="fas fa-user"></i> Informations Apprenant</h6>
+                        <div class="info-box">
+                            <div class="info-row">
+                                <span class="info-label">Nom complet</span>
+                                <span class="info-value">{{ paiement.contrat.apprenant.prenom }} {{ paiement.contrat.apprenant.nom }}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Téléphone</span>
+                                <span class="info-value">{{ paiement.contrat.apprenant.telephone|default:"—" }}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Contrat</span>
+                                <span class="info-value">#{{ paiement.contrat.id }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Paiement -->
+                    <div class="info-section">
+                        <h6><i class="fas fa-credit-card"></i> Détails Transaction</h6>
+                        <div class="info-box">
+                            <div class="info-row">
+                                <span class="info-label">Mode de paiement</span>
+                                <span class="info-value">
+                                    <i class="fas {% if paiement.mode == 'ESPECE' %}fa-money-bill-wave{% elif paiement.mode == 'CHEQUE' %}fa-money-check{% elif paiement.mode == 'VIREMENT' %}fa-university{% elif paiement.mode == 'MOBILE' %}fa-mobile-alt{% else %}fa-receipt{% endif %}"></i>
+                                    {{ paiement.get_mode_display }}
+                                </span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Statut Paiement</span>
+                                <span class="info-value">
+                                    {% if paiement.contrat.montant_restant > 0 %}
+                                        <span class="badge bg-warning text-dark">Partiel</span>
+                                    {% else %}
+                                        <span class="badge bg-success">Soldé</span>
+                                    {% endif %}
+                                </span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Référence</span>
+                                <span class="info-value">{{ paiement.reference }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Note / Observation if any -->
+                {% if paiement.observation %}
+                <div class="info-section mt-4">
+                    <h6><i class="fas fa-comment-alt"></i> Observation</h6>
+                    <div class="info-box">
+                        <p class="mb-0 text-muted">{{ paiement.observation }}</p>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Financial Summary -->
+                <div class="info-section mt-4">
+                    <h6><i class="fas fa-file-invoice-dollar"></i> Résumé Financier du Contrat</h6>
+                    <div class="info-box">
+                        <div class="info-row">
+                            <span class="info-label">Montant Total du Contrat</span>
+                            <span class="info-value">{{ paiement.contrat.montant_total }} FCFA</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Total Payé à ce jour</span>
+                            <span class="info-value text-success">{{ paiement.contrat.montant_paye }} FCFA</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Reste à payer</span>
+                            <span class="info-value text-danger">{{ paiement.contrat.montant_restant }} FCFA</span>
+                        </div>
+                        <div class="progress mt-2" style="height: 8px;">
+                            <div class="progress-bar bg-success" role="progressbar" style="width: {{ paiement.contrat.pourcentage_paiement }}%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Montant Final -->
+                <div class="amount-box">
+                    <span class="amount-label">MONTANT PAYÉ</span>
+                    <span class="amount-value">{{ paiement.montant }} FCFA</span>
+                </div>
+
+                <div class="mt-5 text-center no-print">
+                    <p class="text-muted small">Merci pour votre confiance !</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

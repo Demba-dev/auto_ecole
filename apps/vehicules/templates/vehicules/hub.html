@@ -1,0 +1,858 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    Hub Véhicules - KALANSSO
+{% endblock %}
+
+{% block extra_css %}
+<style>
+:root {
+    --primary: #0f172a;
+    --primary-soft: #f1f5f9;
+    --primary-light: #1e293b;
+    --accent: #3b82f6;
+    --accent-light: #eff6ff;
+    --success: #0b6e4f;
+    --success-light: #e7f3ef;
+    --warning: #b45309;
+    --warning-light: #fffbeb;
+    --danger: #b91c1c;
+    --danger-light: #fef2f2;
+    --info: #0891b2;
+    --info-light: #e0f2fe;
+    --text-dark: #0f172a;
+    --text-medium: #334155;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+    --border-light: #f1f5f9;
+    --radius: 16px;
+    --radius-sm: 12px;
+    --radius-lg: 20px;
+    --shadow: 0 4px 12px rgba(0,0,0,0.08);
+    --shadow-lg: 0 12px 30px rgba(0,0,0,0.06);
+    --transition: 0.2s ease;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: #f8fafc;
+    color: var(--text-dark);
+}
+
+/* ------------------------------------------------
+   BREADCRUMB
+------------------------------------------------ */
+.breadcrumb-custom .breadcrumb {
+    background: transparent;
+    padding: 0;
+    margin-bottom: 0.5rem;
+}
+.breadcrumb-custom .breadcrumb-item + .breadcrumb-item::before {
+    content: "·";
+    color: var(--text-muted);
+}
+.breadcrumb-custom .breadcrumb-item a {
+    text-decoration: none;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    transition: var(--transition);
+}
+.breadcrumb-custom .breadcrumb-item a:hover {
+    color: var(--primary);
+}
+.breadcrumb-custom .breadcrumb-item.active {
+    color: var(--text-medium);
+    font-size: 0.85rem;
+}
+
+/* ------------------------------------------------
+   PAGE HEADER
+------------------------------------------------ */
+.page-header {
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.page-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 0.3rem;
+    letter-spacing: -0.02em;
+}
+.page-subtitle {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+/* ------------------------------------------------
+   BOUTONS
+------------------------------------------------ */
+.btn-outline, .btn-soft, .btn-accent {
+    border-radius: 30px;
+    padding: 0.5rem 1.2rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: 0.2s;
+    text-decoration: none !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: none;
+    cursor: pointer;
+}
+.btn-outline {
+    background: #fff;
+    border: 1px solid var(--border);
+    color: var(--text-medium);
+}
+.btn-outline:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    box-shadow: var(--shadow);
+    transform: translateY(-1px);
+}
+.btn-soft {
+    background: var(--primary-soft);
+    color: var(--text-medium);
+    border: 1px solid transparent;
+}
+.btn-soft:hover {
+    background: #fff;
+    border: 1px solid var(--border);
+    transform: translateY(-1px);
+}
+.btn-accent {
+    background: var(--accent);
+    color: #fff !important;
+    border-radius: 30px;
+    padding: 0.5rem 1.5rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border: none;
+}
+.btn-accent:hover {
+    background: #2563eb;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    transform: translateY(-1px);
+}
+.btn-sm {
+    padding: 0.4rem 1rem;
+    font-size: 0.8rem;
+}
+.btn-icon {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 30px;
+}
+
+/* ------------------------------------------------
+   STATISTIQUES CARDS
+------------------------------------------------ */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: #fff;
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    transition: var(--transition);
+}
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+}
+.stat-card.primary::before { background: var(--accent); }
+.stat-card.success::before { background: var(--success); }
+.stat-card.warning::before { background: var(--warning); }
+
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+}
+.stat-card.primary .stat-icon { background: var(--accent-light); color: var(--accent); }
+.stat-card.success .stat-icon { background: var(--success-light); color: var(--success); }
+.stat-card.warning .stat-icon { background: var(--warning-light); color: var(--warning); }
+
+.stat-content h6 {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 0.25rem;
+}
+.stat-content h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 0;
+}
+.stat-content small {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+}
+
+/* ------------------------------------------------
+   TABLEAUX
+------------------------------------------------ */
+.table-card {
+    background: #fff;
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+    height: 100%;
+}
+.table-card:hover {
+    box-shadow: var(--shadow-lg);
+}
+
+.card-header-custom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.card-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.card-title i {
+    color: var(--accent);
+}
+
+.table-responsive {
+    border-radius: var(--radius-sm);
+    overflow-x: auto;
+}
+
+.table-custom {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.table-custom th {
+    background: var(--primary-soft);
+    color: var(--text-medium);
+    font-weight: 600;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 0.75rem 1rem;
+}
+
+.table-custom td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-light);
+    vertical-align: middle;
+}
+
+.table-custom tr:last-child td {
+    border-bottom: none;
+}
+
+.table-custom tbody tr {
+    transition: var(--transition);
+}
+.table-custom tbody tr:hover {
+    background: var(--primary-soft);
+}
+
+/* Badges statut véhicule */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.8rem;
+    border-radius: 30px;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+.status-disponible {
+    background: var(--success-light);
+    color: var(--success);
+}
+.status-occupe {
+    background: var(--warning-light);
+    color: var(--warning);
+}
+.status-maintenance {
+    background: var(--danger-light);
+    color: var(--danger);
+}
+.status-indisponible {
+    background: var(--primary-soft);
+    color: var(--text-medium);
+}
+
+/* Montants */
+.montant {
+    font-weight: 600;
+    color: var(--text-dark);
+}
+.montant.success {
+    color: var(--success);
+}
+
+/* ------------------------------------------------
+   NAVIGATION
+------------------------------------------------ */
+.nav-card {
+    background: #fff;
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    height: 100%;
+    transition: var(--transition);
+}
+.nav-card:hover {
+    box-shadow: var(--shadow-lg);
+}
+
+.nav-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.25rem;
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    transition: var(--transition);
+    border: 1px solid var(--border);
+}
+.nav-item:hover {
+    border-color: var(--accent);
+    background: var(--accent-light);
+    transform: translateX(4px);
+}
+.nav-item i:first-child {
+    width: 20px;
+    color: var(--accent);
+    font-size: 1rem;
+}
+.nav-item span {
+    flex: 1;
+    margin-left: 0.75rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-medium);
+}
+.nav-item .fa-chevron-right {
+    color: var(--text-muted);
+    font-size: 0.7rem;
+}
+.nav-item:hover .fa-chevron-right {
+    color: var(--accent);
+}
+
+.nav-item.success {
+    border-color: var(--success);
+    background: var(--success-light);
+}
+.nav-item.success i:first-child {
+    color: var(--success);
+}
+
+/* ------------------------------------------------
+   ACTIONS RAPIDES
+------------------------------------------------ */
+.quick-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.quick-action {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    transition: var(--transition);
+    background: var(--primary-soft);
+    color: var(--text-medium);
+}
+.quick-action:hover {
+    background: var(--accent-light);
+    color: var(--accent);
+    transform: translateX(4px);
+}
+.quick-action i {
+    width: 20px;
+    color: var(--accent);
+}
+
+/* ------------------------------------------------
+   ALERTES MAINTENANCE
+------------------------------------------------ */
+.alert-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: var(--radius-sm);
+    background: var(--warning-light);
+    margin-bottom: 0.75rem;
+    border-left: 3px solid var(--warning);
+}
+.alert-icon {
+    width: 32px;
+    height: 32px;
+    background: #fff;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--warning);
+}
+.alert-content {
+    flex: 1;
+}
+.alert-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 0.15rem;
+}
+.alert-meta {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+}
+
+/* ------------------------------------------------
+   RESPONSIVE
+------------------------------------------------ */
+@media (max-width: 992px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .table-card {
+        padding: 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .page-title {
+        font-size: 1.5rem;
+    }
+    
+    .stat-card {
+        padding: 1.25rem;
+    }
+    
+    .stat-content h2 {
+        font-size: 1.75rem;
+    }
+}
+
+/* ------------------------------------------------
+   ANIMATIONS
+------------------------------------------------ */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.stat-card,
+.table-card,
+.nav-card {
+    animation: fadeIn 0.3s ease-out;
+}
+
+.stat-card:nth-child(1) { animation-delay: 0.1s; }
+.stat-card:nth-child(2) { animation-delay: 0.2s; }
+.stat-card:nth-child(3) { animation-delay: 0.3s; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4 py-4">
+    <!-- Header avec breadcrumb -->
+    <div class="page-header">
+        <div>
+            <nav class="breadcrumb-custom" aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Véhicules</li>
+                </ol>
+            </nav>
+            <h1 class="page-title">Gestion des véhicules</h1>
+            <p class="page-subtitle">Suivi du parc automobile et des opérations de maintenance</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{% url 'vehicules:maintenance_create' %}" class="btn-soft btn-sm">
+                <i class="fas fa-tools"></i> Maintenance
+            </a>
+            <a href="{% url 'vehicules:vehicule_create' %}" class="btn-accent btn-sm">
+                <i class="fas fa-plus"></i> Nouveau véhicule
+            </a>
+        </div>
+    </div>
+
+    <!-- Statistiques -->
+    <div class="stats-grid">
+        <div class="stat-card primary">
+            <div class="stat-icon">
+                <i class="fas fa-car"></i>
+            </div>
+            <div class="stat-content">
+                <h6>Total véhicules</h6>
+                <h2>{{ total_vehicules }}</h2>
+                <small>Parc automobile</small>
+            </div>
+        </div>
+        <div class="stat-card success">
+            <div class="stat-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stat-content">
+                <h6>Disponibles</h6>
+                <h2>{{ disponibles }}</h2>
+                <small>Prêts à l'emploi</small>
+            </div>
+        </div>
+        <div class="stat-card warning">
+            <div class="stat-icon">
+                <i class="fas fa-tools"></i>
+            </div>
+            <div class="stat-content">
+                <h6>En maintenance</h6>
+                <h2>{{ en_maintenance }}</h2>
+                <small>Hors circulation</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Colonne principale - Maintenances récentes -->
+        <div class="col-lg-8">
+            <div class="table-card">
+                <div class="card-header-custom">
+                    <h5 class="card-title">
+                        <i class="fas fa-tools"></i>
+                        Maintenances récentes
+                    </h5>
+                    <a href="{% url 'vehicules:vehicules_hub_section' 'maintenances' %}" class="btn-soft btn-sm">
+                        Voir tout <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table-custom">
+                        <thead>
+                            <tr>
+                                <th>Véhicule</th>
+                                <th>Type</th>
+                                <th>Date</th>
+                                <th>Kilométrage</th>
+                                <th>Montant</th>
+                                <th>Prochaine échéance</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for m in maintenances_recentes %}
+                            <tr>
+                                <td>
+                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <i class="fas fa-car" style="color: var(--accent);"></i>
+                                        <div>
+                                            <div class="fw-bold">{{ m.vehicule.marque }} {{ m.vehicule.modele }}</div>
+                                            <small style="color: var(--text-muted);">{{ m.vehicule.immatriculation }}</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="status-badge status-maintenance">
+                                        {{ m.type_maintenance }}
+                                    </span>
+                                </td>
+                                <td>{{ m.date|date:"d/m/Y" }}</td>
+                                <td>{{ m.kilometrage }} km</td>
+                                <td class="montant">{{ m.montant }} FCFA</td>
+                                <td>
+                                    {% if m.prochaine_echeance %}
+                                        {{ m.prochaine_echeance|date:"d/m/Y" }}
+                                    {% else %}
+                                        <span class="text-muted">—</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center py-4" style="color: var(--text-muted);">
+                                    <i class="fas fa-tools mb-2" style="font-size: 1.5rem;"></i>
+                                    <p class="mb-0">Aucune maintenance récente</p>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Alertes échéances (optionnel) -->
+                {% with prochaines=maintenances_a_venir %}
+                {% if prochaines %}
+                <div style="margin-top: 1.5rem;">
+                    <h6 style="font-size: 0.8rem; font-weight: 600; margin-bottom: 0.75rem;">
+                        <i class="fas fa-clock me-2" style="color: var(--warning);"></i>
+                        Maintenances à prévoir
+                    </h6>
+                    {% for m in prochaines|slice:":2" %}
+                    <div class="alert-item">
+                        <div class="alert-icon">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <div class="alert-content">
+                            <div class="alert-title">{{ m.vehicule }} - {{ m.type_maintenance }}</div>
+                            <div class="alert-meta">Prévue le {{ m.prochaine_echeance|date:"d/m/Y" }}</div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% endwith %}
+            </div>
+        </div>
+
+        <!-- Colonne latérale - Navigation et actions -->
+        <div class="col-lg-4">
+            <div class="nav-card">
+                <div class="card-header-custom" style="margin-bottom: 1rem;">
+                    <h5 class="card-title">
+                        <i class="fas fa-compass"></i>
+                        Navigation
+                    </h5>
+                </div>
+
+                <div class="nav-grid">
+                    <a href="{% url 'vehicules:vehicules_hub_section' 'vehicules' %}" class="nav-item">
+                        <i class="fas fa-car-side"></i>
+                        <span>Parc automobile</span>
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                    <a href="{% url 'vehicules:vehicules_hub_section' 'maintenances' %}" class="nav-item">
+                        <i class="fas fa-tools"></i>
+                        <span>Historique maintenances</span>
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                    <a href="{% url 'vehicules:maintenance_create' %}" class="nav-item success">
+                        <i class="fas fa-plus-circle"></i>
+                        <span>Enregistrer une maintenance</span>
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </div>
+
+                <!-- Statistiques supplémentaires -->
+                <div style="margin-top: 1.5rem;">
+                    <h6 style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted); margin-bottom: 1rem;">
+                        APERÇU RAPIDE
+                    </h6>
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 0.8rem;">
+                                <i class="fas fa-circle me-2" style="color: var(--warning); font-size: 0.5rem;"></i>
+                                Occupés
+                            </span>
+                            <span class="fw-bold">{{ occupes|default:"0" }}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 0.8rem;">
+                                <i class="fas fa-circle me-2" style="color: var(--danger); font-size: 0.5rem;"></i>
+                                Indisponibles
+                            </span>
+                            <span class="fw-bold">{{ indisponibles|default:"0" }}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px dashed var(--border);">
+                            <span style="font-size: 0.8rem;">
+                                <i class="fas fa-gas-pump me-2" style="color: var(--accent);"></i>
+                                Diesel/Essence
+                            </span>
+                            <span class="fw-bold">{{ total_vehicules }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actions rapides -->
+                <div class="quick-actions">
+                    <a href="{% url 'vehicules:vehicule_create' %}" class="quick-action">
+                        <i class="fas fa-plus-circle"></i>
+                        Ajouter un véhicule
+                    </a>
+                    <a href="{% url 'vehicules:vehicules_hub_section' 'vehicules' %}?statut=maintenance" class="quick-action">
+                        <i class="fas fa-eye"></i>
+                        Voir véhicules en maintenance
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section supplémentaire : Derniers véhicules ajoutés (optionnel) -->
+    {% if derniers_vehicules %}
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="table-card">
+                <div class="card-header-custom">
+                    <h5 class="card-title">
+                        <i class="fas fa-clock"></i>
+                        Derniers véhicules ajoutés
+                    </h5>
+                </div>
+                <div class="table-responsive">
+                    <table class="table-custom">
+                        <thead>
+                            <tr>
+                                <th>Véhicule</th>
+                                <th>Immatriculation</th>
+                                <th>Type</th>
+                                <th>Énergie</th>
+                                <th>Statut</th>
+                                <th>Kilométrage</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for v in derniers_vehicules %}
+                            <tr>
+                                <td>
+                                    <div style="font-weight: 500;">{{ v.marque }} {{ v.modele }}</div>
+                                </td>
+                                <td>
+                                    <span style="font-family: monospace;">{{ v.immatriculation }}</span>
+                                </td>
+                                <td>
+                                    {% if v.type_boite == 'MANUELLE' %}
+                                        <i class="fas fa-cog" style="color: var(--text-muted);"></i> Manuelle
+                                    {% else %}
+                                        <i class="fas fa-cogs" style="color: var(--accent);"></i> Auto
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if v.energie == 'DIESEL' %}
+                                        <i class="fas fa-gas-pump" style="color: var(--warning);"></i> Diesel
+                                    {% elif v.energie == 'ESSENCE' %}
+                                        <i class="fas fa-gas-pump" style="color: var(--success);"></i> Essence
+                                    {% else %}
+                                        <i class="fas fa-bolt" style="color: var(--accent);"></i> Électrique
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if v.statut == 'DISPONIBLE' %}
+                                        <span class="status-badge status-disponible">
+                                            <i class="fas fa-check-circle"></i> Disponible
+                                        </span>
+                                    {% elif v.statut == 'OCCUPE' %}
+                                        <span class="status-badge status-occupe">
+                                            <i class="fas fa-clock"></i> Occupé
+                                        </span>
+                                    {% elif v.statut == 'MAINTENANCE' %}
+                                        <span class="status-badge status-maintenance">
+                                            <i class="fas fa-tools"></i> Maintenance
+                                        </span>
+                                    {% else %}
+                                        <span class="status-badge status-indisponible">
+                                            <i class="fas fa-ban"></i> Indisponible
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ v.kilometrage_initial }} km</td>
+                                <td>
+                                    <a href="{% url 'vehicules:vehicule_update' v.id %}" class="btn-action btn-soft btn-sm" style="padding: 0.25rem 0.75rem;">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Animation des tooltips si besoin
+    const tooltips = document.querySelectorAll('[data-toggle="tooltip"]');
+    tooltips.forEach(tooltip => {
+        new bootstrap.Tooltip(tooltip);
+    });
+    
+    // Filtrage éventuel (si vous voulez ajouter des filtres plus tard)
+    const filterSelects = document.querySelectorAll('.filter-select');
+    filterSelects.forEach(select => {
+        select.addEventListener('change', function() {
+            // Implémenter la logique de filtrage ici
+            console.log('Filtre changé:', this.value);
+        });
+    });
+});
+</script>
+{% endblock %}

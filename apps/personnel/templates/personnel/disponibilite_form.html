@@ -1,0 +1,1090 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    {% if form.instance.pk %}
+        Modifier disponibilité - {{ form.instance.moniteur }} - KALANSSO
+    {% else %}
+        Nouvelle disponibilité - KALANSSO
+    {% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<style>
+:root {
+    --primary: #0f172a;
+    --primary-soft: #f1f5f9;
+    --primary-light: #1e293b;
+    --accent: #3b82f6;
+    --accent-light: #eff6ff;
+    --success: #0b6e4f;
+    --success-light: #e7f3ef;
+    --warning: #b45309;
+    --warning-light: #fffbeb;
+    --danger: #b91c1c;
+    --danger-light: #fef2f2;
+    --info: #0891b2;
+    --info-light: #e0f2fe;
+    --text-dark: #0f172a;
+    --text-medium: #334155;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+    --border-light: #f1f5f9;
+    --radius: 16px;
+    --radius-sm: 10px;
+    --shadow: 0 4px 12px rgba(0,0,0,0.08);
+    --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+    --transition: 0.2s ease;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: #f8fafc;
+    color: var(--text-dark);
+}
+
+/* ------------------------------------------------
+   BREADCRUMB COMPACT
+------------------------------------------------ */
+.breadcrumb-custom {
+    margin-bottom: 0.5rem;
+}
+.breadcrumb-custom .breadcrumb {
+    background: transparent;
+    padding: 0;
+    margin: 0;
+}
+.breadcrumb-custom .breadcrumb-item + .breadcrumb-item::before {
+    content: "·";
+    color: var(--text-muted);
+    padding: 0 0.4rem;
+}
+.breadcrumb-custom .breadcrumb-item a {
+    text-decoration: none;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    transition: var(--transition);
+}
+.breadcrumb-custom .breadcrumb-item a:hover {
+    color: var(--primary);
+}
+.breadcrumb-custom .breadcrumb-item.active {
+    color: var(--text-medium);
+    font-size: 0.8rem;
+}
+
+/* ------------------------------------------------
+   HEADER COMPACT
+------------------------------------------------ */
+.page-header {
+    margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.page-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 0.2rem;
+    letter-spacing: -0.02em;
+}
+.page-subtitle {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+/* ------------------------------------------------
+   BOUTONS COMPACTS
+------------------------------------------------ */
+.btn-outline, .btn-soft, .btn-accent {
+    border-radius: 30px;
+    padding: 0.45rem 1.2rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    transition: 0.2s;
+    text-decoration: none !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    border: none;
+    cursor: pointer;
+    justify-content: center;
+}
+.btn-outline {
+    background: #fff;
+    border: 1px solid var(--border);
+    color: var(--text-medium);
+}
+.btn-outline:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    box-shadow: var(--shadow);
+    transform: translateY(-1px);
+}
+.btn-soft {
+    background: var(--primary-soft);
+    color: var(--text-medium);
+    border: 1px solid transparent;
+}
+.btn-soft:hover {
+    background: #fff;
+    border: 1px solid var(--border);
+    transform: translateY(-1px);
+}
+.btn-accent {
+    background: var(--accent);
+    color: #fff !important;
+    border-radius: 30px;
+    padding: 0.45rem 1.4rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border: none;
+}
+.btn-accent:hover {
+    background: #2563eb;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    transform: translateY(-1px);
+}
+.btn-sm {
+    padding: 0.35rem 1rem;
+    font-size: 0.75rem;
+}
+
+/* ------------------------------------------------
+   FORMULAIRE CARD
+------------------------------------------------ */
+.form-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.form-card {
+    background: #fff;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.form-card:hover {
+    box-shadow: var(--shadow-lg);
+}
+
+/* Header carte compact */
+.card-header-custom {
+    background: #fff;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.header-icon {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, var(--primary), #1e2a3a);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 1.1rem;
+}
+
+.header-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 0.1rem;
+}
+
+.header-subtitle {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+}
+
+/* Body carte compact */
+.card-body-custom {
+    padding: 1.5rem;
+}
+
+/* Grille dense - 4 colonnes pour disponibilité */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.form-group.span-2 {
+    grid-column: span 2;
+}
+
+.form-group.span-3 {
+    grid-column: span 3;
+}
+
+.form-group.span-4 {
+    grid-column: span 4;
+}
+
+/* Label compact */
+.form-label {
+    font-size: 0.6rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    margin-bottom: 0;
+}
+
+.form-label i {
+    color: var(--accent);
+    font-size: 0.6rem;
+    width: 12px;
+}
+
+.required-star {
+    color: var(--danger);
+    margin-left: 2px;
+    font-size: 0.6rem;
+}
+
+/* Inputs compacts */
+.form-control, .form-select {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.6rem 0.9rem;
+    font-size: 0.8rem;
+    transition: var(--transition);
+    background: #fff;
+    width: 100%;
+    font-family: 'Inter', sans-serif;
+    height: 38px;
+}
+
+.form-control:hover, .form-select:hover {
+    border-color: var(--text-muted);
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    outline: none;
+}
+
+/* Select compact */
+.form-select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.8rem center;
+    background-size: 12px;
+    padding-right: 2rem;
+}
+
+/* Input time spécifique */
+input[type="time"] {
+    font-family: 'Inter', sans-serif;
+    padding: 0.6rem 0.9rem;
+}
+
+/* Checkbox compact */
+.form-check {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.2rem 0;
+    height: 38px;
+}
+
+.form-check-input {
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid var(--border);
+    border-radius: 4px;
+    cursor: pointer;
+    accent-color: var(--accent);
+}
+
+.form-check-label {
+    font-size: 0.75rem;
+    color: var(--text-medium);
+    cursor: pointer;
+}
+
+/* Help text compact */
+.help-text {
+    font-size: 0.55rem;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    margin-top: 0.15rem;
+    background: var(--primary-soft);
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    line-height: 1.2;
+}
+
+.help-text i {
+    color: var(--accent);
+    font-size: 0.55rem;
+}
+
+/* Error compact */
+.error-feedback {
+    color: var(--danger);
+    font-size: 0.55rem;
+    font-weight: 500;
+    margin-top: 0.15rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    background: var(--danger-light);
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+}
+
+.error-feedback i {
+    color: var(--danger);
+    font-size: 0.55rem;
+}
+
+/* Sections */
+.form-section {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: var(--primary-soft);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+}
+
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.section-icon {
+    width: 28px;
+    height: 28px;
+    background: #fff;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent);
+    font-size: 0.8rem;
+}
+
+.section-title h6 {
+    font-size: 0.9rem;
+    font-weight: 700;
+    margin-bottom: 0;
+}
+
+.section-title p {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-bottom: 0;
+    margin-left: 0.5rem;
+}
+
+/* Carte moniteur */
+.moniteur-card {
+    background: #fff;
+    border-radius: var(--radius-sm);
+    padding: 0.75rem;
+    border: 1px solid var(--border);
+    transition: var(--transition);
+    margin-top: 0.5rem;
+}
+.moniteur-card:hover {
+    border-color: var(--accent);
+    background: var(--accent-light);
+}
+
+.moniteur-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.moniteur-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--primary), #1e2a3a);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.moniteur-info h6 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.15rem;
+}
+
+.moniteur-info small {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.moniteur-info small i {
+    color: var(--accent);
+}
+
+/* Plage horaire */
+.time-range {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #fff;
+    border-radius: var(--radius-sm);
+    padding: 0.5rem;
+    border: 1px solid var(--border);
+}
+
+.time-separator {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.time-input-group {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    background: var(--primary-soft);
+    border-radius: 6px;
+    padding: 0.2rem 0.5rem;
+}
+.time-input-group i {
+    color: var(--accent);
+    font-size: 0.7rem;
+}
+.time-input-group input {
+    border: none;
+    background: transparent;
+    padding: 0.3rem 0;
+    width: 100%;
+    font-size: 0.8rem;
+}
+.time-input-group input:focus {
+    outline: none;
+}
+
+/* Jours de semaine */
+.weekdays-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.weekday-tag {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 30px;
+    padding: 0.4rem 1rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-medium);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: var(--transition);
+    cursor: pointer;
+}
+.weekday-tag:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-light);
+}
+.weekday-tag i {
+    color: var(--accent);
+    font-size: 0.9rem;
+}
+.weekday-tag.selected {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+.weekday-tag.selected i {
+    color: #fff;
+}
+
+/* Badge jour */
+.day-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem 0.8rem;
+    border-radius: 30px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    background: var(--primary-soft);
+    color: var(--text-medium);
+}
+.day-badge i {
+    color: var(--accent);
+}
+
+/* Footer compact */
+.card-footer-custom {
+    background: #fff;
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.action-hint {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.hint-item {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    background: var(--primary-soft);
+    padding: 0.2rem 0.7rem;
+    border-radius: 20px;
+}
+
+.hint-item i {
+    color: var(--accent);
+    font-size: 0.55rem;
+}
+
+.form-actions {
+    display: flex;
+    gap: 0.9rem;
+    align-items: center;
+}
+
+/* Alertes */
+.alert-info {
+    background: var(--info-light);
+    border-left: 3px solid var(--info);
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+.alert-info i {
+    color: var(--info);
+}
+
+/* ------------------------------------------------
+   RESPONSIVE
+------------------------------------------------ */
+@media (max-width: 768px) {
+    .form-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .card-header-custom {
+        padding: 1rem;
+    }
+    
+    .card-body-custom {
+        padding: 1rem;
+    }
+    
+    .form-section {
+        padding: 0.75rem;
+    }
+    
+    .time-range {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 576px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .form-group.span-2,
+    .form-group.span-3,
+    .form-group.span-4 {
+        grid-column: span 1;
+    }
+    
+    .card-footer-custom {
+        flex-direction: column-reverse;
+        align-items: stretch;
+    }
+    
+    .action-hint {
+        justify-content: center;
+    }
+    
+    .form-actions {
+        flex-direction: column-reverse;
+    }
+    
+    .btn-outline, .btn-accent {
+        width: 100%;
+    }
+    
+    .weekdays-container {
+        justify-content: center;
+    }
+}
+
+/* ------------------------------------------------
+   ANIMATIONS
+------------------------------------------------ */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.form-card {
+    animation: slideIn 0.3s ease-out;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4 py-4">
+    <!-- Header compact -->
+    <div class="page-header">
+        <div>
+            <nav class="breadcrumb-custom">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'personnel:hub_section' 'disponibilite' %}">Disponibilités</a></li>
+                    <li class="breadcrumb-item active">
+                        {% if form.instance.pk %}Modifier{% else %}Nouvelle disponibilité{% endif %}
+                    </li>
+                </ol>
+            </nav>
+            <h1 class="page-title">
+                {% if form.instance.pk %}
+                    Disponibilité #{{ form.instance.id }}
+                {% else %}
+                    Nouvelle disponibilité
+                {% endif %}
+            </h1>
+            <p class="page-subtitle">
+                {% if form.instance.pk %}
+                    Modifier la plage horaire de {{ form.instance.moniteur }}
+                {% else %}
+                    Définir une plage de disponibilité pour un moniteur
+                {% endif %}
+            </p>
+        </div>
+        <a href="{% url 'personnel:hub_section' 'disponibilite' %}" class="btn-soft btn-sm">
+            <i class="fas fa-arrow-left"></i> Retour
+        </a>
+    </div>
+
+    <!-- Formulaire -->
+    <div class="form-container">
+        <form method="POST" class="form-card" id="disponibiliteForm">
+            {% csrf_token %}
+            
+            <!-- Header carte -->
+            <div class="card-header-custom">
+                <div class="header-icon">
+                    <i class="fas {% if form.instance.pk %}fa-edit{% else %}fa-clock{% endif %}"></i>
+                </div>
+                <div>
+                    <div class="header-title">
+                        {% if form.instance.pk %}Modification disponibilité{% else %}Création disponibilité{% endif %}
+                    </div>
+                    <div class="header-subtitle">
+                        <span class="required-star">*</span> Champs obligatoires
+                    </div>
+                </div>
+            </div>
+
+            <!-- Body -->
+            <div class="card-body-custom">
+                {% if form.non_field_errors %}
+                <div class="alert alert-danger" style="background: var(--danger-light); border-left: 3px solid var(--danger); padding: 0.75rem 1rem; border-radius: var(--radius-sm); margin-bottom: 1.5rem; font-size: 0.8rem;">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    {{ form.non_field_errors }}
+                </div>
+                {% endif %}
+
+                <!-- Affichage en mode modification -->
+                {% if form.instance.pk %}
+                <div class="alert-info">
+                    <i class="fas fa-info-circle"></i>
+                    <span>Créée le {{ form.instance.date_creation|date:"d/m/Y" }}</span>
+                </div>
+                {% endif %}
+
+                <!-- Section Moniteur -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <div class="section-icon">
+                            <i class="fas fa-chalkboard-teacher"></i>
+                        </div>
+                        <h6>Moniteur</h6>
+                        <p>Sélectionner le moniteur</p>
+                    </div>
+                    
+                    <div class="form-grid">
+                        {% for field in form %}
+                            {% if field.name == 'moniteur' %}
+                            <div class="form-group span-4">
+                                <label class="form-label" for="{{ field.id_for_label }}">
+                                    <i class="fas fa-user-tie"></i> {{ field.label }} {% if field.field.required %}<span class="required-star">*</span>{% endif %}
+                                </label>
+                                {{ field }}
+                                
+                                {% if field.value and form.instance.pk %}
+                                <div class="moniteur-card">
+                                    <div class="moniteur-header">
+                                        <div class="moniteur-avatar">
+                                            {{ form.instance.moniteur.employe.user.first_name|first|upper }}{{ form.instance.moniteur.employe.user.last_name|first|upper }}
+                                        </div>
+                                        <div class="moniteur-info">
+                                            <h6>{{ form.instance.moniteur.employe.user.get_full_name }}</h6>
+                                            <small>
+                                                <i class="fas fa-id-card"></i> N° {{ form.instance.moniteur.numero_agrement }}
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                
+                                {% if field.help_text %}
+                                <div class="help-text">
+                                    <i class="fas fa-info-circle"></i> {{ field.help_text }}
+                                </div>
+                                {% endif %}
+                                {% for error in field.errors %}
+                                <div class="error-feedback">
+                                    <i class="fas fa-exclamation-circle"></i> {{ error }}
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Section Jour de la semaine -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <div class="section-icon">
+                            <i class="fas fa-calendar-day"></i>
+                        </div>
+                        <h6>Jour de la semaine</h6>
+                        <p>Sélectionner le jour</p>
+                    </div>
+                    
+                    <div class="form-grid">
+                        {% for field in form %}
+                            {% if field.name == 'jour_semaine' %}
+                            <div class="form-group span-2">
+                                <label class="form-label" for="{{ field.id_for_label }}">
+                                    <i class="fas fa-calendar-alt"></i> {{ field.label }} {% if field.field.required %}<span class="required-star">*</span>{% endif %}
+                                </label>
+                                {{ field }}
+                                
+                                {% if field.help_text %}
+                                <div class="help-text">{{ field.help_text }}</div>
+                                {% endif %}
+                                {% for error in field.errors %}
+                                <div class="error-feedback">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            
+                            {% if field.name == 'actif' %}
+                            <div class="form-group span-2">
+                                <label class="form-label" for="{{ field.id_for_label }}">
+                                    <i class="fas fa-toggle-on"></i> Statut
+                                </label>
+                                <div class="form-check">
+                                    {{ field }}
+                                    <label class="form-check-label" for="{{ field.id_for_label }}">Disponibilité active</label>
+                                </div>
+                                {% if field.help_text %}
+                                <div class="help-text">{{ field.help_text }}</div>
+                                {% endif %}
+                                {% for error in field.errors %}
+                                <div class="error-feedback">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    
+                    <!-- Affichage du jour en mode modification -->
+                    {% if form.instance.pk and form.instance.jour_semaine %}
+                    <div style="margin-top: 0.75rem;">
+                        <span class="day-badge">
+                            <i class="fas fa-calendar-check"></i>
+                            {{ form.instance.get_jour_semaine_display }}
+                        </span>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Section Plage horaire -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <div class="section-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <h6>Plage horaire</h6>
+                        <p>Heure de début et de fin</p>
+                    </div>
+                    
+                    <div class="form-grid">
+                        {% for field in form %}
+                            {% if field.name == 'heure_debut' %}
+                            <div class="form-group span-2">
+                                <label class="form-label" for="{{ field.id_for_label }}">
+                                    <i class="fas fa-hourglass-start"></i> {{ field.label }} {% if field.field.required %}<span class="required-star">*</span>{% endif %}
+                                </label>
+                                <div class="time-input-group">
+                                    <i class="fas fa-clock"></i>
+                                    {{ field }}
+                                </div>
+                                {% if field.help_text %}
+                                <div class="help-text">{{ field.help_text }}</div>
+                                {% endif %}
+                                {% for error in field.errors %}
+                                <div class="error-feedback">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            
+                            {% if field.name == 'heure_fin' %}
+                            <div class="form-group span-2">
+                                <label class="form-label" for="{{ field.id_for_label }}">
+                                    <i class="fas fa-hourglass-end"></i> {{ field.label }} {% if field.field.required %}<span class="required-star">*</span>{% endif %}
+                                </label>
+                                <div class="time-input-group">
+                                    <i class="fas fa-clock"></i>
+                                    {{ field }}
+                                </div>
+                                {% if field.help_text %}
+                                <div class="help-text">{{ field.help_text }}</div>
+                                {% endif %}
+                                {% for error in field.errors %}
+                                <div class="error-feedback">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    
+                    <!-- Visualisation plage horaire -->
+                    {% if form.instance.pk and form.instance.heure_debut and form.instance.heure_fin %}
+                    <div class="time-range" style="margin-top: 1rem;">
+                        <div class="time-input-group" style="flex: 1;">
+                            <i class="fas fa-hourglass-start"></i>
+                            <span style="font-weight: 600;">{{ form.instance.heure_debut|time:"H:i" }}</span>
+                        </div>
+                        <span class="time-separator">→</span>
+                        <div class="time-input-group" style="flex: 1;">
+                            <i class="fas fa-hourglass-end"></i>
+                            <span style="font-weight: 600;">{{ form.instance.heure_fin|time:"H:i" }}</span>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Section Notes -->
+                {% for field in form %}
+                    {% if field.name == 'notes' %}
+                    <div class="form-section">
+                        <div class="section-title">
+                            <div class="section-icon">
+                                <i class="fas fa-sticky-note"></i>
+                            </div>
+                            <h6>Notes</h6>
+                            <p>Informations complémentaires</p>
+                        </div>
+                        
+                        <div class="form-grid">
+                            <div class="form-group span-4">
+                                <label class="form-label" for="{{ field.id_for_label }}">
+                                    <i class="fas fa-comment"></i> {{ field.label }}
+                                </label>
+                                {{ field }}
+                                {% if field.help_text %}
+                                <div class="help-text">{{ field.help_text }}</div>
+                                {% endif %}
+                                {% for error in field.errors %}
+                                <div class="error-feedback">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                {% endfor %}
+                
+                <!-- Section Récapitulatif (optionnel, pour les champs cachés) -->
+                {% if not form.instance.pk %}
+                <div class="form-section" style="background: var(--info-light);">
+                    <div class="section-title">
+                        <div class="section-icon" style="background: var(--info-light);">
+                            <i class="fas fa-info-circle" style="color: var(--info);"></i>
+                        </div>
+                        <h6>Information</h6>
+                        <p>Les disponibilités sont utilisées pour la planification des séances</p>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Footer compact -->
+            <div class="card-footer-custom">
+                <div class="action-hint">
+                    <span class="hint-item">
+                        <i class="fas fa-shield-alt"></i> Données sécurisées
+                    </span>
+                    <span class="hint-item">
+                        <i class="fas fa-clock"></i> {% now "d/m/Y" %}
+                    </span>
+                </div>
+                
+                <div class="form-actions">
+                    <a href="{% url 'personnel:hub_section' 'disponibilite' %}" class="btn-outline btn-sm">
+                        <i class="fas fa-times"></i> Annuler
+                    </a>
+                    <button type="submit" class="btn-accent btn-sm">
+                        <i class="fas fa-save"></i>
+                        {% if form.instance.pk %}Mettre à jour{% else %}Créer{% endif %}
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('disponibiliteForm');
+    let formChanged = false;
+    
+    // Détection des modifications
+    const formInputs = form.querySelectorAll('input, select, textarea');
+    formInputs.forEach(input => {
+        if (input.type !== 'hidden') {
+            input.addEventListener('change', () => formChanged = true);
+            if (input.type === 'text' || input.tagName === 'TEXTAREA' || input.type === 'time') {
+                input.addEventListener('input', () => formChanged = true);
+            }
+        }
+    });
+    
+    // Confirmation avant annulation
+    const cancelBtn = document.querySelector('a[href*="disponibilite"]');
+    if (cancelBtn) {
+        cancelBtn.addEventListener('click', function(e) {
+            if (formChanged && !confirm('Modifications non enregistrées. Quitter ?')) {
+                e.preventDefault();
+            }
+        });
+    }
+    
+    // Validation des heures
+    const heureDebut = document.getElementById('{{ form.heure_debut.id_for_label }}');
+    const heureFin = document.getElementById('{{ form.heure_fin.id_for_label }}');
+    
+    function validateHours() {
+        if (heureDebut.value && heureFin.value) {
+            if (heureDebut.value >= heureFin.value) {
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'error-feedback';
+                errorDiv.innerHTML = '<i class="fas fa-exclamation-circle"></i> L\'heure de fin doit être postérieure à l\'heure de début';
+                
+                const existingError = heureFin.closest('.form-group').querySelector('.error-feedback');
+                if (!existingError) {
+                    heureFin.closest('.form-group').appendChild(errorDiv);
+                    
+                    setTimeout(() => {
+                        errorDiv.remove();
+                    }, 4000);
+                }
+                
+                heureFin.value = '';
+            }
+        }
+    }
+    
+    if (heureDebut && heureFin) {
+        heureDebut.addEventListener('change', validateHours);
+        heureFin.addEventListener('change', validateHours);
+    }
+    
+    // Formatage des heures (optionnel)
+    function formatTime(input) {
+        if (input.value && input.value.length === 4) {
+            // Format HHMM -> HH:MM
+            const hours = input.value.substring(0, 2);
+            const minutes = input.value.substring(2, 4);
+            if (hours >= 0 && hours <= 23 && minutes >= 0 && minutes <= 59) {
+                input.value = `${hours}:${minutes}`;
+            }
+        }
+    }
+    
+    if (heureDebut) {
+        heureDebut.addEventListener('blur', () => formatTime(heureDebut));
+    }
+    if (heureFin) {
+        heureFin.addEventListener('blur', () => formatTime(heureFin));
+    }
+    
+    // Affichage du moniteur sélectionné
+    const moniteurSelect = document.getElementById('{{ form.moniteur.id_for_label }}');
+    if (moniteurSelect) {
+        moniteurSelect.addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            if (selectedOption.value) {
+                console.log('Moniteur sélectionné:', selectedOption.text);
+            }
+        });
+    }
+});
+</script>
+{% endblock %}
