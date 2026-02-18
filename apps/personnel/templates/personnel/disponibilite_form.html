@@ -691,7 +691,7 @@ input[type="time"] {
         <div>
             <nav class="breadcrumb-custom">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
                     <li class="breadcrumb-item"><a href="{% url 'personnel:hub_section' 'disponibilite' %}">Disponibilités</a></li>
                     <li class="breadcrumb-item active">
                         {% if form.instance.pk %}Modifier{% else %}Nouvelle disponibilité{% endif %}

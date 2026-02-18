@@ -1,0 +1,440 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    {% if form.instance.pk %}
+        Modifier séance #{{ form.instance.id }} - {{ form.instance.apprenant }} - KALANSSO
+    {% else %}
+        Nouvelle séance - KALANSSO
+    {% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<style>
+:root {
+    --primary: #0f172a;
+    --primary-soft: #f1f5f9;
+    --primary-light: #1e293b;
+    --accent: #3b82f6;
+    --accent-light: #eff6ff;
+    --success: #0b6e4f;
+    --success-light: #e7f3ef;
+    --warning: #b45309;
+    --warning-light: #fffbeb;
+    --danger: #b91c1c;
+    --danger-light: #fef2f2;
+    --info: #0891b2;
+    --info-light: #e0f2fe;
+    --text-dark: #0f172a;
+    --text-medium: #334155;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+    --border-light: #f1f5f9;
+    --radius: 16px;
+    --radius-sm: 12px;
+    --shadow: 0 4px 12px rgba(0,0,0,0.08);
+    --shadow-lg: 0 12px 30px rgba(0,0,0,0.06);
+    --transition: 0.2s ease;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: #f8fafc;
+    color: var(--text-dark);
+    font-size: 0.95rem;
+}
+
+/* Wizard Steps Indicator */
+.wizard-steps {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 2.5rem;
+    position: relative;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.wizard-steps::before {
+    content: "";
+    position: absolute;
+    top: 20px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--border);
+    z-index: 1;
+}
+
+.step-item {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 1;
+}
+
+.step-icon {
+    width: 42px;
+    height: 42px;
+    background: #fff;
+    border: 2px solid var(--border);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: var(--text-muted);
+    transition: var(--transition);
+}
+
+.step-item.active .step-icon {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+    box-shadow: 0 0 0 4px var(--accent-light);
+}
+
+.step-item.completed .step-icon {
+    background: var(--success);
+    border-color: var(--success);
+    color: #fff;
+}
+
+.step-label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-muted);
+}
+
+.step-item.active .step-label {
+    color: var(--accent);
+}
+
+/* Card */
+.form-container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.form-card {
+    background: #fff;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+}
+
+.card-header-custom {
+    background: #fff;
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+}
+
+.header-icon {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, var(--primary), #1e2a3a);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 1.3rem;
+}
+
+.header-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+.card-body-custom {
+    padding: 2.5rem;
+}
+
+/* Grille */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.form-group.full-width {
+    grid-column: span 2;
+}
+
+/* Label (Taille augmentée) */
+.form-label {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Inputs (Taille augmentée) */
+.form-control, .form-select {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.85rem 1.2rem;
+    font-size: 1.05rem;
+    transition: var(--transition);
+    background: #fcfcfc;
+    height: 54px;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--accent);
+    background: #fff;
+    box-shadow: 0 0 0 4px var(--accent-light);
+}
+
+textarea.form-control {
+    height: auto;
+    min-height: 120px;
+}
+
+/* Wizard Navigation */
+.wizard-nav {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border-light);
+}
+
+.btn-nav {
+    padding: 0.85rem 2.2rem;
+    border-radius: 30px;
+    font-weight: 700;
+    font-size: 1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    border: none;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-prev { background: var(--primary-soft); color: var(--text-medium); }
+.btn-prev:hover { background: var(--border); }
+.btn-next { background: var(--accent); color: #fff; }
+.btn-next:hover { background: #2563eb; transform: translateX(3px); }
+.btn-save { background: var(--success); color: #fff; }
+.btn-save:hover { background: #085a41; }
+
+.error-feedback {
+    color: var(--danger);
+    font-size: 0.9rem;
+    font-weight: 600;
+    background: var(--danger-light);
+    padding: 0.6rem 1rem;
+    border-radius: 8px;
+    margin-top: 0.5rem;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Breadcrumb -->
+    <div class="breadcrumb-custom mb-4">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'planning:planning_hub' %}">Planning</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'planning:planning_hub_section' section='seances' %}">Séances</a></li>
+                <li class="breadcrumb-item active">Formulaire</li>
+            </ol>
+        </nav>
+    </div>
+
+    <!-- Wizard Steps -->
+    <div class="wizard-steps">
+        <div class="step-item active" id="step1-indicator">
+            <div class="step-icon">1</div>
+            <span class="step-label">Informations & Timing</span>
+        </div>
+        <div class="step-item" id="step2-indicator">
+            <div class="step-icon">2</div>
+            <span class="step-label">Attributions & Statut</span>
+        </div>
+    </div>
+
+    <div class="form-container">
+        <div class="form-card">
+            <div class="card-header-custom">
+                <div class="header-icon">
+                    <i class="fas fa-calendar-alt"></i>
+                </div>
+                <div>
+                    <h2 class="header-title">
+                        {% if form.instance.pk %}Modifier la séance{% else %}Programmer une séance{% endif %}
+                    </h2>
+                </div>
+            </div>
+
+            <form method="post" id="seanceForm">
+                {% csrf_token %}
+                
+                <div class="card-body-custom">
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger mb-4 shadow-sm border-0 rounded-3">
+                            {% for error in form.non_field_errors %}
+                                <div class="d-flex align-items-center gap-2">
+                                    <i class="fas fa-exclamation-triangle"></i> {{ error }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <!-- PARTIE 1 : Timing & Type -->
+                    <div id="part1">
+                        <div class="form-grid">
+                            <div class="form-group full-width">
+                                <label class="form-label"><i class="fas fa-tag"></i> Type de séance <span class="required-star">*</span></label>
+                                {{ form.type_seance }}
+                                {% if form.type_seance.errors %}<div class="error-feedback">{{ form.type_seance.errors.0 }}</div>{% endif %}
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label"><i class="fas fa-calendar-day"></i> Date <span class="required-star">*</span></label>
+                                {{ form.date }}
+                                {% if form.date.errors %}<div class="error-feedback">{{ form.date.errors.0 }}</div>{% endif %}
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label"><i class="fas fa-clock"></i> Heure de début <span class="required-star">*</span></label>
+                                {{ form.heure_debut }}
+                                {% if form.heure_debut.errors %}<div class="error-feedback">{{ form.heure_debut.errors.0 }}</div>{% endif %}
+                            </div>
+
+                            <div class="form-group full-width">
+                                <label class="form-label"><i class="fas fa-hourglass-half"></i> Durée (en minutes) <span class="required-star">*</span></label>
+                                {{ form.duree_minutes }}
+                                {% if form.duree_minutes.errors %}<div class="error-feedback">{{ form.duree_minutes.errors.0 }}</div>{% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PARTIE 2 : Attributions & Notes -->
+                    <div id="part2" style="display: none;">
+                        <div class="form-grid">
+                            <div class="form-group full-width">
+                                <label class="form-label"><i class="fas fa-user-graduate"></i> Apprenant <span class="required-star">*</span></label>
+                                {{ form.apprenant }}
+                                {% if form.apprenant.errors %}<div class="error-feedback">{{ form.apprenant.errors.0 }}</div>{% endif %}
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label"><i class="fas fa-chalkboard-teacher"></i> Moniteur <span class="required-star">*</span></label>
+                                {{ form.moniteur }}
+                                {% if form.moniteur.errors %}<div class="error-feedback">{{ form.moniteur.errors.0 }}</div>{% endif %}
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label"><i class="fas fa-car"></i> Véhicule</label>
+                                {{ form.vehicule }}
+                                {% if form.vehicule.errors %}<div class="error-feedback">{{ form.vehicule.errors.0 }}</div>{% endif %}
+                            </div>
+
+                            <div class="form-group full-width">
+                                <label class="form-label"><i class="fas fa-info-circle"></i> Statut de la séance</label>
+                                {{ form.statut }}
+                                {% if form.statut.errors %}<div class="error-feedback">{{ form.statut.errors.0 }}</div>{% endif %}
+                            </div>
+
+                            <div class="form-group full-width">
+                                <label class="form-label"><i class="fas fa-comment-dots"></i> Compte-rendu / Notes</label>
+                                {{ form.compte_rendu }}
+                                {% if form.compte_rendu.errors %}<div class="error-feedback">{{ form.compte_rendu.errors.0 }}</div>{% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Navigation -->
+                    <div class="wizard-nav">
+                        <button type="button" class="btn-nav btn-prev" id="btnPrev" style="visibility: hidden;">
+                            <i class="fas fa-arrow-left"></i> Précédent
+                        </button>
+                        
+                        <div class="d-flex gap-3">
+                            <a href="{% url 'planning:planning_hub_section' section='seances' %}" class="btn-nav btn-prev text-decoration-none">Annuler</a>
+                            
+                            <button type="button" class="btn-nav btn-next" id="btnNext">
+                                Suivant <i class="fas fa-arrow-right"></i>
+                            </button>
+                            
+                            <button type="submit" class="btn-nav btn-save" id="btnSave" style="display: none;">
+                                <i class="fas fa-check"></i> Enregistrer la séance
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const part1 = document.getElementById('part1');
+    const part2 = document.getElementById('part2');
+    const btnPrev = document.getElementById('btnPrev');
+    const btnNext = document.getElementById('btnNext');
+    const btnSave = document.getElementById('btnSave');
+    const step1 = document.getElementById('step1-indicator');
+    const step2 = document.getElementById('step2-indicator');
+
+    // Ajout de classes aux champs Django
+    document.querySelectorAll('input, select, textarea').forEach(el => {
+        if (!el.classList.contains('form-control') && !el.classList.contains('form-select')) {
+            if (el.tagName === 'SELECT') el.classList.add('form-select');
+            else el.classList.add('form-control');
+        }
+    });
+
+    // Gestion du wizard
+    btnNext.addEventListener('click', () => {
+        part1.style.display = 'none';
+        part2.style.display = 'block';
+        
+        btnNext.style.display = 'none';
+        btnSave.style.display = 'inline-flex';
+        btnPrev.style.visibility = 'visible';
+        
+        step1.classList.remove('active');
+        step1.classList.add('completed');
+        step2.classList.add('active');
+    });
+
+    btnPrev.addEventListener('click', () => {
+        part1.style.display = 'block';
+        part2.style.display = 'none';
+        
+        btnNext.style.display = 'inline-flex';
+        btnSave.style.display = 'none';
+        btnPrev.style.visibility = 'hidden';
+        
+        step2.classList.remove('active');
+        step1.classList.remove('completed');
+        step1.classList.add('active');
+    });
+
+    // Si on a des erreurs dans la partie 2 lors de la soumission
+    {% if form.apprenant.errors or form.moniteur.errors or form.statut.errors %}
+        btnNext.click();
+    {% endif %}
+});
+</script>
+{% endblock %}

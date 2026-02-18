@@ -1,0 +1,936 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Planning · Hub - KALANSSO{% endblock %}
+
+{% block extra_css %}
+<style>
+:root {
+    --primary: #0f172a;
+    --primary-soft: #f1f5f9;
+    --primary-light: #1e293b;
+    --accent: #3b82f6;
+    --accent-light: #eff6ff;
+    --success: #0b6e4f;
+    --success-light: #e7f3ef;
+    --warning: #b45309;
+    --warning-light: #fffbeb;
+    --danger: #b91c1c;
+    --danger-light: #fef2f2;
+    --info: #0891b2;
+    --info-light: #e0f2fe;
+    --text-dark: #0f172a;
+    --text-medium: #334155;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+    --border-light: #f1f5f9;
+    --radius: 16px;
+    --radius-sm: 12px;
+    --radius-lg: 20px;
+    --shadow: 0 4px 12px rgba(0,0,0,0.08);
+    --shadow-lg: 0 12px 30px rgba(0,0,0,0.06);
+    --transition: 0.2s ease;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: #f8fafc;
+    color: var(--text-dark);
+}
+
+/* ------------------------------------------------
+   BREADCRUMB
+------------------------------------------------ */
+.breadcrumb-custom .breadcrumb {
+    background: transparent;
+    padding: 0;
+    margin-bottom: 0.5rem;
+}
+.breadcrumb-custom .breadcrumb-item + .breadcrumb-item::before {
+    content: "·";
+    color: var(--text-muted);
+}
+.breadcrumb-custom .breadcrumb-item a {
+    text-decoration: none;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    transition: var(--transition);
+}
+.breadcrumb-custom .breadcrumb-item a:hover {
+    color: var(--primary);
+}
+.breadcrumb-custom .breadcrumb-item.active {
+    color: var(--text-medium);
+    font-size: 0.85rem;
+}
+
+/* ------------------------------------------------
+   PAGE HEADER
+------------------------------------------------ */
+.page-header {
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.page-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 0.3rem;
+    letter-spacing: -0.02em;
+}
+.page-subtitle {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+/* ------------------------------------------------
+   BOUTONS
+------------------------------------------------ */
+.btn-outline, .btn-soft, .btn-accent {
+    border-radius: 30px;
+    padding: 0.5rem 1.2rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: 0.2s;
+    text-decoration: none !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: none;
+    cursor: pointer;
+}
+.btn-outline {
+    background: #fff;
+    border: 1px solid var(--border);
+    color: var(--text-medium);
+}
+.btn-outline:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    box-shadow: var(--shadow);
+    transform: translateY(-1px);
+}
+.btn-soft {
+    background: var(--primary-soft);
+    color: var(--text-medium);
+    border: 1px solid transparent;
+}
+.btn-soft:hover {
+    background: #fff;
+    border: 1px solid var(--border);
+    transform: translateY(-1px);
+}
+.btn-accent {
+    background: var(--accent);
+    color: #fff !important;
+    border-radius: 30px;
+    padding: 0.5rem 1.5rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border: none;
+}
+.btn-accent:hover {
+    background: #2563eb;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    transform: translateY(-1px);
+}
+.btn-sm {
+    padding: 0.4rem 1rem;
+    font-size: 0.8rem;
+}
+.btn-icon {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 30px;
+}
+
+/* ------------------------------------------------
+   STATISTIQUES CARDS
+------------------------------------------------ */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: #fff;
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    transition: var(--transition);
+}
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+}
+.stat-card.primary::before { background: var(--accent); }
+.stat-card.success::before { background: var(--success); }
+.stat-card.warning::before { background: var(--warning); }
+.stat-card.info::before { background: var(--info); }
+
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+}
+.stat-card.primary .stat-icon { background: var(--accent-light); color: var(--accent); }
+.stat-card.success .stat-icon { background: var(--success-light); color: var(--success); }
+.stat-card.warning .stat-icon { background: var(--warning-light); color: var(--warning); }
+.stat-card.info .stat-icon { background: var(--info-light); color: var(--info); }
+
+.stat-content h6 {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 0.25rem;
+}
+.stat-content h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 0;
+}
+.stat-content small {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+}
+
+/* ------------------------------------------------
+   SECTION CARDS
+------------------------------------------------ */
+.section-card {
+    background: #fff;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    transition: var(--transition);
+    height: 100%;
+}
+.section-card:hover {
+    box-shadow: var(--shadow-lg);
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.section-title {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+.section-title i {
+    color: var(--accent);
+}
+
+.section-link {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: var(--transition);
+}
+.section-link:hover {
+    color: var(--accent);
+}
+.section-link i {
+    font-size: 0.6rem;
+    margin-left: 0.25rem;
+}
+
+/* ------------------------------------------------
+   PROCHAINES SÉANCES
+------------------------------------------------ */
+.upcoming-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.upcoming-item {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    border-radius: var(--radius-sm);
+    background: var(--primary-soft);
+    transition: var(--transition);
+    border: 1px solid transparent;
+}
+.upcoming-item:hover {
+    background: #fff;
+    border-color: var(--border);
+    transform: translateX(4px);
+}
+
+.time-box {
+    min-width: 100px;
+    text-align: center;
+    padding-right: 1rem;
+    border-right: 2px solid var(--border);
+    margin-right: 1rem;
+}
+.time-val {
+    font-weight: 700;
+    color: var(--text-dark);
+    font-size: 1rem;
+}
+.date-val {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+}
+
+.seance-info {
+    flex: 1;
+}
+.seance-title {
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 0.25rem;
+}
+.seance-meta {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+.seance-meta i {
+    color: var(--accent);
+    width: 12px;
+}
+.seance-meta span {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.seance-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+.btn-seance {
+    padding: 0.35rem 1rem;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: var(--transition);
+    background: #fff;
+    color: var(--text-medium);
+    border: 1px solid var(--border);
+}
+.btn-seance:hover {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
+/* ------------------------------------------------
+   NAVIGATION & ACTIONS
+------------------------------------------------ */
+.nav-card {
+    background: #fff;
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    height: 100%;
+    transition: var(--transition);
+}
+.nav-card:hover {
+    box-shadow: var(--shadow-lg);
+}
+
+.card-header-custom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.card-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.card-title i {
+    color: var(--accent);
+}
+
+.nav-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.25rem;
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    transition: var(--transition);
+    border: 1px solid var(--border);
+}
+.nav-item:hover {
+    border-color: var(--accent);
+    background: var(--accent-light);
+    transform: translateX(4px);
+}
+.nav-item i:first-child {
+    width: 20px;
+    color: var(--accent);
+    font-size: 1rem;
+}
+.nav-item span {
+    flex: 1;
+    margin-left: 0.75rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-medium);
+}
+.nav-item .fa-chevron-right {
+    color: var(--text-muted);
+    font-size: 0.7rem;
+}
+.nav-item:hover .fa-chevron-right {
+    color: var(--accent);
+}
+
+.nav-item.success {
+    border-color: var(--success);
+    background: var(--success-light);
+}
+.nav-item.success i:first-child {
+    color: var(--success);
+}
+
+.quick-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.quick-action {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    transition: var(--transition);
+    background: var(--primary-soft);
+    color: var(--text-medium);
+}
+.quick-action:hover {
+    background: var(--accent-light);
+    color: var(--accent);
+    transform: translateX(4px);
+}
+.quick-action i {
+    width: 20px;
+    color: var(--accent);
+}
+
+.btn-quick-action {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    background: var(--primary-soft);
+    border-radius: var(--radius-sm);
+    text-decoration: none !important;
+    transition: var(--transition);
+    border: 1px solid transparent;
+    text-align: center;
+}
+.btn-quick-action:hover {
+    background: #fff;
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+}
+.btn-quick-action i {
+    font-size: 1.25rem;
+}
+.btn-quick-action span {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-medium);
+}
+
+/* ------------------------------------------------
+   RÉPARTITION PAR TYPE
+------------------------------------------------ */
+.repartition-item {
+    margin-bottom: 1rem;
+}
+.repartition-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+.repartition-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-medium);
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+.repartition-label i {
+    color: var(--accent);
+}
+.repartition-value {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+.progress-custom {
+    height: 6px;
+    background: var(--border);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+}
+.progress-bar-custom {
+    height: 100%;
+    border-radius: var(--radius-sm);
+    transition: width 0.3s ease;
+}
+.bg-code { background: var(--info); }
+.bg-conduite { background: var(--success); }
+.bg-examen { background: var(--warning); }
+.bg-rattrapage { background: var(--danger); }
+
+/* ------------------------------------------------
+   STATUTS DU JOUR
+------------------------------------------------ */
+.status-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.status-card {
+    background: var(--primary-soft);
+    border-radius: var(--radius-sm);
+    padding: 1rem;
+    text-align: center;
+    transition: var(--transition);
+}
+.status-card:hover {
+    transform: translateY(-2px);
+}
+.status-card h4 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+}
+.status-card small {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+}
+.status-card.realise h4 { color: var(--success); }
+.status-card.attente h4 { color: var(--warning); }
+.status-card.absent h4 { color: var(--danger); }
+.status-card.annule h4 { color: var(--text-muted); }
+
+/* ------------------------------------------------
+   MINI CALENDRIER
+------------------------------------------------ */
+.mini-calendar {
+    background: var(--primary-soft);
+    border-radius: var(--radius-sm);
+    padding: 1rem;
+    text-align: center;
+}
+.calendar-day {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 0.25rem;
+}
+.calendar-month {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+}
+.calendar-weekday {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+/* ------------------------------------------------
+   RESPONSIVE
+------------------------------------------------ */
+@media (max-width: 1100px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 992px) {
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .upcoming-item {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .time-box {
+        border-right: none;
+        border-bottom: 2px solid var(--border);
+        padding-right: 0;
+        padding-bottom: 0.5rem;
+        margin-right: 0;
+        margin-bottom: 0.5rem;
+        width: 100%;
+    }
+    
+    .seance-meta {
+        justify-content: center;
+    }
+    
+    .seance-actions {
+        margin-top: 0.5rem;
+    }
+    
+    .status-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ------------------------------------------------
+   ANIMATIONS
+------------------------------------------------ */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.stat-card,
+.section-card {
+    animation: fadeIn 0.3s ease-out;
+}
+
+.stat-card:nth-child(1) { animation-delay: 0.05s; }
+.stat-card:nth-child(2) { animation-delay: 0.1s; }
+.stat-card:nth-child(3) { animation-delay: 0.15s; }
+.stat-card:nth-child(4) { animation-delay: 0.2s; }
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+
+.upcoming-item:first-child {
+    animation: pulse 2s infinite;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+    <!-- Header avec breadcrumb -->
+    <div class="page-header">
+        <div>
+            <nav class="breadcrumb-custom" aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Planning</li>
+                </ol>
+            </nav>
+            <h1 class="page-title">Hub Planning</h1>
+            <p class="page-subtitle">Vue d'ensemble de l'activité pédagogique</p>
+        </div>
+        <div class="d-flex gap-3">
+            <a href="{% url 'planning:planning_hub_section' section='seances' %}" class="btn-soft">
+                <i class="fas fa-list"></i> Liste complète
+            </a>
+            <a href="{% url 'planning:seance_create' %}" class="btn-accent">
+                <i class="fas fa-plus"></i> Nouvelle séance
+            </a>
+        </div>
+    </div>
+
+    <!-- Statistiques -->
+    <div class="stats-grid">
+        <div class="stat-card primary">
+            <div class="stat-icon">
+                <i class="fas fa-calendar-day"></i>
+            </div>
+            <div class="stat-content">
+                <h6>Séances aujourd'hui</h6>
+                <h2>{{ total_today|default:"0" }}</h2>
+                <small>{% now "l d F" %}</small>
+            </div>
+        </div>
+        <div class="stat-card warning">
+            <div class="stat-icon">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-content">
+                <h6>En attente</h6>
+                <h2>{{ total_prevu|default:"0" }}</h2>
+                <small>À venir</small>
+            </div>
+        </div>
+        <div class="stat-card success">
+            <div class="stat-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stat-content">
+                <h6>Réalisées</h6>
+                <h2>{{ total_realise|default:"0" }}</h2>
+                <small>Ce mois</small>
+            </div>
+        </div>
+        <div class="stat-card info">
+            <div class="stat-icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="stat-content">
+                <h6>Moniteurs actifs</h6>
+                <h2>{{ moniteurs_actifs|default:"0" }}</h2>
+                <small>Aujourd'hui</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Prochaines séances -->
+        <div class="col-lg-8">
+            <div class="section-card">
+                <div class="section-header">
+                    <h3 class="section-title">
+                        <i class="fas fa-bolt text-warning"></i>
+                        Prochaines séances
+                    </h3>
+                    <a href="{% url 'planning:planning_hub_section' section='seances' %}" class="section-link">
+                        Voir tout <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                
+                <div class="upcoming-list">
+                    {% for s in upcoming_seances %}
+                    <div class="upcoming-item">
+                        <div class="time-box">
+                            <div class="time-val">{{ s.heure_debut|time:"H:i" }}</div>
+                            <div class="date-val">{{ s.date|date:"d M" }}</div>
+                        </div>
+                        <div class="seance-info">
+                            <div class="seance-title">{{ s.apprenant.prenom }} {{ s.apprenant.nom }}</div>
+                            <div class="seance-meta">
+                                <span>
+                                    <i class="fas fa-chalkboard-teacher"></i> {{ s.moniteur.prenom }} {{ s.moniteur.nom }}
+                                </span>
+                                <span>
+                                    <i class="fas fa-tag"></i> {{ s.get_type_seance_display }}
+                                </span>
+                                {% if s.vehicule %}
+                                <span>
+                                    <i class="fas fa-car"></i> {{ s.vehicule.immatriculation }}
+                                </span>
+                                {% endif %}
+                                <span>
+                                    <i class="fas fa-hourglass-half"></i> {{ s.duree_minutes }} min
+                                </span>
+                            </div>
+                        </div>
+                        <div class="seance-actions">
+                            <a href="{% url 'planning:seance_update' s.id %}" class="btn-seance">
+                                <i class="fas fa-eye"></i> Détails
+                            </a>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="text-center py-4" style="color: var(--text-muted);">
+                        <i class="fas fa-calendar-times mb-2" style="font-size: 1.5rem;"></i>
+                        <p class="mb-0">Aucune séance prévue prochainement.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Colonne latérale -->
+        <div class="col-lg-4">
+            <div class="nav-card">
+                <!-- Mini calendrier & Aujourd'hui -->
+                <div class="card-header-custom">
+                    <h5 class="card-title">
+                        <i class="fas fa-calendar-check"></i>
+                        Aujourd'hui
+                    </h5>
+                </div>
+                
+                <div class="mini-calendar">
+                    <div class="calendar-day">{% now "d" %}</div>
+                    <div class="calendar-month">{% now "F Y" %}</div>
+                    <div class="calendar-weekday">{% now "l" %}</div>
+                </div>
+                
+                <div style="margin-top: 1.5rem; margin-bottom: 2rem;">
+                    <div class="status-grid">
+                        <div class="status-card realise">
+                            <h4>{{ realised_today|default:"0" }}</h4>
+                            <small>Réalisées</small>
+                        </div>
+                        <div class="status-card attente">
+                            <h4>{{ waiting_today|default:"0" }}</h4>
+                            <small>En attente</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation/Actions -->
+                <div class="card-header-custom" style="margin-bottom: 1rem;">
+                    <h5 class="card-title">
+                        <i class="fas fa-compass"></i>
+                        Navigation
+                    </h5>
+                </div>
+
+                <div class="nav-grid">
+                    <a href="{% url 'planning:seance_create' %}" class="nav-item success">
+                        <i class="fas fa-plus-circle"></i>
+                        <span>Nouvelle séance</span>
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                    <a href="{% url 'planning:planning_hub_section' section='seances' %}" class="nav-item">
+                        <i class="fas fa-list"></i>
+                        <span>Liste des séances</span>
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                    <a href="{% url 'personnel:hub_section' 'moniteur' %}" class="nav-item">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                        <span>Planning Moniteur</span>
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </div>
+
+                <!-- Répartition rapide -->
+                <div style="margin-top: 2rem;">
+                    <h6 style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px;">
+                        Répartition par type
+                    </h6>
+                    
+                    {% for type in stats_types %}
+                    <div class="repartition-item" style="margin-bottom: 0.75rem;">
+                        <div class="repartition-header" style="margin-bottom: 0.25rem;">
+                            <span class="repartition-label" style="font-size: 0.75rem;">
+                                {% if type.type_seance == 'CODE' %}
+                                    <i class="fas fa-book" style="color: var(--info); width: 15px;"></i>
+                                {% elif type.type_seance == 'CONDUITE' %}
+                                    <i class="fas fa-car" style="color: var(--success); width: 15px;"></i>
+                                {% elif type.type_seance == 'EXAMEN' %}
+                                    <i class="fas fa-graduation-cap" style="color: var(--warning); width: 15px;"></i>
+                                {% elif type.type_seance == 'RATTRAPAGE' %}
+                                    <i class="fas fa-redo" style="color: var(--danger); width: 15px;"></i>
+                                {% endif %}
+                                {{ type.type_seance }}
+                            </span>
+                            <span class="repartition-value" style="font-size: 0.75rem; font-weight: 600;">{{ type.total }}</span>
+                        </div>
+                        <div class="progress-custom" style="height: 4px;">
+                            <div class="progress-bar-custom 
+                                {% if type.type_seance == 'CODE' %}bg-code
+                                {% elif type.type_seance == 'CONDUITE' %}bg-conduite
+                                {% elif type.type_seance == 'EXAMEN' %}bg-examen
+                                {% elif type.type_seance == 'RATTRAPAGE' %}bg-danger{% endif %}" 
+                                style="width: {% widthratio type.total total_global 100 %}%">
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p class="text-muted small text-center py-2">Aucune donnée disponible.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Animation pour la première séance
+    const firstSeance = document.querySelector('.upcoming-item:first-child');
+    if (firstSeance) {
+        firstSeance.classList.add('highlight');
+    }
+    
+    // Tooltips si besoin
+    const tooltips = document.querySelectorAll('[data-toggle="tooltip"]');
+    tooltips.forEach(tooltip => {
+        new bootstrap.Tooltip(tooltip);
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,1099 @@
+<!-- dashboard.html -->
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Dashboard - KALANSSO{% endblock %}
+
+{% block extra_css %}
+<style>
+:root {
+    --primary: #0f172a;
+    --primary-soft: #f1f5f9;
+    --primary-light: #1e293b;
+    --accent: #3b82f6;
+    --accent-light: #eff6ff;
+    --success: #0b6e4f;
+    --success-light: #e7f3ef;
+    --warning: #b45309;
+    --warning-light: #fffbeb;
+    --danger: #b91c1c;
+    --danger-light: #fef2f2;
+    --info: #0891b2;
+    --info-light: #e0f2fe;
+    --text-dark: #0f172a;
+    --text-medium: #334155;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+    --border-light: #f1f5f9;
+    --radius: 16px;
+    --radius-sm: 12px;
+    --radius-lg: 20px;
+    --shadow: 0 4px 12px rgba(0,0,0,0.08);
+    --shadow-lg: 0 12px 30px rgba(0,0,0,0.06);
+    --transition: 0.2s ease;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: #f8fafc;
+    color: var(--text-dark);
+}
+
+/* ------------------------------------------------
+   BREADCRUMB
+------------------------------------------------ */
+.breadcrumb-custom .breadcrumb {
+    background: transparent;
+    padding: 0;
+    margin-bottom: 0.5rem;
+}
+.breadcrumb-custom .breadcrumb-item + .breadcrumb-item::before {
+    content: "·";
+    color: var(--text-muted);
+}
+.breadcrumb-custom .breadcrumb-item a {
+    text-decoration: none;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    transition: var(--transition);
+}
+.breadcrumb-custom .breadcrumb-item a:hover {
+    color: var(--primary);
+}
+.breadcrumb-custom .breadcrumb-item.active {
+    color: var(--text-medium);
+    font-size: 0.85rem;
+}
+
+/* ------------------------------------------------
+   PAGE HEADER
+------------------------------------------------ */
+.page-header {
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.page-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 0.3rem;
+    letter-spacing: -0.02em;
+}
+.page-subtitle {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+/* ------------------------------------------------
+   BOUTONS
+------------------------------------------------ */
+.btn-outline, .btn-soft, .btn-accent {
+    border-radius: 30px;
+    padding: 0.5rem 1.2rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: 0.2s;
+    text-decoration: none !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: none;
+    cursor: pointer;
+}
+.btn-outline {
+    background: #fff;
+    border: 1px solid var(--border);
+    color: var(--text-medium);
+}
+.btn-outline:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    box-shadow: var(--shadow);
+    transform: translateY(-1px);
+}
+.btn-soft {
+    background: var(--primary-soft);
+    color: var(--text-medium);
+    border: 1px solid transparent;
+}
+.btn-soft:hover {
+    background: #fff;
+    border: 1px solid var(--border);
+    transform: translateY(-1px);
+}
+.btn-accent {
+    background: var(--accent);
+    color: #fff !important;
+    border-radius: 30px;
+    padding: 0.5rem 1.5rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border: none;
+}
+.btn-accent:hover {
+    background: #25eb4d;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    transform: translateY(-1px);
+}
+.btn-sm {
+    padding: 0.4rem 1rem;
+    font-size: 0.8rem;
+}
+.btn-icon {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 30px;
+}
+
+/* quick actions container */
+.quick-actions a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* ------------------------------------------------
+   STATISTIQUES CARDS
+------------------------------------------------ */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: #fff;
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    transition: var(--transition);
+}
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+}
+.stat-card.primary::before { background: var(--accent); }
+.stat-card.success::before { background: var(--success); }
+.stat-card.warning::before { background: var(--warning); }
+.stat-card.info::before { background: var(--info); }
+
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+}
+.stat-card.primary .stat-icon { background: var(--accent-light); color: var(--accent); }
+.stat-card.success .stat-icon { background: var(--success-light); color: var(--success); }
+.stat-card.warning .stat-icon { background: var(--warning-light); color: var(--warning); }
+.stat-card.info .stat-icon { background: var(--info-light); color: var(--info); }
+
+.stat-trend {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.25rem 0.75rem;
+    border-radius: 30px;
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+}
+.trend-up { background: var(--success-light); color: var(--success); }
+.trend-down { background: var(--danger-light); color: var(--danger); }
+
+.stat-content h6 {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 0.25rem;
+}
+.stat-content h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 0;
+}
+.stat-content small {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+}
+.stat-detail {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    margin-top: 0.5rem;
+}
+
+/* ------------------------------------------------
+   SECTION CARDS
+------------------------------------------------ */
+.table-card {
+    background: #fff;
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+    /* remove fixed height to allow cards to size naturally */
+    /* height: 100%; */
+}
+.table-card:hover {
+    box-shadow: var(--shadow-lg);
+}
+
+.card-header-custom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.card-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.card-title i {
+    color: var(--accent);
+}
+
+/* ------------------------------------------------
+   SÉANCES DU JOUR
+------------------------------------------------ */
+.seance-item {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    border-radius: var(--radius-sm);
+    background: var(--primary-soft);
+    margin-bottom: 0.75rem;
+    transition: var(--transition);
+    border: 1px solid transparent;
+}
+.seance-item:hover {
+    background: #fff;
+    border-color: var(--border);
+    transform: translateX(4px);
+}
+
+.seance-time {
+    min-width: 100px;
+    text-align: center;
+    padding-right: 1rem;
+    border-right: 2px solid var(--border);
+    margin-right: 1rem;
+}
+.seance-time .hour {
+    font-weight: 700;
+    color: var(--accent);
+    font-size: 1rem;
+}
+.seance-time .duration {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+}
+
+.seance-item {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    border-radius: var(--radius-sm);
+    background: var(--primary-soft);
+    margin-bottom: 0.75rem;
+    transition: var(--transition);
+    border: 1px solid transparent;
+    overflow: hidden;
+}
+
+.seance-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.seance-info h6,
+.seance-info .meta span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.seance-info .meta i {
+    color: var(--accent);
+    width: 14px;
+}
+
+.seance-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 30px;
+    font-size: 0.65rem;
+    font-weight: 600;
+}
+.seance-badge.code { background: var(--info-light); color: var(--info); }
+.seance-badge.conduite { background: var(--success-light); color: var(--success); }
+.seance-badge.examen { background: var(--warning-light); color: var(--warning); }
+
+/* ------------------------------------------------
+   GRAPHIQUES
+------------------------------------------------ */
+.chart-container {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: var(--primary-soft);
+    border-radius: var(--radius-sm);
+}
+
+.chart-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+.chart-bar .day {
+    min-width: 40px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-medium);
+}
+.chart-bar .bar-container {
+    flex: 1;
+    height: 24px;
+    background: #fff;
+    border-radius: 6px;
+    overflow: hidden;
+}
+.chart-bar .bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), #60a5fa);
+    border-radius: 6px;
+    transition: width 0.3s ease;
+}
+.chart-bar .value {
+    min-width: 30px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-medium);
+}
+
+/* ------------------------------------------------
+   ALERTES
+------------------------------------------------ */
+.alert-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: var(--radius-sm);
+    margin-bottom: 0.75rem;
+    border-left: 3px solid;
+    transition: var(--transition);
+    cursor: pointer;
+    text-decoration: none;
+}
+.alert-item:hover {
+    transform: translateX(4px);
+}
+.alert-item.warning { background: var(--warning-light); border-color: var(--warning); }
+.alert-item.danger { background: var(--danger-light); border-color: var(--danger); }
+.alert-item.info { background: var(--info-light); border-color: var(--info); }
+.alert-item.success { background: var(--success-light); border-color: var(--success); }
+
+.alert-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.5);
+}
+.alert-item.warning .alert-icon { color: var(--warning); }
+.alert-item.danger .alert-icon { color: var(--danger); }
+.alert-item.info .alert-icon { color: var(--info); }
+.alert-item.success .alert-icon { color: var(--success); }
+
+.alert-content {
+    flex: 1;
+}
+.alert-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 0.15rem;
+    color: var(--text-dark);
+}
+.alert-message {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+}
+
+/* ------------------------------------------------
+   BADGES
+------------------------------------------------ */
+.badge-custom {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 30px;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+.badge-primary {
+    background: var(--accent-light);
+    color: var(--accent);
+}
+.badge-success {
+    background: var(--success-light);
+    color: var(--success);
+}
+.badge-warning {
+    background: var(--warning-light);
+    color: var(--warning);
+}
+.badge-info {
+    background: var(--info-light);
+    color: var(--info);
+}
+.badge-danger {
+    background: var(--danger-light);
+    color: var(--danger);
+}
+
+/* ------------------------------------------------
+   TABLES
+------------------------------------------------ */
+.table-responsive {
+    border-radius: var(--radius-sm);
+    overflow-x: auto;
+}
+
+.table-custom {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.table-custom th {
+    background: var(--primary-soft);
+    color: var(--text-medium);
+    font-weight: 600;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 0.75rem 1rem;
+}
+
+.table-custom td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-light);
+    vertical-align: middle;
+}
+
+.table-custom tr:last-child td {
+    border-bottom: none;
+}
+
+.table-custom tbody tr {
+    transition: var(--transition);
+}
+.table-custom tbody tr:hover {
+    background: var(--primary-soft);
+}
+
+/* ------------------------------------------------
+   PROGRESS CIRCULAIRE
+------------------------------------------------ */
+.progress-circle {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    margin: 0 auto;
+}
+.progress-circle svg {
+    transform: rotate(-90deg);
+}
+.progress-circle circle {
+    fill: none;
+    stroke-width: 8;
+}
+.progress-circle .bg {
+    stroke: var(--border);
+}
+.progress-circle .progress {
+    stroke: var(--success);
+    stroke-linecap: round;
+    transition: stroke-dasharray 0.3s ease;
+}
+.progress-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+.progress-text .value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+.progress-text .label {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+}
+
+/* ------------------------------------------------
+   NAVIGATION CARD
+------------------------------------------------ */
+.nav-card {
+    background: #fff;
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    height: 100%;
+    transition: var(--transition);
+}
+.nav-card:hover {
+    box-shadow: var(--shadow-lg);
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.25rem;
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    transition: var(--transition);
+    border: 1px solid var(--border);
+    margin-bottom: 0.75rem;
+}
+.nav-item:hover {
+    border-color: var(--accent);
+    background: var(--accent-light);
+    transform: translateX(4px);
+}
+.nav-item i:first-child {
+    width: 20px;
+    color: var(--accent);
+    font-size: 1rem;
+}
+.nav-item span {
+    flex: 1;
+    margin-left: 0.75rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-medium);
+}
+.nav-item .fa-chevron-right {
+    color: var(--text-muted);
+    font-size: 0.7rem;
+}
+.nav-item:hover .fa-chevron-right {
+    color: var(--accent);
+}
+
+/* ------------------------------------------------
+   RESPONSIVE
+------------------------------------------------ */
+@media (max-width: 1200px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 992px) {
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .seance-item {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .seance-time {
+        border-right: none;
+        border-bottom: 2px solid var(--border);
+        padding-right: 0;
+        padding-bottom: 0.5rem;
+        margin-right: 0;
+        margin-bottom: 0.5rem;
+        width: 100%;
+    }
+    
+    .seance-info .meta {
+        justify-content: center;
+    }
+    
+    .table-card {
+        padding: 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .page-title {
+        font-size: 1.5rem;
+    }
+    
+    .stat-card {
+        padding: 1.25rem;
+    }
+    
+    .stat-content h2 {
+        font-size: 1.75rem;
+    }
+}
+
+/* ------------------------------------------------
+   ANIMATIONS
+------------------------------------------------ */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.stat-card,
+.table-card,
+.nav-card {
+    animation: fadeIn 0.3s ease-out;
+}
+
+.stat-card:nth-child(1) { animation-delay: 0.05s; }
+.stat-card:nth-child(2) { animation-delay: 0.1s; }
+.stat-card:nth-child(3) { animation-delay: 0.15s; }
+.stat-card:nth-child(4) { animation-delay: 0.2s; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4 py-4">
+    <!-- Header avec breadcrumb -->
+    <div class="page-header">
+        <div>
+            <nav class="breadcrumb-custom" aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Accueil</li>
+                </ol>
+            </nav>
+            <h1 class="page-title">Dashboard</h1>
+            <p class="page-subtitle">{{ today|date:"l d F Y" }} · Vue d'ensemble de l'activité</p>
+        </div>
+        <div class="d-flex gap-2">
+            <span class="btn-soft btn-sm">
+                <i class="fas fa-sync-alt me-2"></i>{% now "H:i" %}
+            </span>
+        </div>
+    </div>
+
+    <!-- Quick actions shortcuts -->
+    <div class="quick-actions mb-4 d-flex flex-wrap gap-2">
+        {% for action in quick_actions %}
+        <a href="{{ action.url }}" class="btn-accent btn-sm">
+            <i class="fas fa-{{ action.icon }}"></i> {{ action.label }}
+        </a>
+        {% endfor %}
+    </div>
+
+    <!-- Statistiques principales -->
+    <div class="stats-grid">
+        <div class="stat-card primary">
+            <div class="stat-icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <span class="stat-trend trend-up">
+                <i class="fas fa-arrow-up me-1"></i>{{ variation_apprenants|default:"0" }}%
+            </span>
+            <div class="stat-content">
+                <h6>Total apprenants</h6>
+                <h2>{{ total_apprenants|default:"0" }}</h2>
+                <small>Actifs</small>
+                <div class="stat-detail">
+                    <i class="fas fa-user-plus me-1"></i>{{ nouveaux_apprenants_mois|default:"0" }} ce mois
+                </div>
+            </div>
+        </div>
+
+        <div class="stat-card success">
+            <div class="stat-icon">
+                <i class="fas fa-chalkboard-teacher"></i>
+            </div>
+            <div class="stat-content">
+                <h6>Moniteurs</h6>
+                <h2>{{ total_moniteurs|default:"0" }}</h2>
+                <small>Actifs</small>
+                <div class="stat-detail">
+                    <i class="fas fa-check-circle me-1" style="color: var(--success);"></i>{{ moniteurs_actifs|default:"0" }} disponibles
+                </div>
+            </div>
+        </div>
+
+        <div class="stat-card warning">
+            <div class="stat-icon">
+                <i class="fas fa-calendar-check"></i>
+            </div>
+            <div class="stat-content">
+                <h6>Séances</h6>
+                <h2>{{ seances_jour|default:"0" }}</h2>
+                <small>Aujourd'hui</small>
+                <div class="stat-detail">
+                    <i class="fas fa-clock me-1"></i>{{ seances_mois|default:"0" }} ce mois
+                </div>
+            </div>
+        </div>
+
+        <div class="stat-card info">
+            <div class="stat-icon">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <span class="stat-trend {% if ca_variation >= 0 %}trend-up{% else %}trend-down{% endif %}">
+                <i class="fas fa-{% if ca_variation >= 0 %}arrow-up{% else %}arrow-down{% endif %} me-1"></i>
+                {{ ca_variation|default:"0"|floatformat:1 }}%
+            </span>
+            <div class="stat-content">
+                <h6>Chiffre d'affaires</h6>
+                <h2>{{ ca_mois|default:"0"|floatformat:0 }} FCFA</h2>
+                <small>Ce mois</small>
+                <div class="stat-detail">
+                    <i class="fas fa-credit-card me-1"></i>{{ contrats_impayes|default:"0" }} impayés
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Colonne gauche - 8 colonnes -->
+        <div class="col-lg-8">
+            <!-- Séances du jour -->
+            <div class="table-card">
+                <div class="card-header-custom">
+                    <h5 class="card-title">
+                        <i class="fas fa-calendar-day"></i>
+                        Séances du jour
+                    </h5>
+                    <a href="{% url 'planning:planning_hub_section' section='seances' %}" class="btn-soft btn-sm">
+                        Voir tout <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+
+                {% if seances_today %}
+                    {% for seance in seances_today %}
+                    <div class="seance-item">
+                        <div class="seance-time">
+                            <div class="hour">{{ seance.heure_debut|time:"H:i" }}</div>
+                            <div class="duration">{{ seance.duree_minutes }} min</div>
+                        </div>
+                        <div class="seance-info">
+                            <h6>{{ seance.apprenant.prenom }} {{ seance.apprenant.nom }}</h6>
+                            <div class="meta">
+                                <span><i class="fas fa-chalkboard-teacher"></i> {{ seance.moniteur.prenom}}</span>
+                                {% if seance.vehicule %}
+                                <span><i class="fas fa-car"></i> {{ seance.vehicule.immatriculation }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <span class="seance-badge 
+                            {% if seance.type_seance == 'CODE' %}code
+                            {% elif seance.type_seance == 'CONDUITE' %}conduite
+                            {% elif seance.type_seance == 'EXAMEN' %}examen{% endif %}">
+                            {{ seance.get_type_seance_display }}
+                        </span>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center py-5" style="color: var(--text-muted);">
+                        <i class="fas fa-calendar-check mb-2" style="font-size: 2rem;"></i>
+                        <p class="mb-0">Aucune séance prévue aujourd'hui</p>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Activité hebdomadaire -->
+            <div class="table-card mt-4">
+                <div class="card-header-custom">
+                    <h5 class="card-title">
+                        <i class="fas fa-chart-line"></i>
+                        Activité hebdomadaire
+                    </h5>
+                </div>
+                
+                <div class="chart-container">
+                    {% for item in stats_hebdo %}
+                    <div class="chart-bar">
+                        <span class="day">{{ item.nom }}</span>
+                        <div class="bar-container">
+                            <div class="bar" style="width: {% widthratio item.count 10 100 %}%"></div>
+                        </div>
+                        <span class="value">{{ item.count }}</span>
+                    </div>
+                    {% empty %}
+                    <div class="text-center py-3 text-muted">
+                        <p>Aucune donnée disponible</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Objectifs / performances -->
+            <div class="table-card mt-4">
+                <div class="card-header-custom">
+                    <h5 class="card-title">
+                        <i class="fas fa-bullseye"></i>
+                        Objectifs du mois
+                    </h5>
+                </div>
+                <div class="p-3">
+                    <div class="mb-3">
+                        <small class="text-muted d-block">Séances</small>
+                        <div class="progress" style="height:8px;">
+                            <div class="progress-bar bg-info" role="progressbar" style="width: {{ progress_seances }}%;" aria-valuenow="{{ progress_seances }}" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <small class="text-muted">{{ seances_count }} / {{ objectif_seances }}</small>
+                    </div>
+                    <div>
+                        <small class="text-muted d-block">Chiffre d'affaires</small>
+                        <div class="progress" style="height:8px;">
+                            <div class="progress-bar bg-success" role="progressbar" style="width: {{ progress_ca }}%;" aria-valuenow="{{ progress_ca }}" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <small class="text-muted">{{ ca_count|floatformat:0 }} / {{ objectif_ca|floatformat:0 }} FCFA</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Colonne droite - 4 colonnes -->
+        <div class="col-lg-4">
+            <!-- Taux de réussite -->
+            <div class="table-card">
+                <div class="card-header-custom">
+                    <h5 class="card-title">
+                        <i class="fas fa-graduation-cap"></i>
+                        Taux de réussite
+                    </h5>
+                </div>
+                
+                <div class="progress-circle">
+                    <svg width="120" height="120">
+                        <circle class="bg" cx="60" cy="60" r="52"></circle>
+                        <circle class="progress" cx="60" cy="60" r="52" 
+                                stroke-dasharray="326.56" 
+                                stroke-dashoffset="{{ taux_reussite_offset|default:'326.56' }}"></circle>
+                    </svg>
+                    <div class="progress-text">
+                        <div class="value">{{ taux_reussite|default:"0" }}%</div>
+                        <div class="label">réussite</div>
+                    </div>
+                </div>
+
+                <div class="row g-3 mt-3 text-center">
+                    <div class="col-6">
+                        <small class="text-muted d-block">Examens</small>
+                        <strong class="h4 mb-0">{{ examens_mois|default:"0" }}</strong>
+                    </div>
+                    <div class="col-6">
+                        <small class="text-muted d-block">Impayés</small>
+                        <strong class="h4 mb-0 text-danger">{{ examens_impayes|default:"0" }}</strong>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Alertes -->
+            <div class="table-card mt-4">
+                <div class="card-header-custom">
+                    <h5 class="card-title">
+                        <i class="fas fa-bell"></i>
+                        Alertes ({{ alertes|length }})
+                    </h5>
+                </div>
+                
+                {% if alertes %}
+                    {% for alerte in alertes %}
+                    <a href="{{ alerte.lien }}" class="alert-item {{ alerte.type }}">
+                        <div class="alert-icon">
+                            <i class="fas fa-{{ alerte.icone }}"></i>
+                        </div>
+                        <div class="alert-content">
+                            <div class="alert-title">{{ alerte.titre }}</div>
+                            <div class="alert-message">{{ alerte.message }}</div>
+                        </div>
+                    </a>
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center py-4 text-muted">
+                        <i class="fas fa-check-circle mb-2" style="font-size: 1.5rem;"></i>
+                        <p class="mb-0">Aucune alerte</p>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Top moniteurs -->
+            <div class="table-card mt-4">
+                <div class="card-header-custom">
+                    <h5 class="card-title">
+                        <i class="fas fa-trophy"></i>
+                        Top moniteurs
+                    </h5>
+                </div>
+                
+                {% for moniteur in top_moniteurs %}
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="rounded-circle bg-primary-soft d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                            <span class="fw-bold text-primary">{{ forloop.counter }}</span>
+                        </div>
+                        <div>
+                            <div class="fw-bold">{{ moniteur.prenom }} {{ moniteur.nom }}</div>
+                            <div class="text-muted">
+                            <small class="text-muted">{{ moniteur.nb_seances }} séances</small>
+                        </div>
+                    </div>
+                    <span class="badge-custom badge-primary">{{ moniteur.nb_seances }}</span>
+                </div>
+                {% empty %}
+                <p class="text-muted text-center py-3">Aucune donnée</p>
+                {% endfor %}
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Dernière ligne : Examens à venir et Parc auto -->
+    <div class="row g-4 mt-2">
+        <div class="col-md-6">
+            <div class="table-card">
+                <div class="card-header-custom">
+                    <h5 class="card-title">
+                        <i class="fas fa-graduation-cap"></i>
+                        Examens à venir
+                    </h5>
+                    <a href="{% url 'examens:examen_list' %}" class="btn-soft btn-sm">
+                        Voir tout <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table-custom">
+                        <thead>
+                            <tr>
+                                <th>Apprenant</th>
+                                <th>Date</th>
+                                <th>Statut</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for examen in examens_a_venir %}
+                            <tr>
+                                <td>{{ examen.apprenant }}</td>
+                                <td>{{ examen.date|date:"d/m/Y" }}</td>
+                                <td>
+                                    {% if examen.est_paye %}
+                                    <span class="badge-custom badge-success">Payé</span>
+                                    {% else %}
+                                    <span class="badge-custom badge-warning">Impayé</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="3" class="text-center py-3 text-muted">Aucun examen à venir</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="table-card">
+                <div class="card-header-custom">
+                    <h5 class="card-title">
+                        <i class="fas fa-car"></i>
+                        Parc automobile
+                    </h5>
+                    <a href="{% url 'vehicules:vehicules_hub_section' section='vehicules' %}" class="btn-soft btn-sm">
+                        Voir tout <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-4 text-center">
+                        <small class="text-muted d-block">Total</small>
+                        <strong class="h3 mb-0 text-primary">{{ total_vehicules|default:"0" }}</strong>
+                    </div>
+                    <div class="col-4 text-center">
+                        <small class="text-muted d-block">Disponibles</small>
+                        <strong class="h3 mb-0 text-success">{{ vehicules_disponibles|default:"0" }}</strong>
+                    </div>
+                    <div class="col-4 text-center">
+                        <small class="text-muted d-block">Maintenance</small>
+                        <strong class="h3 mb-0 text-warning">{{ vehicules_maintenance|default:"0" }}</strong>
+                    </div>
+                </div>
+
+                {% if vehicules_maintenance and vehicules_maintenance > 0 %}
+                <div class="mt-3 p-2 bg-warning-light rounded">
+                    <small class="text-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        {{ vehicules_maintenance }} véhicule(s) en maintenance
+                    </small>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Animation des barres de progression
+    const bars = document.querySelectorAll('.bar');
+    bars.forEach(bar => {
+        const width = bar.style.width;
+        bar.style.width = '0';
+        setTimeout(() => {
+            bar.style.width = width;
+        }, 100);
+    });
+});
+</script>
+{% endblock %}

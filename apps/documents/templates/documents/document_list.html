@@ -1,0 +1,816 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Documents - KALANSSO{% endblock %}
+
+{% block extra_css %}
+<style>
+:root {
+    --primary: #0f172a;
+    --primary-soft: #f1f5f9;
+    --primary-light: #1e293b;
+    --accent: #3b82f6;
+    --accent-light: #eff6ff;
+    --success: #0b6e4f;
+    --success-light: #e7f3ef;
+    --warning: #b45309;
+    --warning-light: #fffbeb;
+    --danger: #b91c1c;
+    --danger-light: #fef2f2;
+    --info: #0891b2;
+    --info-light: #e0f2fe;
+    --text-dark: #0f172a;
+    --text-medium: #334155;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+    --border-light: #f1f5f9;
+    --radius: 16px;
+    --radius-sm: 12px;
+    --radius-lg: 20px;
+    --shadow: 0 4px 12px rgba(0,0,0,0.08);
+    --shadow-lg: 0 12px 30px rgba(0,0,0,0.06);
+    --transition: 0.2s ease;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: #f8fafc;
+    color: var(--text-dark);
+}
+
+/* ------------------------------------------------
+   BREADCRUMB
+------------------------------------------------ */
+.breadcrumb-custom .breadcrumb {
+    background: transparent;
+    padding: 0;
+    margin-bottom: 0.5rem;
+}
+.breadcrumb-custom .breadcrumb-item + .breadcrumb-item::before {
+    content: "·";
+    color: var(--text-muted);
+}
+.breadcrumb-custom .breadcrumb-item a {
+    text-decoration: none;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    transition: var(--transition);
+}
+.breadcrumb-custom .breadcrumb-item a:hover {
+    color: var(--primary);
+}
+.breadcrumb-custom .breadcrumb-item.active {
+    color: var(--text-medium);
+    font-size: 0.85rem;
+}
+
+/* ------------------------------------------------
+   PAGE HEADER
+------------------------------------------------ */
+.page-header {
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.page-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 0.3rem;
+    letter-spacing: -0.02em;
+}
+.page-subtitle {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+/* ------------------------------------------------
+   BOUTONS
+------------------------------------------------ */
+.btn-outline, .btn-soft, .btn-accent {
+    border-radius: 30px;
+    padding: 0.5rem 1.2rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: 0.2s;
+    text-decoration: none !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: none;
+    cursor: pointer;
+}
+.btn-outline {
+    background: #fff;
+    border: 1px solid var(--border);
+    color: var(--text-medium);
+}
+.btn-outline:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    box-shadow: var(--shadow);
+    transform: translateY(-1px);
+}
+.btn-soft {
+    background: var(--primary-soft);
+    color: var(--text-medium);
+    border: 1px solid transparent;
+}
+.btn-soft:hover {
+    background: #fff;
+    border: 1px solid var(--border);
+    transform: translateY(-1px);
+}
+.btn-accent {
+    background: var(--accent);
+    color: #fff !important;
+    border-radius: 30px;
+    padding: 0.5rem 1.5rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border: none;
+}
+.btn-accent:hover {
+    background: #2563eb;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    transform: translateY(-1px);
+}
+.btn-sm {
+    padding: 0.4rem 1rem;
+    font-size: 0.8rem;
+}
+.btn-icon {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 30px;
+}
+
+/* ------------------------------------------------
+   FILTRES
+------------------------------------------------ */
+.filters-bar {
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: flex-end;
+}
+
+.filter-group {
+    flex: 1;
+    min-width: 200px;
+}
+
+.filter-label {
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 0.25rem;
+    display: block;
+}
+
+.filter-select, .filter-input {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.6rem 1rem;
+    font-size: 0.85rem;
+    background: #fff;
+    transition: var(--transition);
+}
+.filter-select:hover, .filter-input:hover {
+    border-color: var(--text-muted);
+}
+.filter-select:focus, .filter-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    outline: none;
+}
+
+.filter-select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 12px;
+    padding-right: 2.5rem;
+}
+
+.filter-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.filter-badge {
+    background: var(--accent-light);
+    color: var(--accent);
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.65rem;
+    margin-left: 0.5rem;
+}
+
+/* ------------------------------------------------
+   STATISTIQUES
+------------------------------------------------ */
+.stats-mini-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.stat-mini-card {
+    background: #fff;
+    border-radius: var(--radius-sm);
+    padding: 1rem;
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    transition: var(--transition);
+}
+.stat-mini-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+.stat-mini-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: var(--accent-light);
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+}
+.stat-mini-content h4 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 0;
+    line-height: 1.2;
+}
+.stat-mini-content small {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+}
+
+/* ------------------------------------------------
+   TABLEAU
+------------------------------------------------ */
+.table-card {
+    background: #fff;
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+}
+.table-card:hover {
+    box-shadow: var(--shadow-lg);
+}
+
+.card-header-custom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.card-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0;
+}
+.card-title i {
+    color: var(--accent);
+}
+
+.table-responsive {
+    border-radius: var(--radius-sm);
+    overflow-x: auto;
+}
+
+.table-custom {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.table-custom th {
+    background: var(--primary-soft);
+    color: var(--text-medium);
+    font-weight: 600;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 1rem 1.25rem;
+    text-align: left;
+}
+
+.table-custom td {
+    padding: 1.25rem;
+    border-bottom: 1px solid var(--border-light);
+    vertical-align: middle;
+}
+
+.table-custom tr:last-child td {
+    border-bottom: none;
+}
+
+.table-custom tbody tr {
+    transition: var(--transition);
+}
+.table-custom tbody tr:hover {
+    background: var(--primary-soft);
+}
+
+/* ------------------------------------------------
+   AVATARS ET INFOS APPRENANT
+------------------------------------------------ */
+.apprenant-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+.apprenant-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--primary), #1e2a3a);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 600;
+}
+.apprenant-details h6 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.2rem;
+}
+.apprenant-details small {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+}
+
+/* ------------------------------------------------
+   BADGES
+------------------------------------------------ */
+.badge-custom {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 1rem;
+    border-radius: 30px;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+.badge-success {
+    background: var(--success-light);
+    color: var(--success);
+}
+.badge-warning {
+    background: var(--warning-light);
+    color: var(--warning);
+}
+.badge-info {
+    background: var(--info-light);
+    color: var(--info);
+}
+.badge-primary {
+    background: var(--accent-light);
+    color: var(--accent);
+}
+.badge-danger {
+    background: var(--danger-light);
+    color: var(--danger);
+}
+
+/* Type de document */
+.type-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 500;
+}
+.type-cni { background: var(--info-light); color: var(--info); }
+.type-permis { background: var(--success-light); color: var(--success); }
+.type-photo { background: var(--accent-light); color: var(--accent); }
+.type-contrat { background: var(--warning-light); color: var(--warning); }
+.type-autre { background: var(--primary-soft); color: var(--text-medium); }
+
+/* ------------------------------------------------
+   FICHIER
+------------------------------------------------ */
+.file-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    background: var(--primary-soft);
+    color: var(--text-medium);
+    text-decoration: none;
+    font-size: 0.75rem;
+    transition: var(--transition);
+    border: 1px solid transparent;
+}
+.file-link:hover {
+    background: var(--accent-light);
+    color: var(--accent);
+    border-color: var(--accent);
+}
+.file-link i {
+    font-size: 0.8rem;
+}
+
+/* ------------------------------------------------
+   ACTIONS
+------------------------------------------------ */
+.actions-group {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+.btn-action {
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    transition: var(--transition);
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--text-muted);
+    text-decoration: none;
+}
+.btn-action:hover {
+    transform: translateY(-2px);
+}
+.btn-action-view:hover {
+    background: var(--info-light);
+    color: var(--info);
+    border-color: var(--info);
+}
+.btn-action-edit:hover {
+    background: var(--warning-light);
+    color: var(--warning);
+    border-color: var(--warning);
+}
+.btn-action-delete:hover {
+    background: var(--danger-light);
+    color: var(--danger);
+    border-color: var(--danger);
+}
+.btn-action-validate:hover {
+    background: var(--success-light);
+    color: var(--success);
+    border-color: var(--success);
+}
+
+/* ------------------------------------------------
+   EMPTY STATE
+------------------------------------------------ */
+.empty-state {
+    text-align: center;
+    padding: 3rem 2rem;
+    color: var(--text-muted);
+}
+.empty-state i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: var(--border);
+}
+.empty-state h5 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 0.5rem;
+}
+.empty-state p {
+    font-size: 0.8rem;
+    margin-bottom: 1.5rem;
+}
+
+/* ------------------------------------------------
+   RESPONSIVE
+------------------------------------------------ */
+@media (max-width: 992px) {
+    .filters-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .filter-group {
+        width: 100%;
+    }
+    .filter-actions {
+        justify-content: flex-end;
+    }
+}
+
+@media (max-width: 768px) {
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    .stats-mini-grid {
+        grid-template-columns: 1fr;
+    }
+    .table-custom th,
+    .table-custom td {
+        padding: 0.75rem;
+    }
+    .apprenant-info {
+        flex-direction: column;
+        text-align: center;
+    }
+    .actions-group {
+        flex-direction: column;
+    }
+    .btn-action {
+        width: 100%;
+    }
+}
+
+/* ------------------------------------------------
+   ANIMATIONS
+------------------------------------------------ */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+.table-card {
+    animation: fadeIn 0.3s ease-out;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4 py-4">
+    <!-- Header avec breadcrumb -->
+    <div class="page-header">
+        <div>
+            <nav class="breadcrumb-custom" aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Documents</li>
+                </ol>
+            </nav>
+            <h1 class="page-title">Documents</h1>
+            <p class="page-subtitle">{{ documents|length }} document{{ documents|pluralize }} au total</p>
+        </div>
+        <a href="{% url 'documents:document_upload' %}" class="btn-accent btn-sm">
+            <i class="fas fa-plus"></i> Nouveau document
+        </a>
+    </div>
+
+    <!-- Mini statistiques -->
+    <div class="stats-mini-grid">
+        <div class="stat-mini-card">
+            <div class="stat-mini-icon">
+                <i class="fas fa-file"></i>
+            </div>
+            <div class="stat-mini-content">
+                <h4>{{ total_documents|default:documents|length }}</h4>
+                <small>Total</small>
+            </div>
+        </div>
+        <div class="stat-mini-card">
+            <div class="stat-mini-icon" style="background: var(--success-light); color: var(--success);">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stat-mini-content">
+                <h4>{{ documents_valides|default:"0" }}</h4>
+                <small>Validés</small>
+            </div>
+        </div>
+        <div class="stat-mini-card">
+            <div class="stat-mini-icon" style="background: var(--warning-light); color: var(--warning);">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-mini-content">
+                <h4>{{ documents_non_valides|default:"0" }}</h4>
+                <small>Non validés</small>
+            </div>
+        </div>
+        <div class="stat-mini-card">
+            <div class="stat-mini-icon" style="background: var(--info-light); color: var(--info);">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="stat-mini-content">
+                <h4>{{ apprenants_avec_docs|default:"0" }}</h4>
+                <small>Apprenants</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtres -->
+    <div class="filters-bar">
+        <form method="get" class="d-flex flex-wrap gap-3 w-100 align-items-end">
+            <div class="filter-group">
+                <label class="filter-label">Type de document</label>
+                <select name="type_document" class="filter-select">
+                    <option value="">Tous les types</option>
+                    {% for value, label in type_choices %}
+                    <option value="{{ value }}" {% if request.GET.type_document == value %}selected{% endif %}>
+                        {{ label }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label class="filter-label">Statut</label>
+                <select name="est_valide" class="filter-select">
+                    <option value="">Tous</option>
+                    <option value="1" {% if request.GET.est_valide == '1' %}selected{% endif %}>Validés</option>
+                    <option value="0" {% if request.GET.est_valide == '0' %}selected{% endif %}>Non validés</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label class="filter-label">Apprenant</label>
+                <input type="text" name="apprenant_nom" class="filter-input" 
+                       placeholder="Nom ou prénom..." value="{{ request.GET.apprenant_nom }}">
+            </div>
+
+            <div class="filter-actions">
+                <button type="submit" class="btn-accent btn-sm">
+                    <i class="fas fa-filter"></i> Filtrer
+                </button>
+                <a href="{% url 'documents:document_list' %}" class="btn-soft btn-sm">
+                    <i class="fas fa-times"></i> Effacer
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Liste des documents -->
+    <div class="table-card">
+        <div class="card-header-custom">
+            <h5 class="card-title">
+                <i class="fas fa-list"></i>
+                Liste des documents
+            </h5>
+            <span class="text-muted small">
+                <i class="fas fa-info-circle"></i> {{ documents|length }} document{{ documents|pluralize }}
+            </span>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table-custom">
+                <thead>
+                    <tr>
+                        <th>Apprenant</th>
+                        <th>Type</th>
+                        <th>Fichier</th>
+                        <th>Validé</th>
+                        <th>Date d'upload</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for doc in documents %}
+                    <tr>
+                        <td>
+                            <div class="apprenant-info">
+                                <div class="apprenant-avatar">
+                                    {{ doc.apprenant.prenom|first|upper }}{{ doc.apprenant.nom|first|upper }}
+                                </div>
+                                <div class="apprenant-details">
+                                    <h6>{{ doc.apprenant.prenom }} {{ doc.apprenant.nom }}</h6>
+                                    <small>{{ doc.apprenant.telephone }}</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="type-badge 
+                                {% if doc.type_document == 'CNI' %}type-cni
+                                {% elif doc.type_document == 'PERMIS' %}type-permis
+                                {% elif doc.type_document == 'PHOTO' %}type-photo
+                                {% elif doc.type_document == 'CONTRAT' %}type-contrat
+                                {% else %}type-autre{% endif %}">
+                                {{ doc.get_type_document_display }}
+                            </span>
+                        </td>
+                        <td>
+                            <a href="{{ doc.fichier.url }}" target="_blank" class="file-link">
+                                <i class="fas fa-file-pdf"></i>
+                                <span>Voir</span>
+                                <i class="fas fa-external-link-alt ms-1" style="font-size: 0.6rem;"></i>
+                            </a>
+                        </td>
+                        <td>
+                            {% if doc.est_valide %}
+                                <span class="badge-custom badge-success">
+                                    <i class="fas fa-check-circle"></i> Validé
+                                </span>
+                            {% else %}
+                                <span class="badge-custom badge-warning">
+                                    <i class="fas fa-clock"></i> Non validé
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div style="font-size: 0.8rem;">{{ doc.date_upload|date:"d/m/Y" }}</div>
+                            <small class="text-muted">{{ doc.date_upload|date:"H:i" }}</small>
+                        </td>
+                        <td class="text-end">
+                            <div class="actions-group">
+                                <a href="{% url 'documents:document_detail' doc.pk %}" class="btn-action btn-action-view" title="Voir détails">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{% url 'documents:document_edit' doc.pk %}" class="btn-action btn-action-edit" title="Modifier">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                {% if not doc.est_valide %}
+                                <a href="{% url 'documents:document_validate' doc.pk %}" class="btn-action btn-action-validate" title="Valider">
+                                    <i class="fas fa-check"></i>
+                                </a>
+                                {% endif %}
+                                <a href="{% url 'documents:document_delete' doc.pk %}" class="btn-action btn-action-delete" title="Supprimer" onclick="return confirm('Supprimer ce document ?')">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6">
+                            <div class="empty-state">
+                                <i class="fas fa-file-alt"></i>
+                                <h5>Aucun document trouvé</h5>
+                                <p>Commencez par ajouter votre premier document.</p>
+                                <a href="{% url 'documents:document_upload' %}" class="btn-accent btn-sm">
+                                    <i class="fas fa-plus"></i> Ajouter un document
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Footer du tableau -->
+        {% if documents %}
+        <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-light);">
+            <div class="d-flex justify-content-between align-items-center">
+                <small class="text-muted">
+                    <i class="fas fa-file-alt me-1"></i> 
+                    {{ documents|length }} document{{ documents|pluralize }}
+                </small>
+                <div class="d-flex gap-3">
+                    <span class="d-flex align-items-center gap-2">
+                        <i class="fas fa-circle" style="color: var(--success); font-size: 0.5rem;"></i>
+                        <small>Validé</small>
+                    </span>
+                    <span class="d-flex align-items-center gap-2">
+                        <i class="fas fa-circle" style="color: var(--warning); font-size: 0.5rem;"></i>
+                        <small>Non validé</small>
+                    </span>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Confirmation de suppression
+    const deleteLinks = document.querySelectorAll('a[onclick*="confirm"]');
+    deleteLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            if (!confirm('Êtes-vous sûr de vouloir supprimer ce document ?')) {
+                e.preventDefault();
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

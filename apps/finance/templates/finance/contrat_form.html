@@ -729,7 +729,7 @@ textarea.form-control {
         <div>
             <nav class="breadcrumb-custom">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
                     <li class="breadcrumb-item"><a href="{% url 'finance:hub_section' 'contrat' %}">Contrats</a></li>
                     <li class="breadcrumb-item active">
                         {% if form.instance.pk %}Modifier contrat #{{ form.instance.id }}{% else %}Nouveau contrat{% endif %}

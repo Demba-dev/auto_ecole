@@ -10,11 +10,13 @@ class ExamenAdmin(admin.ModelAdmin):
         'type_examen',
         'date',
         'heure_debut',
-        'heure_fin',
+        'get_heure_fin',
         'apprenant',
         'moniteur',
         'vehicule',
-        'result'
+        'result',
+        'est_paye',
+        'date_creation',
     )
     
     list_filter = (
@@ -28,9 +30,12 @@ class ExamenAdmin(admin.ModelAdmin):
     search_fields = (
         'apprenant__nom',
         'apprenant__prenom',
-        'moniteur__first_name',
-        'moniteur__last_name',
+        'moniteur__username',
         'vehicule__immatriculation',
     )
 
-    readonly_fields = ('date_creation', 'heure_fin')
+    readonly_fields = ('date_creation', 'get_heure_fin')
+
+    def get_heure_fin(self, obj):
+        return obj.heure_fin
+    get_heure_fin.short_description = 'Heure de fin'

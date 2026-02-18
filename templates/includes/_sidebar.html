@@ -23,7 +23,7 @@
                 Principal
             </p>
             <div class="d-flex flex-column gap-1">
-                <a href="/" class="nav-link d-flex align-items-center gap-3 px-3 py-3 rounded-3 text-decoration-none {% if request.resolver_match.url_name == 'dashboard' %}active-link{% else %}inactive-link{% endif %}">
+                <a href="{% url 'dashboard' %}" class="nav-link d-flex align-items-center gap-3 px-3 py-3 rounded-3 text-decoration-none {% if request.resolver_match.url_name == 'dashboard' %}active-link{% else %}inactive-link{% endif %}">
                     <i class="fas fa-tachometer-alt" style="width: 20px; font-size: 18px;"></i>
                     <span class="fw-medium flex-fill">Tableau de bord</span>
                     {% if request.resolver_match.url_name == 'dashboard' %}
@@ -39,12 +39,12 @@
                     {% endif %}
                 </a>
                 
-                <a href="#" class="nav-link d-flex align-items-center gap-3 px-3 py-3 rounded-3 text-decoration-none inactive-link">
+                <a href="{% url 'planning:planning_hub' %}" class="nav-link d-flex align-items-center gap-3 px-3 py-3 rounded-3 text-decoration-none {% if request.resolver_match.app_name == 'planning' %}active-link{% else %}inactive-link{% endif %}">
                     <i class="fas fa-calendar-alt" style="width: 20px; font-size: 18px;"></i>
                     <span class="fw-medium flex-fill">Planning</span>
                 </a>
                 
-                <a href="#" class="nav-link d-flex align-items-center gap-3 px-3 py-3 rounded-3 text-decoration-none inactive-link">
+                <a href="{% url 'examens:hub' %}" class="nav-link d-flex align-items-center gap-3 px-3 py-3 rounded-3 text-decoration-none {% if request.resolver_match.app_name == 'examens' %}active-link{% else %}inactive-link{% endif %}">
                     <i class="fas fa-graduation-cap" style="width: 20px; font-size: 18px;"></i>
                     <span class="fw-medium flex-fill">Examens</span>
                 </a>
@@ -80,7 +80,7 @@
                 Système
             </p>
             <div class="d-flex flex-column gap-1">
-                <a href="#" class="nav-link d-flex align-items-center gap-3 px-3 py-3 rounded-3 text-decoration-none inactive-link">
+                <a href="{% url 'documents:document_list' %}" class="nav-link d-flex align-items-center gap-3 px-3 py-3 rounded-3 text-decoration-none {% if request.resolver_match.app_name == 'documents' %}active-link{% else %}inactive-link{% endif %}">
                     <i class="fas fa-file-alt" style="width: 20px; font-size: 18px;"></i>
                     <span class="fw-medium flex-fill">Documents</span>
                 </a>

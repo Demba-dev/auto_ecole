@@ -1,7 +1,10 @@
 from django.db import models
 from django.utils import timezone
 from apps.apprenants.models import Apprenant, TypePermis
-from django.db.models import Sum
+from django.db.models import Sum, F
+from django.core.exceptions import ValidationError
+from django.db.models.functions import Coalesce
+from django.db.models import Value
 
 
 class Tarif(models.Model):
@@ -21,6 +24,14 @@ class Tarif(models.Model):
         return f"{self.type_permis} - {self.libelle} ({self.montant} FCFA)"
 
 
+class ContratQuerySet(models.QuerySet):
+    def avec_stats(self):
+        return self.annotate(
+            total_paye=Coalesce(Sum('paiements__montant'), Value(0, output_field=models.DecimalField()))
+        ).annotate(
+            montant_restant=F('montant_total') - F('total_paye')
+        )
+
 class Contrat(models.Model):
     apprenant = models.ForeignKey(
         Apprenant,
@@ -39,6 +50,8 @@ class Contrat(models.Model):
     heures_inclues = models.PositiveIntegerField(default=0)
     heures_effectuees = models.PositiveIntegerField(default=0)
     actif = models.BooleanField(default=True)
+
+    objects = ContratQuerySet.as_manager()
 
     def __str__(self):
         return f"Contrat {self.apprenant} - {self.tarif}"
@@ -90,3 +103,34 @@ class Paiement(models.Model):
 
     def __str__(self):
         return f"{self.contrat.apprenant} - {self.montant} FCFA ({self.mode})"
+    
+
+class PaiementExamen(models.Model):
+
+    examen = models.OneToOneField(
+        'examens.Examen',
+        on_delete=models.CASCADE,
+        related_name='paiement'
+    )
+
+    montant = models.DecimalField(max_digits=10, decimal_places=2)
+    date_paiement = models.DateTimeField(default=timezone.now)
+    mode = models.CharField(max_length=20, choices=Paiement.MODE_CHOICES)
+
+    est_valide = models.BooleanField(default=True)
+
+
+    def clean(self):
+        if self.examen.est_paye:
+            raise ValidationError("Ce paiement a déjà été validé pour cet examen.")
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+        if self.est_valide:
+            self.examen.est_paye = True
+            self.examen.save()
+
+    def __str__(self):
+        return f"{self.examen.apprenant} - {self.montant} FCFA (Examen)"
+

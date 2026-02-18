@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}Supprimer examen{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h3>Confirmer la suppression</h3>
+    <p>Voulez-vous vraiment supprimer l'examen de {{ examen.apprenant }} du {{ examen.date }} ?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Oui, supprimer</button>
+        <a href="{% url 'examens:examen_list' %}" class="btn btn-secondary">Annuler</a>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Activités Récentes - KALANSSO{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4 py-4">
+    <div class="page-header d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'examens:hub' %}">Examens</a></li>
+                    <li class="breadcrumb-item active">Activités</li>
+                </ol>
+            </nav>
+            <h1 class="h3 mb-0">Activités Récentes</h1>
+        </div>
+        <a href="{% url 'examens:examen_create' %}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Nouvel examen
+        </a>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+            <div class="activities-list">
+                {% for activite in activites %}
+                <div class="d-flex align-items-start gap-3 p-3 border-bottom">
+                    <div class="bg-light text-primary rounded-3 p-2">
+                        <i class="fas fa-{{ activite.icone }} fa-lg"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <div class="d-flex justify-content-between">
+                            <h5 class="mb-1">{{ activite.titre }}</h5>
+                            <small class="text-muted">{{ activite.heure|date:"d/m/Y H:i" }}</small>
+                        </div>
+                        <p class="text-muted small mb-2">{{ activite.description }}</p>
+                        <span class="badge bg-{{ activite.statut_classe }}">
+                            {{ activite.statut }}
+                        </span>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="text-center py-5">
+                    <i class="fas fa-history fa-3x text-muted mb-3"></i>
+                    <p class="text-muted">Aucune activité enregistrée.</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

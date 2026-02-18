@@ -31,6 +31,114 @@
     --transition: 0.2s ease;
 }
 
+/* FullCalendar Custom Styles */
+.fc {
+    --fc-border-color: var(--border-light);
+    --fc-button-bg-color: var(--accent);
+    --fc-button-border-color: var(--accent);
+    --fc-button-hover-bg-color: #2563eb;
+    --fc-button-active-bg-color: #1d4ed8;
+    --fc-event-bg-color: var(--accent);
+    --fc-event-border-color: var(--accent);
+    --fc-today-bg-color: var(--accent-light);
+}
+.fc .fc-toolbar-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+.fc .fc-button {
+    border-radius: 30px;
+    padding: 0.5rem 1rem;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+.fc-event {
+    cursor: pointer;
+    padding: 2px 5px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+}
+.fc-v-event .fc-event-title {
+    font-weight: 600;
+}
+
+/* Calendar Event Status Colors */
+.fc-event.badge-prevu { background-color: var(--info-light) !important; color: var(--info) !important; border-color: var(--info) !important; }
+.fc-event.badge-realise { background-color: var(--success-light) !important; color: var(--success) !important; border-color: var(--success) !important; }
+.fc-event.badge-annule { background-color: var(--danger-light) !important; color: var(--danger) !important; border-color: var(--danger) !important; }
+.fc-event.badge-reporte { background-color: var(--warning-light) !important; color: var(--warning) !important; border-color: var(--warning) !important; }
+
+/* ------------------------------------------------
+   STATISTIQUES CARDS
+------------------------------------------------ */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: #fff;
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    transition: var(--transition);
+}
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+}
+.stat-card.primary::before { background: var(--accent); }
+.stat-card.success::before { background: var(--success); }
+.stat-card.warning::before { background: var(--warning); }
+.stat-card.info::before { background: var(--info); }
+
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+}
+.stat-card.primary .stat-icon { background: var(--accent-light); color: var(--accent); }
+.stat-card.success .stat-icon { background: var(--success-light); color: var(--success); }
+.stat-card.warning .stat-icon { background: var(--warning-light); color: var(--warning); }
+.stat-card.info .stat-icon { background: var(--info-light); color: var(--info); }
+
+.stat-content h6 {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 0.25rem;
+}
+.stat-content h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 0;
+}
+.stat-content small {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+}
+
 body {
     font-family: 'Inter', sans-serif;
     background: #f8fafc;
@@ -587,7 +695,7 @@ body {
     <div class="page-header">
         <nav class="breadcrumb-custom" aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
                 <li class="breadcrumb-item"><a href="{% url 'liste_apprenants' %}">Apprenants</a></li>
                 <li class="breadcrumb-item"><a href="{% url 'detail_apprenant' apprenant.id %}">{{ apprenant.prenom }} {{ apprenant.nom }}</a></li>
                 <li class="breadcrumb-item active">Planning</li>
@@ -607,7 +715,7 @@ body {
                 <a href="{% url 'detail_apprenant' apprenant.id %}" class="btn-soft">
                     <i class="fas fa-arrow-left"></i> Retour
                 </a>
-                <a href="#" class="btn-accent">
+                <a href="{% url 'planning:seance_create' %}" class="btn-accent">
                     <i class="fas fa-plus"></i> Nouvelle séance
                 </a>
             </div>
@@ -641,7 +749,7 @@ body {
                     <h6>Apprenant</h6>
                     <h4>{{ apprenant.prenom }} {{ apprenant.nom }}</h4>
                     <div class="apprenant-meta">
-                        <span><i class="fas fa-calendar-alt"></i> {{ apprenant.age }} ans</span>
+                        <span><i class="fas fa-calendar-alt"></i> {{ apprenant.age|default:"--" }} ans</span>
                         <span><i class="fas fa-phone"></i> {{ apprenant.telephone }}</span>
                         <span><i class="fas fa-envelope"></i> {{ apprenant.email|default:"Non renseigné" }}</span>
                         <span><i class="fas fa-id-card"></i> 
@@ -706,7 +814,7 @@ body {
                     </thead>
                     <tbody>
                         {% for seance in seances %}
-                        <tr class="seance-row" data-statut="{{ seance.statut }}" data-type="{{ seance.type_seance }}">
+                        <tr class="seance-row" data-statut="{{ seance.statut }}" data-type="{{ seance.type_seance }}" data-date="{{ seance.date|date:'Y-m-d' }}">
                             <td>
                                 <div style="font-weight: 600; color: var(--text-dark);">
                                     {{ seance.date|date:"d/m/Y" }}
@@ -743,16 +851,20 @@ body {
                             <td>
                                 <div class="moniteur-info">
                                     <div class="moniteur-avatar">
-                                        {{ seance.moniteur.first_name|first|upper }}{{ seance.moniteur.last_name|first|upper }}
+                                        {% with moniteur=seance.moniteur %}
+                                            {% if moniteur.prenom %}{{ moniteur.prenom|first|upper }}{% else %}M{% endif %}
+                                            {% if moniteur.nom %}{{ moniteur.nom|first|upper }}{% endif %}
+                                        {% endwith %}
                                     </div>
                                     <div>
                                         <div class="moniteur-name">
-                                            {{ seance.moniteur.get_full_name|default:seance.moniteur.username }}
+                                            {{ seance.moniteur.prenom }} {{ seance.moniteur.nom }}
                                         </div>
                                         <div class="moniteur-role">Moniteur</div>
                                     </div>
                                 </div>
                             </td>
+
                             <td>
                                 {% if seance.statut == 'PREVU' %}
                                     <span class="badge-custom badge-prevu">
@@ -787,7 +899,7 @@ body {
                                     <i class="fas fa-calendar-times"></i>
                                     <h5>Aucune séance planifiée</h5>
                                     <p>Cet apprenant n'a pas encore de séances programmées.</p>
-                                    <a href="#" class="btn-accent">
+                                    <a href="{% url 'ajouter_progression' apprenant.id %}" class="btn-accent">
                                         <i class="fas fa-plus"></i> Planifier une séance
                                     </a>
                                 </div>
@@ -798,12 +910,9 @@ body {
                 </table>
             </div>
 
-            <!-- Vue Calendrier (préparée pour extension future) -->
+            <!-- Vue Calendrier -->
             <div id="calendarView" class="calendar-view">
-                <div class="text-center py-5">
-                    <i class="fas fa-calendar-alt" style="font-size: 3rem; color: var(--border);"></i>
-                    <p class="mt-3 text-muted">Vue calendrier disponible prochainement</p>
-                </div>
+                <div id="calendar" style="min-height: 600px;"></div>
             </div>
         </div>
 
@@ -834,65 +943,99 @@ body {
 </div>
 
 <!-- Statistiques rapides -->
-<div class="row mt-4 g-4">
-    <div class="col-md-3">
-        <div class="detail-card p-3">
-            <div class="d-flex align-items-center gap-3">
-                <div class="info-icon">
-                    <i class="fas fa-calendar-check"></i>
-                </div>
-                <div>
-                    <div class="info-label">Séances à venir</div>
-                    <div class="stat-box-value">{{ seances|dictsortreversed:"date"|slice:":5"|length }}</div>
-                </div>
-            </div>
+<div class="stats-grid mt-4">
+    <div class="stat-card info">
+        <div class="stat-icon">
+            <i class="fas fa-calendar-check"></i>
+        </div>
+        <div class="stat-content">
+            <h6>Séances planifiées</h6>
+            <h2>{{ seances.count }}</h2>
+            <small>Au total</small>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="detail-card p-3">
-            <div class="d-flex align-items-center gap-3">
-                <div class="info-icon">
-                    <i class="fas fa-check-circle"></i>
-                </div>
-                <div>
-                    <div class="info-label">Réalisées</div>
-                    <div class="stat-box-value">{{ seances|dictsort:"statut"|length }}</div>
-                </div>
-            </div>
+    
+    <div class="stat-card success">
+        <div class="stat-icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <div class="stat-content">
+            <h6>Réalisées</h6>
+            <h2>{{ seances.count }}</h2>
+            <small>Taux de complétion</small>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="detail-card p-3">
-            <div class="d-flex align-items-center gap-3">
-                <div class="info-icon">
-                    <i class="fas fa-chart-line"></i>
-                </div>
-                <div>
-                    <div class="info-label">Progression</div>
-                    <div class="stat-box-value">{{ apprenant.progression_conduite.pourcentage_progression|floatformat:0 }}%</div>
-                </div>
-            </div>
+
+    <div class="stat-card primary">
+        <div class="stat-icon">
+            <i class="fas fa-chart-line"></i>
+        </div>
+        <div class="stat-content">
+            <h6>Progression</h6>
+            <h2>{{ apprenant.progression_conduite.pourcentage_progression|floatformat:0|default:"0" }}%</h2>
+            <small>Leçons de conduite</small>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="detail-card p-3">
-            <div class="d-flex align-items-center gap-3">
-                <div class="info-icon">
-                    <i class="fas fa-users"></i>
-                </div>
-                <div>
-                    <div class="info-label">Moniteurs</div>
-                    <div class="stat-box-value">{{ seances|dictsort:"moniteur"|length }}</div>
-                </div>
-            </div>
+
+    <div class="stat-card warning">
+        <div class="stat-icon">
+            <i class="fas fa-users"></i>
+        </div>
+        <div class="stat-content">
+            <h6>Intervenants</h6>
+            <h2>{{ seances|dictsort:"moniteur_id"|length }}</h2>
+            <small>Moniteurs différents</small>
         </div>
     </div>
 </div>
 {% endblock %}
 
 {% block extra_js %}
+<!-- FullCalendar JS -->
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Initialisation du calendrier
+    const calendarEl = document.getElementById('calendar');
+    const calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        locale: 'fr',
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek,timeGridDay'
+        },
+        buttonText: {
+            today: "Aujourd'hui",
+            month: 'Mois',
+            week: 'Semaine',
+            day: 'Jour'
+        },
+        firstDay: 1, // Lundi
+        events: [
+            {% for seance in seances %}
+            {
+                id: '{{ seance.id }}',
+                title: '{{ seance.get_type_seance_display }}',
+                start: '{{ seance.date|date:"Y-m-d" }}T{{ seance.heure_debut|time:"H:i:s" }}',
+                end: '{{ seance.date|date:"Y-m-d" }}T{{ seance.heure_fin|time:"H:i:s" }}',
+                className: 'badge-{% if seance.statut == "PREVU" %}prevu{% elif seance.statut == "REALISE" %}realise{% elif seance.statut == "ANNULE" %}annule{% else %}reporte{% endif %}',
+                extendedProps: {
+                    moniteur: '{{ seance.moniteur.prenom }} {{ seance.moniteur.nom }}',
+                    statut: '{{ seance.get_statut_display }}',
+                    statut_code: '{{ seance.statut }}',
+                    type_code: '{{ seance.type_seance }}'
+                }
+            }{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        ],
+        eventDidMount: function(info) {
+            const moniteur = info.event.extendedProps.moniteur;
+            const statut = info.event.extendedProps.statut;
+            info.el.title = `${info.event.title}\nMoniteur: ${moniteur}\nStatut: ${statut}`;
+        }
+    });
+
     // Filtres
     const statutFilter = document.getElementById('statutFilter');
     const typeFilter = document.getElementById('typeFilter');
@@ -902,17 +1045,25 @@ document.addEventListener('DOMContentLoaded', function() {
         const statut = statutFilter.value;
         const type = typeFilter.value;
         
+        // Filtrer le tableau
         rows.forEach(row => {
             let show = true;
-            
-            if (statut !== 'all' && row.dataset.statut !== statut) {
-                show = false;
-            }
-            if (type !== 'all' && row.dataset.type !== type) {
-                show = false;
-            }
-            
+            if (statut !== 'all' && row.dataset.statut !== statut) show = false;
+            if (type !== 'all' && row.dataset.type !== type) show = false;
             row.style.display = show ? '' : 'none';
+        });
+
+        // Filtrer le calendrier
+        calendar.getEvents().forEach(event => {
+            let show = true;
+            if (statut !== 'all' && event.extendedProps.statut_code !== statut) show = false;
+            if (type !== 'all' && event.extendedProps.type_code !== type) show = false;
+            
+            if (show) {
+                event.setProp('display', 'auto');
+            } else {
+                event.setProp('display', 'none');
+            }
         });
     }
     
@@ -929,25 +1080,29 @@ document.addEventListener('DOMContentLoaded', function() {
     
     if (tableViewBtn && calendarViewBtn) {
         tableViewBtn.addEventListener('click', function() {
-            tableView.classList.add('active');
-            calendarView.classList.remove('active');
+            tableView.style.display = 'block';
+            calendarView.style.display = 'none';
             tableViewBtn.classList.add('active');
             calendarViewBtn.classList.remove('active');
         });
         
         calendarViewBtn.addEventListener('click', function() {
-            calendarView.classList.add('active');
-            tableView.classList.remove('active');
+            tableView.style.display = 'none';
+            calendarView.style.display = 'block';
             calendarViewBtn.classList.add('active');
             tableViewBtn.classList.remove('active');
+            
+            // Re-render calendar when shown to fix layout issues
+            setTimeout(() => {
+                calendar.render();
+            }, 50);
         });
     }
     
     // Marquer les séances du jour
-    const today = new Date().toISOString().split('T')[0];
+    const todayStr = new Date().toISOString().split('T')[0];
     rows.forEach(row => {
-        const dateCell = row.cells[0]?.innerText;
-        if (dateCell && dateCell.includes(today.replace(/-/g, '/'))) {
+        if (row.dataset.date === todayStr) {
             row.classList.add('seance-coming');
         }
     });

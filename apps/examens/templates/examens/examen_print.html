@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Impression Examen #{{ examen.id }} - KALANSSO</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.5;
+            color: #333;
+            margin: 0;
+            padding: 40px;
+        }
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #000;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+            text-transform: uppercase;
+        }
+        .header p {
+            margin: 5px 0 0;
+            color: #666;
+        }
+        .section {
+            margin-bottom: 25px;
+        }
+        .section-title {
+            font-weight: bold;
+            text-transform: uppercase;
+            border-bottom: 1px solid #ccc;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .item {
+            margin-bottom: 10px;
+        }
+        .label {
+            font-weight: bold;
+            color: #555;
+            font-size: 12px;
+        }
+        .value {
+            font-size: 14px;
+        }
+        .status-box {
+            border: 2px solid #000;
+            padding: 15px;
+            text-align: center;
+            margin-top: 20px;
+        }
+        .status-box .label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .status-box .value {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .notes {
+            background: #f9f9f9;
+            padding: 15px;
+            border: 1px solid #eee;
+            font-style: italic;
+            min-height: 100px;
+        }
+        .footer {
+            margin-top: 50px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .signature-box {
+            width: 200px;
+            border-top: 1px solid #000;
+            text-align: center;
+            padding-top: 10px;
+            font-size: 12px;
+        }
+        @media print {
+            .no-print {
+                display: none;
+            }
+            body {
+                padding: 0;
+            }
+        }
+        .print-btn {
+            background: #3b82f6;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="no-print" style="text-align: right;">
+        <button onclick="window.print()" class="print-btn">Lancer l'impression</button>
+        <button onclick="window.close()" class="print-btn" style="background: #6b7280;">Fermer</button>
+    </div>
+
+    <div class="header">
+        <h1>KALANSSO ERP - FICHE D'EXAMEN</h1>
+        <p>Référence : EXAM-{{ examen.id|stringformat:"05d" }} | Date d'édition : {{ "now"|date:"d/m/Y H:i" }}</p>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Informations Générales</div>
+        <div class="grid">
+            <div class="item">
+                <div class="label">Type d'examen</div>
+                <div class="value">{{ examen.get_type_examen_display }}</div>
+            </div>
+            <div class="item">
+                <div class="label">Date et Heure</div>
+                <div class="value">{{ examen.date|date:"d/m/Y" }} à {{ examen.heure_debut|time:"H:i" }}</div>
+            </div>
+            <div class="item">
+                <div class="label">Tentative n°</div>
+                <div class="value">{{ examen.tentative }}</div>
+            </div>
+            <div class="item">
+                <div class="label">Durée</div>
+                <div class="value">{{ examen.duree_minutes }} minutes</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Apprenant</div>
+        <div class="grid">
+            <div class="item">
+                <div class="label">Nom complet</div>
+                <div class="value">{{ examen.apprenant.prenom }} {{ examen.apprenant.nom }}</div>
+            </div>
+            <div class="item">
+                <div class="label">Téléphone</div>
+                <div class="value">{{ examen.apprenant.telephone|default:"N/A" }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Encadrement</div>
+        <div class="grid">
+            <div class="item">
+                <div class="label">Moniteur</div>
+                <div class="value">{{ examen.moniteur.prenom }} {{ examen.moniteur.nom|default:"Non assigné" }}</div>
+            </div>
+            <div class="item">
+                <div class="label">Véhicule</div>
+                <div class="value">
+                    {% if examen.vehicule %}
+                        {{ examen.vehicule.marque }} {{ examen.vehicule.modele }} ({{ examen.vehicule.immatriculation }})
+                    {% else %}
+                        N/A
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Résultat Officiel</div>
+        <div class="status-box">
+            <div class="label">Résultat de l'épreuve</div>
+            <div class="value">{{ examen.get_result_display }}</div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Observations / Remarques</div>
+        <div class="notes">
+            {{ examen.notes|default:"Aucune observation particulière."|linebreaks }}
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="signature-box">
+            Cachet de l'Auto-école
+        </div>
+        <div class="signature-box">
+            Signature du Candidat
+        </div>
+        <div class="signature-box">
+            Signature de l'Examinateur
+        </div>
+    </div>
+
+    <script>
+        // Optionnel : Lancer l'impression automatiquement au chargement
+        // window.onload = function() { window.print(); }
+    </script>
+</body>
+</html>

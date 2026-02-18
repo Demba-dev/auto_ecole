@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Statistiques Examens - KALANSSO{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4 py-4">
+    <div class="page-header d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'examens:hub' %}">Examens</a></li>
+                    <li class="breadcrumb-item active">Statistiques</li>
+                </ol>
+            </nav>
+            <h1 class="h3 mb-0">Statistiques Détaillées</h1>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 text-center p-3">
+                <h6 class="text-muted">Taux de réussite global</h6>
+                <div class="display-4 fw-bold text-success">{{ taux_global }}%</div>
+                <div class="small text-muted">Sur {{ total_examens }} examens</div>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <div class="row g-3">
+                <div class="col-sm-3">
+                    <div class="card shadow-sm border-0 p-3 bg-success text-white">
+                        <small>Admis</small>
+                        <h3 class="mb-0">{{ total_admis }}</h3>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="card shadow-sm border-0 p-3 bg-danger text-white">
+                        <small>Ajournés</small>
+                        <h3 class="mb-0">{{ total_ajourne }}</h3>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="card shadow-sm border-0 p-3 bg-warning text-dark">
+                        <small>En attente</small>
+                        <h3 class="mb-0">{{ total_attente }}</h3>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="card shadow-sm border-0 p-3 bg-secondary text-white">
+                        <small>Absents</small>
+                        <h3 class="mb-0">{{ total_absent }}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0">Réussite par type d'examen</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table align-middle">
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Total</th>
+                                <th>Taux</th>
+                                <th>Progrès</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for s in stats_type %}
+                            <tr>
+                                <td>{{ s.type_examen }}</td>
+                                <td>{{ s.total }}</td>
+                                <td>{{ s.taux }}%</td>
+                                <td style="width: 40%;">
+                                    <div class="progress" style="height: 10px;">
+                                        <div class="progress-bar bg-info" role="progressbar" style="width: {{ s.taux }}%"></div>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0">Top moniteurs (Taux de réussite)</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table align-middle">
+                        <thead>
+                            <tr>
+                                <th>Moniteur</th>
+                                <th>Examens</th>
+                                <th>Taux</th>
+                                <th>Progrès</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for s in stats_moniteur %}
+                            <tr>
+                                <td>{{ s.moniteur__prenom }} {{ s.moniteur__nom }}</td>
+                                <td>{{ s.total }}</td>
+                                <td>{{ s.taux }}%</td>
+                                <td style="width: 40%;">
+                                    <div class="progress" style="height: 10px;">
+                                        <div class="progress-bar bg-success" role="progressbar" style="width: {{ s.taux }}%"></div>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -50,6 +50,9 @@ INSTALLED_APPS = [
     'apps.dashboard',
     'apps.documents',
     'apps.audit',
+    # third-party packages
+    'crispy_forms',
+    'crispy_bootstrap4',
 ]
 
 MIDDLEWARE = [
@@ -122,6 +125,7 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
+TIME_ZONE = 'Africa/Bamako'  # Définir le fuseau horaire sur Bamako
 
 
 # Static files (CSS, JavaScript, Images)
@@ -133,6 +137,9 @@ STATICFILES_DIRS = [BASE_DIR / "static"]
 # Media files (Images, Documents)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# Crispy forms configuration
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 # Redirection après connexion/déconnexion
 LOGIN_REDIRECT_URL = 'liste_apprenants'

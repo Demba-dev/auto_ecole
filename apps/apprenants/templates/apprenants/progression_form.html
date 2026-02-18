@@ -536,7 +536,7 @@ input[type="number"]::-webkit-inner-spin-button {
     <div class="page-header">
         <nav class="breadcrumb-custom" aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
                 <li class="breadcrumb-item"><a href="{% url 'liste_apprenants' %}">Apprenants</a></li>
                 <li class="breadcrumb-item"><a href="{% url 'detail_apprenant' apprenant.id %}">{{ apprenant.prenom }} {{ apprenant.nom }}</a></li>
                 <li class="breadcrumb-item active">Suivi des heures</li>

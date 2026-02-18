@@ -1,0 +1,934 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    {% if form.instance.pk %}
+        Modifier document - {{ form.instance.apprenant }} - KALANSSO
+    {% else %}
+        Ajouter un document - KALANSSO
+    {% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<style>
+:root {
+    --primary: #0f172a;
+    --primary-soft: #f1f5f9;
+    --primary-light: #1e293b;
+    --accent: #3b82f6;
+    --accent-light: #eff6ff;
+    --success: #0b6e4f;
+    --success-light: #e7f3ef;
+    --warning: #b45309;
+    --warning-light: #fffbeb;
+    --danger: #b91c1c;
+    --danger-light: #fef2f2;
+    --info: #0891b2;
+    --info-light: #e0f2fe;
+    --text-dark: #0f172a;
+    --text-medium: #334155;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+    --border-light: #f1f5f9;
+    --radius: 16px;
+    --radius-sm: 12px;
+    --radius-lg: 20px;
+    --shadow: 0 4px 12px rgba(0,0,0,0.08);
+    --shadow-lg: 0 12px 30px rgba(0,0,0,0.06);
+    --transition: 0.2s ease;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: #f8fafc;
+    color: var(--text-dark);
+}
+
+/* ------------------------------------------------
+   BREADCRUMB
+------------------------------------------------ */
+.breadcrumb-custom .breadcrumb {
+    background: transparent;
+    padding: 0;
+    margin-bottom: 0.5rem;
+}
+.breadcrumb-custom .breadcrumb-item + .breadcrumb-item::before {
+    content: "·";
+    color: var(--text-muted);
+}
+.breadcrumb-custom .breadcrumb-item a {
+    text-decoration: none;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    transition: var(--transition);
+}
+.breadcrumb-custom .breadcrumb-item a:hover {
+    color: var(--primary);
+}
+.breadcrumb-custom .breadcrumb-item.active {
+    color: var(--text-medium);
+    font-size: 0.85rem;
+}
+
+/* ------------------------------------------------
+   PAGE HEADER
+------------------------------------------------ */
+.page-header {
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.page-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 0.3rem;
+    letter-spacing: -0.02em;
+}
+.page-subtitle {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+/* ------------------------------------------------
+   BOUTONS
+------------------------------------------------ */
+.btn-outline, .btn-soft, .btn-accent {
+    border-radius: 30px;
+    padding: 0.5rem 1.2rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: 0.2s;
+    text-decoration: none !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: none;
+    cursor: pointer;
+}
+.btn-outline {
+    background: #fff;
+    border: 1px solid var(--border);
+    color: var(--text-medium);
+}
+.btn-outline:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    box-shadow: var(--shadow);
+    transform: translateY(-1px);
+}
+.btn-soft {
+    background: var(--primary-soft);
+    color: var(--text-medium);
+    border: 1px solid transparent;
+}
+.btn-soft:hover {
+    background: #fff;
+    border: 1px solid var(--border);
+    transform: translateY(-1px);
+}
+.btn-accent {
+    background: var(--accent);
+    color: #fff !important;
+    border-radius: 30px;
+    padding: 0.5rem 1.5rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border: none;
+}
+.btn-accent:hover {
+    background: #2563eb;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    transform: translateY(-1px);
+}
+.btn-sm {
+    padding: 0.4rem 1rem;
+    font-size: 0.8rem;
+}
+.btn-icon {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 30px;
+}
+
+/* ------------------------------------------------
+   FORMULAIRE CARD
+------------------------------------------------ */
+.form-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.form-card {
+    background: #fff;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    transition: var(--transition);
+}
+.form-card:hover {
+    box-shadow: var(--shadow-lg);
+}
+
+/* Header carte */
+.card-header-custom {
+    background: #fff;
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.header-icon {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, var(--primary), #1e2a3a);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 1.25rem;
+}
+
+.header-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 0.2rem;
+}
+.header-subtitle {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+/* Body carte */
+.card-body-custom {
+    padding: 2rem;
+}
+
+/* Grille du formulaire */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group.full-width {
+    grid-column: span 2;
+}
+
+/* Labels */
+.form-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0;
+}
+.form-label i {
+    color: var(--accent);
+    font-size: 0.7rem;
+    width: 14px;
+}
+.required-star {
+    color: var(--danger);
+    margin-left: 2px;
+}
+
+/* Inputs */
+.form-control, .form-select, .form-textarea {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+    transition: var(--transition);
+    background: #fff;
+    width: 100%;
+    font-family: 'Inter', sans-serif;
+}
+.form-control:hover, .form-select:hover, .form-textarea:hover {
+    border-color: var(--text-muted);
+}
+.form-control:focus, .form-select:focus, .form-textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+    outline: none;
+}
+.form-textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+/* Select */
+.form-select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 16px;
+    padding-right: 2.5rem;
+}
+
+/* Checkbox personnalisée */
+.form-check {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 0;
+}
+.form-check-input {
+    width: 1.2rem;
+    height: 1.2rem;
+    border: 2px solid var(--border);
+    border-radius: 4px;
+    cursor: pointer;
+    accent-color: var(--accent);
+    transition: var(--transition);
+}
+.form-check-input:checked {
+    background-color: var(--accent);
+    border-color: var(--accent);
+}
+.form-check-label {
+    font-size: 0.9rem;
+    color: var(--text-medium);
+    cursor: pointer;
+}
+
+/* ------------------------------------------------
+   UPLOAD DE FICHIER
+------------------------------------------------ */
+.file-upload-area {
+    margin-top: 0.5rem;
+}
+
+.file-dropzone {
+    border: 2px dashed var(--border);
+    border-radius: var(--radius-sm);
+    padding: 2rem;
+    text-align: center;
+    background: var(--primary-soft);
+    transition: var(--transition);
+    cursor: pointer;
+}
+.file-dropzone:hover {
+    border-color: var(--accent);
+    background: var(--accent-light);
+}
+.file-dropzone i {
+    font-size: 2rem;
+    color: var(--accent);
+    margin-bottom: 1rem;
+}
+.file-dropzone .upload-text {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 0.25rem;
+}
+.file-dropzone .upload-hint {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.file-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--primary-soft);
+    border-radius: var(--radius-sm);
+    padding: 1rem;
+    margin-top: 0.5rem;
+    border: 1px solid var(--border);
+}
+.file-info-left {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+.file-info-left i {
+    font-size: 1.5rem;
+    color: var(--accent);
+}
+.file-name {
+    font-weight: 600;
+    color: var(--text-dark);
+}
+.file-size {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+}
+.file-remove {
+    color: var(--danger);
+    background: transparent;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition);
+}
+.file-remove:hover {
+    background: var(--danger-light);
+}
+
+/* Fichier caché */
+input[type="file"] {
+    display: none;
+}
+
+/* ------------------------------------------------
+   AIDE ET ERREURS
+------------------------------------------------ */
+.help-text {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.25rem;
+    background: var(--primary-soft);
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--radius-sm);
+}
+.help-text i {
+    color: var(--accent);
+    font-size: 0.7rem;
+}
+
+.error-feedback {
+    color: var(--danger);
+    font-size: 0.7rem;
+    font-weight: 500;
+    margin-top: 0.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--danger-light);
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--radius-sm);
+}
+.error-feedback i {
+    color: var(--danger);
+    font-size: 0.7rem;
+}
+
+/* ------------------------------------------------
+   MINI CARTE APPRENANT
+------------------------------------------------ */
+.apprenant-card {
+    background: var(--primary-soft);
+    border-radius: var(--radius-sm);
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    border: 1px solid var(--border);
+}
+.apprenant-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--primary), #1e2a3a);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+.apprenant-info h6 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+}
+.apprenant-info small {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.apprenant-info small i {
+    color: var(--accent);
+}
+
+/* ------------------------------------------------
+   FOOTER
+------------------------------------------------ */
+.card-footer-custom {
+    background: #fff;
+    padding: 1.5rem 2rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.action-hint {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+.hint-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    background: var(--primary-soft);
+    padding: 0.3rem 1rem;
+    border-radius: 30px;
+}
+.hint-item i {
+    color: var(--accent);
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+/* ------------------------------------------------
+   RESPONSIVE
+------------------------------------------------ */
+@media (max-width: 768px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+    .form-group.full-width {
+        grid-column: span 1;
+    }
+    .card-header-custom,
+    .card-body-custom,
+    .card-footer-custom {
+        padding: 1.5rem;
+    }
+    .apprenant-card {
+        flex-direction: column;
+        text-align: center;
+    }
+    .form-actions {
+        flex-direction: column-reverse;
+        width: 100%;
+    }
+    .btn-outline, .btn-accent {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 576px) {
+    .card-footer-custom {
+        flex-direction: column-reverse;
+    }
+    .action-hint {
+        flex-direction: column;
+        width: 100%;
+    }
+    .hint-item {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* ------------------------------------------------
+   ANIMATIONS
+------------------------------------------------ */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+.form-card {
+    animation: slideIn 0.3s ease-out;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4 py-4">
+    <!-- Header avec breadcrumb -->
+    <div class="page-header">
+        <div>
+            <nav class="breadcrumb-custom" aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'documents:document_list' %}">Documents</a></li>
+                    <li class="breadcrumb-item active">
+                        {% if form.instance.pk %}Modifier{% else %}Ajouter{% endif %}
+                    </li>
+                </ol>
+            </nav>
+            <h1 class="page-title">
+                {% if form.instance.pk %}
+                    Modifier le document
+                {% else %}
+                    Ajouter un document
+                {% endif %}
+            </h1>
+            <p class="page-subtitle">
+                {% if form.instance.pk %}
+                    Modifier les informations du document de {{ form.instance.apprenant }}
+                {% else %}
+                    Télécharger un nouveau document pour un apprenant
+                {% endif %}
+            </p>
+        </div>
+        <a href="{% url 'documents:document_list' %}" class="btn-soft btn-sm">
+            <i class="fas fa-arrow-left"></i> Retour
+        </a>
+    </div>
+
+    <!-- Formulaire -->
+    <div class="form-container">
+        <form method="post" enctype="multipart/form-data" class="form-card" id="documentForm">
+            {% csrf_token %}
+            
+            <!-- Header carte -->
+            <div class="card-header-custom">
+                <div class="header-icon">
+                    <i class="fas {% if form.instance.pk %}fa-edit{% else %}fa-cloud-upload-alt{% endif %}"></i>
+                </div>
+                <div>
+                    <div class="header-title">
+                        {% if form.instance.pk %}
+                            Document #{{ form.instance.id }}
+                        {% else %}
+                            Nouveau document
+                        {% endif %}
+                    </div>
+                    <div class="header-subtitle">
+                        <span class="required-star">*</span> Champs obligatoires
+                    </div>
+                </div>
+            </div>
+
+            <!-- Body carte -->
+            <div class="card-body-custom">
+                {% if form.non_field_errors %}
+                <div class="alert alert-danger" style="background: var(--danger-light); border-left: 3px solid var(--danger); padding: 1rem; border-radius: var(--radius-sm); margin-bottom: 1.5rem;">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    {{ form.non_field_errors }}
+                </div>
+                {% endif %}
+
+                <!-- Si pas d'apprenant sélectionné, afficher le champ apprenant -->
+                {% if not apprenant %}
+                <div class="form-group full-width mb-4">
+                    <label class="form-label" for="{{ form.apprenant.id_for_label }}">
+                        <i class="fas fa-user-graduate"></i> Apprenant <span class="required-star">*</span>
+                    </label>
+                    {{ form.apprenant }}
+                    <div class="help-text">
+                        <i class="fas fa-info-circle"></i> Sélectionnez l'apprenant concerné
+                    </div>
+                    {% for error in form.apprenant.errors %}
+                    <div class="error-feedback">
+                        <i class="fas fa-exclamation-circle"></i> {{ error }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Mini carte apprenant si déjà sélectionné -->
+                {% if apprenant %}
+                <div class="apprenant-card">
+                    <div class="apprenant-avatar">
+                        {{ apprenant.prenom|first|upper }}{{ apprenant.nom|first|upper }}
+                    </div>
+                    <div class="apprenant-info">
+                        <h6>{{ apprenant.prenom }} {{ apprenant.nom }}</h6>
+                        <small>
+                            <i class="fas fa-phone"></i> {{ apprenant.telephone }}
+                            <i class="fas fa-envelope ms-2"></i> {{ apprenant.email|default:"Email non renseigné" }}
+                        </small>
+                    </div>
+                </div>
+                <!-- Champ caché pour l'apprenant -->
+                <input type="hidden" name="apprenant" value="{{ apprenant.id }}">
+                {% endif %}
+
+                <!-- Grille du formulaire -->
+                <div class="form-grid">
+                    <!-- Type de document -->
+                    <div class="form-group full-width">
+                        <label class="form-label" for="{{ form.type_document.id_for_label }}">
+                            <i class="fas fa-tag"></i> Type de document <span class="required-star">*</span>
+                        </label>
+                        {{ form.type_document }}
+                        {% for error in form.type_document.errors %}
+                        <div class="error-feedback">
+                            <i class="fas fa-exclamation-circle"></i> {{ error }}
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Fichier -->
+                    <div class="form-group full-width">
+                        <label class="form-label">
+                            <i class="fas fa-file"></i> Fichier <span class="required-star">*</span>
+                        </label>
+                        
+                        {% if form.instance.pk and form.instance.fichier %}
+                        <!-- Fichier existant -->
+                        <div class="file-info">
+                            <div class="file-info-left">
+                                <i class="fas fa-file-pdf"></i>
+                                <div>
+                                    <div class="file-name">{{ form.instance.fichier.name|slice:"20:" }}</div>
+                                    <div class="file-size">Document actuel</div>
+                                </div>
+                            </div>
+                            <a href="{{ form.instance.fichier.url }}" target="_blank" class="btn-soft btn-sm">
+                                <i class="fas fa-eye"></i> Voir
+                            </a>
+                        </div>
+                        {% endif %}
+
+                        <!-- Zone de drop -->
+                        <div class="file-upload-area">
+                            {{ form.fichier }}
+                            <div class="file-dropzone" id="dropzone">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <div class="upload-text">
+                                    {% if form.instance.pk and form.instance.fichier %}
+                                        Remplacer le document
+                                    {% else %}
+                                        Cliquez ou glissez-déposez
+                                    {% endif %}
+                                </div>
+                                <div class="upload-hint">
+                                    PDF, JPG, PNG - Max 10 Mo
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="file-info" style="display: none;" class="file-info">
+                            <div class="file-info-left">
+                                <i class="fas fa-file" id="file-icon"></i>
+                                <div>
+                                    <div class="file-name" id="file-name"></div>
+                                    <div class="file-size" id="file-size"></div>
+                                </div>
+                            </div>
+                            <button type="button" class="file-remove" id="file-remove">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+
+                        {% for error in form.fichier.errors %}
+                        <div class="error-feedback">
+                            <i class="fas fa-exclamation-circle"></i> {{ error }}
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Statut et commentaire -->
+                    <div class="form-group">
+                        <div class="form-check">
+                            {{ form.est_valide }}
+                            <label class="form-check-label" for="{{ form.est_valide.id_for_label }}">
+                                Document valide
+                            </label>
+                        </div>
+                        <div class="help-text">
+                            <i class="fas fa-info-circle"></i> Cochez si le document est conforme
+                        </div>
+                        {% for error in form.est_valide.errors %}
+                        <div class="error-feedback">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label class="form-label" for="{{ form.commentaire.id_for_label }}">
+                            <i class="fas fa-comment"></i> Commentaire
+                        </label>
+                        {{ form.commentaire }}
+                        <div class="help-text">
+                            <i class="fas fa-info-circle"></i> Ajoutez une note si nécessaire
+                        </div>
+                        {% for error in form.commentaire.errors %}
+                        <div class="error-feedback">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                {% if form.instance.pk %}
+                <!-- Métadonnées -->
+                <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed var(--border);">
+                    <small class="text-muted">
+                        <i class="fas fa-clock me-1"></i> Téléchargé le {{ form.instance.date_upload|date:"d/m/Y à H:i" }}
+                    </small>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Footer -->
+            <div class="card-footer-custom">
+                <div class="action-hint">
+                    <span class="hint-item">
+                        <i class="fas fa-shield-alt"></i> Données sécurisées
+                    </span>
+                    <span class="hint-item">
+                        <i class="fas fa-clock"></i> {% now "d/m/Y" %}
+                    </span>
+                </div>
+                
+                <div class="form-actions">
+                    <a href="{% url 'documents:document_list' %}" class="btn-outline btn-sm">
+                        <i class="fas fa-times"></i> Annuler
+                    </a>
+                    <button type="submit" class="btn-accent btn-sm">
+                        <i class="fas fa-save"></i>
+                        {% if form.instance.pk %}Mettre à jour{% else %}Uploader{% endif %}
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('documentForm');
+    const fileInput = document.getElementById('{{ form.fichier.id_for_label }}');
+    const dropzone = document.getElementById('dropzone');
+    const fileInfo = document.getElementById('file-info');
+    const fileName = document.getElementById('file-name');
+    const fileSize = document.getElementById('file-size');
+    const fileIcon = document.getElementById('file-icon');
+    const fileRemove = document.getElementById('file-remove');
+    
+    let formChanged = false;
+
+    // Détection des modifications
+    const formInputs = form.querySelectorAll('input, select, textarea');
+    formInputs.forEach(input => {
+        if (input.type !== 'hidden' && input.type !== 'file') {
+            input.addEventListener('change', () => formChanged = true);
+            input.addEventListener('input', () => formChanged = true);
+        }
+    });
+
+    // Confirmation avant annulation
+    const cancelBtn = document.querySelector('a[href*="document_list"]');
+    if (cancelBtn) {
+        cancelBtn.addEventListener('click', function(e) {
+            if (formChanged && !confirm('Modifications non enregistrées. Quitter ?')) {
+                e.preventDefault();
+            }
+        });
+    }
+
+    // Gestion du drag & drop
+    if (dropzone && fileInput) {
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropzone.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropzone.addEventListener(eventName, () => {
+                dropzone.style.borderColor = 'var(--accent)';
+                dropzone.style.background = 'var(--accent-light)';
+            });
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropzone.addEventListener(eventName, () => {
+                dropzone.style.borderColor = 'var(--border)';
+                dropzone.style.background = 'var(--primary-soft)';
+            });
+        });
+
+        dropzone.addEventListener('drop', (e) => {
+            const files = e.dataTransfer.files;
+            if (files.length) {
+                fileInput.files = files;
+                updateFileInfo(files[0]);
+            }
+        });
+
+        dropzone.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files.length) {
+                updateFileInfo(fileInput.files[0]);
+            }
+        });
+
+        fileRemove.addEventListener('click', () => {
+            fileInput.value = '';
+            fileInfo.style.display = 'none';
+            dropzone.style.display = 'block';
+        });
+
+        function updateFileInfo(file) {
+            dropzone.style.display = 'none';
+            fileInfo.style.display = 'flex';
+            
+            fileName.textContent = file.name.length > 40 ? file.name.substring(0, 37) + '...' : file.name;
+            
+            const size = file.size / 1024;
+            if (size < 1024) {
+                fileSize.textContent = size.toFixed(1) + ' Ko';
+            } else {
+                fileSize.textContent = (size / 1024).toFixed(1) + ' Mo';
+            }
+
+            if (file.type.includes('pdf')) {
+                fileIcon.className = 'fas fa-file-pdf';
+            } else if (file.type.includes('image')) {
+                fileIcon.className = 'fas fa-file-image';
+            } else {
+                fileIcon.className = 'fas fa-file';
+            }
+
+            formChanged = true;
+        }
+    }
+
+    // Si fichier déjà présent en modification
+    {% if form.instance.pk and form.instance.fichier %}
+    dropzone.style.display = 'none';
+    {% endif %}
+});
+</script>
+{% endblock %}

@@ -1,0 +1,749 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Hub Examens - KALANSSO{% endblock %}
+
+{% block extra_css %}
+<style>
+:root {
+    --primary: #0f172a;
+    --primary-soft: #f1f5f9;
+    --primary-light: #1e293b;
+    --accent: #3b82f6;
+    --accent-light: #eff6ff;
+    --success: #0b6e4f;
+    --success-light: #e7f3ef;
+    --warning: #b45309;
+    --warning-light: #fffbeb;
+    --danger: #b91c1c;
+    --danger-light: #fef2f2;
+    --info: #0891b2;
+    --info-light: #e0f2fe;
+    --text-dark: #0f172a;
+    --text-medium: #334155;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+    --border-light: #f1f5f9;
+    --radius: 16px;
+    --radius-sm: 12px;
+    --radius-lg: 20px;
+    --shadow: 0 4px 12px rgba(0,0,0,0.08);
+    --shadow-lg: 0 12px 30px rgba(0,0,0,0.06);
+    --transition: 0.2s ease;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: #f8fafc;
+    color: var(--text-dark);
+}
+
+/* ------------------------------------------------
+   BREADCRUMB
+------------------------------------------------ */
+.breadcrumb-custom .breadcrumb {
+    background: transparent;
+    padding: 0;
+    margin-bottom: 0.5rem;
+}
+.breadcrumb-custom .breadcrumb-item + .breadcrumb-item::before {
+    content: "·";
+    color: var(--text-muted);
+}
+.breadcrumb-custom .breadcrumb-item a {
+    text-decoration: none;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    transition: var(--transition);
+}
+.breadcrumb-custom .breadcrumb-item a:hover {
+    color: var(--primary);
+}
+.breadcrumb-custom .breadcrumb-item.active {
+    color: var(--text-medium);
+    font-size: 0.85rem;
+}
+
+/* ------------------------------------------------
+   PAGE HEADER
+------------------------------------------------ */
+.page-header {
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.page-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 0.3rem;
+    letter-spacing: -0.02em;
+}
+.page-subtitle {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+/* ------------------------------------------------
+   STATISTIQUES RAPIDES
+------------------------------------------------ */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: #fff;
+    border-radius: var(--radius-sm);
+    padding: 1.25rem;
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: var(--transition);
+}
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: var(--accent-light);
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+}
+.stat-content h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.2rem;
+    line-height: 1.2;
+}
+.stat-content small {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+}
+
+/* ------------------------------------------------
+   GRILLE PRINCIPALE
+------------------------------------------------ */
+.hub-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+@media (min-width: 992px) {
+    .hub-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .hub-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.hub-card {
+    background: #fff;
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+.hub-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+}
+.hub-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--accent), var(--info));
+    opacity: 0;
+    transition: var(--transition);
+}
+.hub-card:hover::before {
+    opacity: 1;
+}
+
+.hub-card-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    background: var(--primary-soft);
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin-bottom: 1.25rem;
+    transition: var(--transition);
+}
+.hub-card:hover .hub-card-icon {
+    background: var(--accent);
+    color: #fff;
+}
+
+.hub-card-content {
+    flex: 1;
+}
+
+.hub-card-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 0.5rem;
+}
+
+.hub-card-description {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+}
+
+.hub-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: auto;
+}
+
+.hub-card-badge {
+    font-size: 0.7rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    background: var(--primary-soft);
+    color: var(--text-medium);
+}
+
+/* ------------------------------------------------
+   BOUTONS
+------------------------------------------------ */
+.btn-custom {
+    border-radius: 30px;
+    padding: 0.5rem 1.2rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: var(--transition);
+    text-decoration: none !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: none;
+    cursor: pointer;
+}
+.btn-primary-custom {
+    background: var(--accent);
+    color: #fff !important;
+}
+.btn-primary-custom:hover {
+    background: #2563eb;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    transform: translateY(-1px);
+}
+.btn-outline-custom {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-medium);
+}
+.btn-outline-custom:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: translateY(-1px);
+}
+.btn-soft-custom {
+    background: var(--primary-soft);
+    color: var(--text-medium);
+    border: 1px solid transparent;
+}
+.btn-soft-custom:hover {
+    background: #fff;
+    border: 1px solid var(--border);
+    transform: translateY(-1px);
+}
+
+/* ------------------------------------------------
+   FILTRES RAPIDES
+------------------------------------------------ */
+.quick-filters {
+    background: #fff;
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow);
+}
+
+.quick-filters-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.filters-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.filter-chip {
+    padding: 0.5rem 1.2rem;
+    border-radius: 30px;
+    background: var(--primary-soft);
+    color: var(--text-medium);
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.filter-chip:hover {
+    background: var(--accent);
+    color: #fff;
+    transform: translateY(-1px);
+}
+.filter-chip.active {
+    background: var(--accent);
+    color: #fff;
+}
+.filter-chip i {
+    font-size: 0.7rem;
+}
+
+/* ------------------------------------------------
+   ACTIVITÉS RÉCENTES
+------------------------------------------------ */
+.recent-activities {
+    background: #fff;
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    margin-top: 2rem;
+}
+
+.activity-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border-light);
+}
+.activity-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+.activity-item:first-child {
+    padding-top: 0;
+}
+
+.activity-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: var(--accent-light);
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+}
+
+.activity-content {
+    flex: 1;
+}
+
+.activity-title {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-dark);
+    margin-bottom: 0.2rem;
+}
+
+.activity-meta {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    display: flex;
+    gap: 1rem;
+}
+
+.activity-time {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+/* ------------------------------------------------
+   BADGES STATUT
+------------------------------------------------ */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+.status-success {
+    background: var(--success-light);
+    color: var(--success);
+}
+.status-warning {
+    background: var(--warning-light);
+    color: var(--warning);
+}
+.status-info {
+    background: var(--info-light);
+    color: var(--info);
+}
+.status-danger {
+    background: var(--danger-light);
+    color: var(--danger);
+}
+
+/* ------------------------------------------------
+   ANIMATIONS
+------------------------------------------------ */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+.hub-card {
+    animation: slideIn 0.3s ease-out;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4 py-4">
+    <!-- Header avec breadcrumb -->
+    <div class="page-header">
+        <div>
+            <nav class="breadcrumb-custom" aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Examens</li>
+                </ol>
+            </nav>
+            <h1 class="page-title">Gestion des examens</h1>
+            <p class="page-subtitle">Gérez tous les examens de l'auto-école</p>
+        </div>
+        <a href="{% url 'examens:examen_create' %}" class="btn-primary-custom btn-custom">
+            <i class="fas fa-plus"></i> Nouvel examen
+        </a>
+    </div>
+
+    <!-- Statistiques rapides -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-calendar-alt"></i>
+            </div>
+            <div class="stat-content">
+                <h3>{{ total_examens|default:"0" }}</h3>
+                <small>Examens total</small>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon" style="background: var(--success-light); color: var(--success);">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stat-content">
+                <h3>{{ examens_aujourdhui|default:"0" }}</h3>
+                <small>Aujourd'hui</small>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon" style="background: var(--warning-light); color: var(--warning);">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-content">
+                <h3>{{ examens_en_attente|default:"0" }}</h3>
+                <small>En attente</small>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon" style="background: var(--info-light); color: var(--info);">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="stat-content">
+                <h3>{{ apprenants_concernes|default:"0" }}</h3>
+                <small>Apprenants</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtres rapides -->
+    <div class="quick-filters">
+        <div class="quick-filters-title">
+            <i class="fas fa-filter"></i>
+            Filtres rapides
+        </div>
+        <div class="filters-chips">
+            <a href="{% url 'examens:examen_list' %}" class="filter-chip {% if not request.GET.filter %}active{% endif %}">
+                <i class="fas fa-list"></i> Tous
+            </a>
+            <a href="{% url 'examens:examen_list' %}?filter=aujourdhui" class="filter-chip">
+                <i class="fas fa-sun"></i> Aujourd'hui
+            </a>
+            <a href="{% url 'examens:examen_list' %}?filter=semaine" class="filter-chip">
+                <i class="fas fa-calendar-week"></i> Cette semaine
+            </a>
+            <a href="{% url 'examens:examen_list' %}?filter=code" class="filter-chip">
+                <i class="fas fa-pencil-alt"></i> Code
+            </a>
+            <a href="{% url 'examens:examen_list' %}?filter=conduite" class="filter-chip">
+                <i class="fas fa-car"></i> Conduite
+            </a>
+            <a href="{% url 'examens:examen_list' %}?filter=non_payes" class="filter-chip">
+                <i class="fas fa-credit-card"></i> Non payés
+            </a>
+            <a href="{% url 'examens:examen_list' %}?filter=en_attente" class="filter-chip">
+                <i class="fas fa-hourglass-half"></i> En attente
+            </a>
+        </div>
+    </div>
+
+    <!-- Hub principal -->
+    <div class="hub-grid">
+        <!-- Carte Liste des examens -->
+        <div class="hub-card">
+            <div class="hub-card-icon">
+                <i class="fas fa-list-ul"></i>
+            </div>
+            <div class="hub-card-content">
+                <h3 class="hub-card-title">Liste des examens</h3>
+                <p class="hub-card-description">
+                    Consultez et gérez tous les examens enregistrés
+                </p>
+            </div>
+            <div class="hub-card-footer">
+                <span class="hub-card-badge">
+                    <i class="fas fa-file"></i> {{ total_examens|default:"0" }}
+                </span>
+                <a href="{% url 'examens:examen_list' %}" class="btn-soft-custom btn-custom btn-sm">
+                    Accéder <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Carte Nouvel examen -->
+        <div class="hub-card">
+            <div class="hub-card-icon" style="background: var(--success-light); color: var(--success);">
+                <i class="fas fa-plus-circle"></i>
+            </div>
+            <div class="hub-card-content">
+                <h3 class="hub-card-title">Nouvel examen</h3>
+                <p class="hub-card-description">
+                    Créer un nouvel examen pour un apprenant
+                </p>
+            </div>
+            <div class="hub-card-footer">
+                <span class="hub-card-badge">
+                    <i class="fas fa-clock"></i> Rapide
+                </span>
+                <a href="{% url 'examens:examen_create' %}" class="btn-primary-custom btn-custom btn-sm">
+                    Ajouter <i class="fas fa-plus"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Carte Examens par apprenant -->
+        <div class="hub-card">
+            <div class="hub-card-icon" style="background: var(--info-light); color: var(--info);">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="hub-card-content">
+                <h3 class="hub-card-title">Par apprenant</h3>
+                <p class="hub-card-description">
+                    Filtrer les examens par apprenant ou par type
+                </p>
+            </div>
+            <div class="hub-card-footer">
+                <span class="hub-card-badge">
+                    <i class="fas fa-user"></i> {{ apprenants_concernes|default:"0" }}
+                </span>
+                <a href="{% url 'examens:examen_list' %}?filter=apprenant" class="btn-soft-custom btn-custom btn-sm">
+                    Filtrer <i class="fas fa-filter"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Carte Examens non payés -->
+        <div class="hub-card">
+            <div class="hub-card-icon" style="background: var(--warning-light); color: var(--warning);">
+                <i class="fas fa-credit-card"></i>
+            </div>
+            <div class="hub-card-content">
+                <h3 class="hub-card-title">Paiements en attente</h3>
+                <p class="hub-card-description">
+                    Examens dont le paiement n'est pas effectué
+                </p>
+            </div>
+            <div class="hub-card-footer">
+                <span class="hub-card-badge">
+                    <i class="fas fa-exclamation-triangle"></i> {{ examens_non_payes|default:"0" }}
+                </span>
+                <a href="{% url 'examens:examen_list' %}?filter=non_payes" class="btn-soft-custom btn-custom btn-sm">
+                    Voir <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Carte Résultats -->
+        <div class="hub-card">
+            <div class="hub-card-icon" style="background: var(--success-light); color: var(--success);">
+                <i class="fas fa-chart-bar"></i>
+            </div>
+            <div class="hub-card-content">
+                <h3 class="hub-card-title">Résultats</h3>
+                <p class="hub-card-description">
+                    Consulter et gérer les résultats d'examens
+                </p>
+            </div>
+            <div class="hub-card-footer">
+                <span class="hub-card-badge">
+                    <i class="fas fa-check"></i> {{ examens_avec_resultats|default:"0" }}
+                </span>
+                <a href="{% url 'examens:examen_list' %}?filter=resultats" class="btn-soft-custom btn-custom btn-sm">
+                    Voir <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Carte Statistiques -->
+        <div class="hub-card">
+            <div class="hub-card-icon" style="background: var(--primary-soft); color: var(--primary);">
+                <i class="fas fa-chart-pie"></i>
+            </div>
+            <div class="hub-card-content">
+                <h3 class="hub-card-title">Statistiques</h3>
+                <p class="hub-card-description">
+                    Taux de réussite et analyses détaillées
+                </p>
+            </div>
+            <div class="hub-card-footer">
+                <span class="hub-card-badge">
+                    <i class="fas fa-percent"></i> {{ taux_reussite|default:"0" }}%
+                </span>
+                <a href="{% url 'examens:statistiques' %}" class="btn-soft-custom btn-custom btn-sm">
+                    Analyser <i class="fas fa-chart-line"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Carte Planning -->
+        <div class="hub-card">
+            <div class="hub-card-icon" style="background: var(--info-light); color: var(--info);">
+                <i class="fas fa-calendar-alt"></i>
+            </div>
+            <div class="hub-card-content">
+                <h3 class="hub-card-title">Planning</h3>
+                <p class="hub-card-description">
+                    Vue calendrier des examens à venir
+                </p>
+            </div>
+            <div class="hub-card-footer">
+                <span class="hub-card-badge">
+                    <i class="fas fa-calendar-day"></i> {{ examens_a_venir|default:"0" }}
+                </span>
+                <a href="{% url 'examens:planning' %}" class="btn-soft-custom btn-custom btn-sm">
+                    Voir <i class="fas fa-calendar-alt"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Carte Examens blancs -->
+        <div class="hub-card">
+            <div class="hub-card-icon" style="background: var(--warning-light); color: var(--warning);">
+                <i class="fas fa-graduation-cap"></i>
+            </div>
+            <div class="hub-card-content">
+                <h3 class="hub-card-title">Examens blancs</h3>
+                <p class="hub-card-description">
+                    Gérer les examens blancs et simulations
+                </p>
+            </div>
+            <div class="hub-card-footer">
+                <span class="hub-card-badge">
+                    <i class="fas fa-clock"></i> {{ examens_blancs|default:"0" }}
+                </span>
+                <a href="{% url 'examens:examen_list' %}?type=BLANC" class="btn-soft-custom btn-custom btn-sm">
+                    Accéder <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Activités récentes -->
+    <div class="recent-activities">
+        <div class="quick-filters-title">
+            <i class="fas fa-history"></i>
+            Activités récentes
+        </div>
+        <div class="activities-list">
+            {% for activite in activites_recentes %}
+            <div class="activity-item">
+                <div class="activity-icon">
+                    <i class="fas fa-{{ activite.icone }}"></i>
+                </div>
+                <div class="activity-content">
+                    <div class="activity-title">{{ activite.titre }}</div>
+                    <div class="activity-meta">
+                        <span class="activity-time">
+                            <i class="fas fa-clock"></i> {{ activite.heure }}
+                        </span>
+                        <span class="status-badge status-{{ activite.statut_classe }}">
+                            <i class="fas fa-circle"></i> {{ activite.statut }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="text-center py-4">
+                <i class="fas fa-inbox fa-2x mb-3" style="color: var(--text-muted);"></i>
+                <p class="text-muted">Aucune activité récente</p>
+            </div>
+            {% endfor %}
+        </div>
+        {% if activites_recentes %}
+        <div class="text-center mt-3">
+            <a href="{% url 'examens:activites' %}" class="btn-outline-custom btn-custom btn-sm">
+                Voir toutes les activités <i class="fas fa-arrow-right ms-1"></i>
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -5,6 +5,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Apprenant, TypePermis, DossierApprenant, ProgressionConduite
 from apps.planning.models import Seance
+from datetime import date
 from .forms import ApprenantForm, DossierForm, ProgressionForm
 from django.contrib.auth.decorators import login_required
 from apps.accounts.decorators import admin_required
@@ -68,12 +69,12 @@ def liste_apprenants(request):
     }
     return render(request, 'apprenants/liste.html', context)
 
-@login_required
+@admin_required
 def detail_apprenant(request, pk):
     apprenant = get_object_or_404(Apprenant, pk=pk)
     return render(request, 'apprenants/detail.html', {'apprenant': apprenant})
 
-@login_required
+@admin_required
 def ajouter_apprenant(request):
     if request.method == 'POST':
         form = ApprenantForm(request.POST, request.FILES)
@@ -84,7 +85,7 @@ def ajouter_apprenant(request):
         form = ApprenantForm()
     return render(request, 'apprenants/form.html', {'form': form})
 
-@login_required
+@admin_required
 def modifier_apprenant(request, pk):
     apprenant = get_object_or_404(Apprenant, pk=pk)
     if request.method == 'POST':
@@ -96,7 +97,7 @@ def modifier_apprenant(request, pk):
         form = ApprenantForm(instance=apprenant)
     return render(request, 'apprenants/form.html', {'form': form})
 
-@login_required
+@admin_required
 def supprimer_apprenant(request, pk):
     apprenant = get_object_or_404(Apprenant, pk=pk)
     if request.method == 'POST':
@@ -104,7 +105,7 @@ def supprimer_apprenant(request, pk):
         return redirect('liste_apprenants')
     return render(request, 'apprenants/confirmer_suppression.html', {'apprenant': apprenant})
 
-@login_required
+@admin_required
 def planning_apprenant(request, pk):
     apprenant = get_object_or_404(Apprenant, pk=pk)
     seances = Seance.objects.filter(apprenant=apprenant).order_by('date', 'heure_debut')
@@ -113,7 +114,7 @@ def planning_apprenant(request, pk):
         'seances': seances
     })
 
-@login_required
+@admin_required
 def exporter_apprenants(request):
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="apprenants.csv"'
@@ -133,7 +134,7 @@ def exporter_apprenants(request):
 
     return response
 
-@login_required
+@admin_required
 def creer_dossier(request, pk):
     apprenant = get_object_or_404(Apprenant, pk=pk)
     if request.method == 'POST':
@@ -147,7 +148,7 @@ def creer_dossier(request, pk):
         form = DossierForm()
     return render(request, 'apprenants/dossier_form.html', {'form': form, 'apprenant': apprenant})
 
-@login_required
+@admin_required
 def modifier_dossier(request, pk):
     apprenant = get_object_or_404(Apprenant, pk=pk)
     dossier = get_object_or_404(DossierApprenant, apprenant=apprenant)
@@ -160,7 +161,7 @@ def modifier_dossier(request, pk):
         form = DossierForm(instance=dossier)
     return render(request, 'apprenants/dossier_form.html', {'form': form, 'apprenant': apprenant})
 
-@login_required
+@admin_required
 def ajouter_progression(request, pk):
     apprenant = get_object_or_404(Apprenant, pk=pk)
     # On essaie de récupérer l'existante ou on en crée une nouvelle
@@ -174,3 +175,16 @@ def ajouter_progression(request, pk):
     else:
         form = ProgressionForm(instance=progression)
     return render(request, 'apprenants/progression_form.html', {'form': form, 'apprenant': apprenant})
+
+@admin_required
+def planning_apprenant(request, pk):
+    apprenant = get_object_or_404(Apprenant, pk=pk)
+    seances = Seance.objects.filter(apprenant=apprenant).order_by('date', 'heure_debut')
+    today = date.today()
+    
+    context = {
+        'apprenant': apprenant,
+        'seances': seances,
+        'today': today,
+    }
+    return render(request, 'apprenants/planning.html', context)

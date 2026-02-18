@@ -1,0 +1,227 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Planning · Séances - KALANSSO{% endblock %}
+
+{% block extra_css %}
+<style>
+:root {
+    --primary: #0f172a;
+    --primary-soft: #f1f5f9;
+    --accent: #3b82f6;
+    --accent-light: #eff6ff;
+    --success: #0b6e4f;
+    --success-light: #e7f3ef;
+    --warning: #b45309;
+    --warning-light: #fffbeb;
+    --danger: #b91c1c;
+    --danger-light: #fef2f2;
+    --text-dark: #0f172a;
+    --text-medium: #334155;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+    --radius: 16px;
+    --radius-sm: 12px;
+    --shadow: 0 4px 12px rgba(0,0,0,0.08);
+    --transition: 0.2s ease;
+}
+
+.page-header {
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.page-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 0.3rem;
+    letter-spacing: -0.02em;
+}
+
+.btn-accent {
+    background: var(--accent);
+    color: #fff !important;
+    border-radius: 30px;
+    padding: 0.6rem 1.5rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: var(--transition);
+}
+
+.btn-accent:hover {
+    background: #2563eb;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    transform: translateY(-1px);
+}
+
+.content-card {
+    background: #fff;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+}
+
+.table-responsive {
+    padding: 1rem;
+}
+
+.table-custom {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 0.5rem;
+}
+
+.table-custom th {
+    background: var(--primary-soft);
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 1rem 1.5rem;
+    border: none;
+}
+
+.table-custom tbody tr {
+    transition: var(--transition);
+}
+
+.table-custom tbody tr:hover {
+    background: #f8fafc;
+}
+
+.table-custom td {
+    padding: 1.25rem 1.5rem;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.badge-custom {
+    padding: 0.4rem 0.8rem;
+    border-radius: 30px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.badge-prevu { background: var(--accent-light); color: var(--accent); }
+.badge-realise { background: var(--success-light); color: var(--success); }
+.badge-annule { background: var(--danger-light); color: var(--danger); }
+.badge-absent { background: #f1f5f9; color: #64748b; }
+
+.btn-action {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    transition: var(--transition);
+    text-decoration: none !important;
+}
+
+.btn-action:hover {
+    background: var(--primary-soft);
+    color: var(--accent);
+}
+
+.btn-action-delete:hover {
+    background: var(--danger-light);
+    color: var(--danger);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="page-header">
+        <div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-2">
+                    <li class="breadcrumb-item"><a href="{% url 'planning:planning_hub' %}" class="text-decoration-none text-muted">Planning</a></li>
+                    <li class="breadcrumb-item active">Séances</li>
+                </ol>
+            </nav>
+            <h1 class="page-title">Gestion des séances</h1>
+        </div>
+        <a href="{% url 'planning:seance_create' %}" class="btn-accent">
+            <i class="fas fa-plus"></i>
+            Nouvelle séance
+        </a>
+    </div>
+
+    <div class="content-card">
+        <div class="table-responsive">
+            <table class="table table-custom">
+                <thead>
+                    <tr>
+                        <th>Date & Heure</th>
+                        <th>Type</th>
+                        <th>Apprenant</th>
+                        <th>Moniteur</th>
+                        <th>Véhicule</th>
+                        <th>Statut</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for s in seances %}
+                    <tr>
+                        <td>
+                            <div class="fw-bold text-dark">{{ s.date|date:"d M Y" }}</div>
+                            <small class="text-muted">{{ s.heure_debut|time:"H:i" }} - {{ s.heure_fin|time:"H:i" }}</small>
+                        </td>
+                        <td>
+                            <span class="text-medium">{{ s.get_type_seance_display }}</span>
+                        </td>
+                        <td>
+                            <div class="fw-semibold">{{ s.apprenant }}</div>
+                        </td>
+                        <td>
+                            <div class="text-muted small"><i class="fas fa-id-badge me-1"></i> {{ s.moniteur }}</div>
+                        </td>
+                        <td>
+                            {% if s.vehicule %}
+                            <span class="badge bg-light text-dark border">{{ s.vehicule }}</span>
+                            {% else %}
+                            <span class="text-muted">-</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="badge-custom {% if s.statut == 'PREVU' %}badge-prevu{% elif s.statut == 'REALISE' %}badge-realise{% elif s.statut == 'ANNULE' %}badge-annule{% else %}badge-absent{% endif %}">
+                                {{ s.get_statut_display }}
+                            </span>
+                        </td>
+                        <td class="text-end">
+                            <a href="{% url 'planning:seance_update' s.id %}" class="btn-action" title="Modifier">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="{% url 'planning:seance_delete' s.id %}" class="btn-action btn-action-delete" title="Supprimer">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center py-5">
+                            <div class="text-muted">
+                                <i class="fas fa-calendar-times fa-3x mb-3 opacity-25"></i>
+                                <p>Aucune séance enregistrée.</p>
+                                <a href="{% url 'planning:seance_create' %}" class="btn btn-sm btn-outline-primary rounded-pill">Ajouter une séance</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

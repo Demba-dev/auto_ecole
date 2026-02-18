@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="card">
+    <div class="card-header">
+      <h5>Supprimer le document</h5>
+    </div>
+    <div class="card-body">
+      <p class="text-danger"><strong>Attention :</strong> Cette action est irréversible. Le fichier sera supprimé définitivement.</p>
+
+      <ul class="list-unstyled mb-3">
+        <li><strong>Apprenant :</strong> {{ document.apprenant.nom }}</li>
+        <li><strong>Type :</strong> {{ document.get_type_document_display }}</li>
+        {% if document.fichier %}
+        <li><strong>Fichier :</strong> <a href="{{ document.fichier.url }}" target="_blank">{{ document.fichier.name }}</a></li>
+        {% endif %}
+        <li><strong>Téléchargé le :</strong> {{ document.date_upload|date:"SHORT_DATETIME_FORMAT" }}</li>
+      </ul>
+
+      <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Confirmer la suppression</button>
+        <a href="{% url 'documents:document_list' %}" class="btn btn-secondary ms-2">Annuler</a>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

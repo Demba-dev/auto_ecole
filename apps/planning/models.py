@@ -3,6 +3,7 @@ from apps.apprenants.models import Apprenant
 from apps.accounts.models import User  # Moniteurs
 from apps.vehicules.models import Vehicule  # On créera ce module après si pas encore
 from datetime import timedelta, datetime
+from django.core.exceptions import ValidationError
 
 SESSION_TYPE_CHOICES = [
     ('CODE', 'Cours de code'),
@@ -30,7 +31,7 @@ class Seance(models.Model):
         Apprenant, on_delete=models.CASCADE, related_name='seances'
     )
     moniteur = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='seances', limit_choices_to={'role': 'MONITEUR'}
+       'personnel.Employe', on_delete=models.CASCADE, related_name='seances', limit_choices_to={'type_employe': 'MONITEUR'}
     )
     vehicule = models.ForeignKey(
         'vehicules.Vehicule', on_delete=models.SET_NULL, related_name='seances', null=True, blank=True
@@ -44,6 +45,12 @@ class Seance(models.Model):
     class Meta:
         ordering = ['date', 'heure_debut']
         unique_together = ('apprenant', 'date', 'heure_debut')  # évite doublon exact
+        constraints = [
+            models.UniqueConstraint(
+                fields=['moniteur', 'date', 'heure_debut'],
+                name='unique_moniteur_exact'
+            ),
+        ]
 
     def __str__(self):
         return f"{self.get_type_seance_display()} - {self.apprenant} avec {self.moniteur} le {self.date} à {self.heure_debut}"
@@ -55,23 +62,34 @@ class Seance(models.Model):
         return fin.time()
     
     def save(self, *args, **kwargs):
-        # Vérification conflit moniteur
-        conflits_moniteur = Seance.objects.filter(
-            moniteur=self.moniteur,
-            date=self.date,
-            heure_debut=self.heure_debut
-        ).exclude(id=self.id)
-        if conflits_moniteur.exists():
-            raise ValueError("Ce moniteur est déjà occupé à cette heure.")
+        debut = datetime.combine(self.date, self.heure_debut)
+        fin = debut + timedelta(minutes=self.duree_minutes)
 
-        # Vérification conflit véhicule
+        # Conflit moniteur
+        seances_moniteur = Seance.objects.filter(
+            moniteur=self.moniteur,
+            date=self.date
+        ).exclude(id=self.id)
+
+        for s in seances_moniteur:
+            s_debut = datetime.combine(s.date, s.heure_debut)
+            s_fin = s_debut + timedelta(minutes=s.duree_minutes)
+
+            if debut < s_fin and fin > s_debut:
+                raise ValidationError("Ce moniteur est déjà occupé à cette heure.")
+
+        # Conflit véhicule
         if self.vehicule:
-            conflits_vehicule = Seance.objects.filter(
+            seances_vehicule = Seance.objects.filter(
                 vehicule=self.vehicule,
-                date=self.date,
-                heure_debut=self.heure_debut
+                date=self.date
             ).exclude(id=self.id)
-            if conflits_vehicule.exists():
-                raise ValueError("Ce véhicule est déjà réservé à cette heure.")
+
+            for s in seances_vehicule:
+                s_debut = datetime.combine(s.date, s.heure_debut)
+                s_fin = s_debut + timedelta(minutes=s.duree_minutes)
+
+                if debut < s_fin and fin > s_debut:
+                    raise ValidationError("Ce véhicule est déjà réservé à cette heure.")
 
         super().save(*args, **kwargs)

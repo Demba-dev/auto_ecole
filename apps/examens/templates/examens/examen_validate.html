@@ -1,0 +1,195 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Validation Résultat - KALANSSO{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Récupération des styles de base du formulaire */
+:root {
+    --primary: #0f172a;
+    --primary-soft: #f1f5f9;
+    --accent: #3b82f6;
+    --accent-light: #eff6ff;
+    --success: #0b6e4f;
+    --success-light: #e7f3ef;
+    --warning: #b45309;
+    --warning-light: #fffbeb;
+    --danger: #b91c1c;
+    --danger-light: #fef2f2;
+    --text-dark: #0f172a;
+    --text-medium: #334155;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+    --radius-lg: 20px;
+    --radius-sm: 12px;
+    --shadow: 0 4px 12px rgba(0,0,0,0.08);
+    --transition: 0.2s ease;
+}
+
+.form-container {
+    max-width: 600px;
+    margin: 2rem auto;
+}
+
+.form-card {
+    background: #fff;
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    box-shadow: var(--shadow);
+}
+
+.recap-card {
+    background: var(--primary-soft);
+    border-radius: var(--radius-sm);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.recap-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.recap-label {
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.recap-value {
+    color: var(--text-dark);
+    font-weight: 600;
+}
+
+.form-label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-medium);
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+}
+
+.form-select, .form-control {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    margin-bottom: 1.5rem;
+}
+
+.btn-custom {
+    padding: 0.75rem 1.5rem;
+    border-radius: 30px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: none;
+    cursor: pointer;
+    transition: var(--transition);
+    text-decoration: none;
+}
+
+.btn-primary-custom {
+    background: var(--accent);
+    color: #fff;
+}
+
+.btn-primary-custom:hover {
+    background: #2563eb;
+    transform: translateY(-1px);
+}
+
+.btn-secondary-custom {
+    background: var(--primary-soft);
+    color: var(--text-medium);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="form-container">
+        <div class="mb-4">
+            <h1 class="h3 fw-bold">Saisir le résultat</h1>
+            <p class="text-muted">Enregistrez le résultat final de l'examen</p>
+        </div>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="form-card">
+            <div class="recap-card">
+                <div class="recap-item">
+                    <span class="recap-label">Apprenant</span>
+                    <span class="recap-value">{{ examen.apprenant }}</span>
+                </div>
+                <div class="recap-item">
+                    <span class="recap-label">Type d'examen</span>
+                    <span class="recap-value">{{ examen.get_type_examen_display }}</span>
+                </div>
+                <div class="recap-item">
+                    <span class="recap-label">Date</span>
+                    <span class="recap-value">{{ examen.date|date:"d/m/Y" }}</span>
+                </div>
+                <div class="recap-item">
+                    <span class="recap-label">Statut Paiement</span>
+                    <span class="recap-value">
+                        {% if examen.est_paye %}
+                            <span class="text-success"><i class="fas fa-check-circle"></i> Payé</span>
+                        {% else %}
+                            <span class="text-danger"><i class="fas fa-exclamation-triangle"></i> Non payé</span>
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+
+            <form method="post">
+                {% csrf_token %}
+                
+                <div class="mb-3">
+                    <label class="form-label">Résultat de l'examen</label>
+                    {{ form.result }}
+                    {% if form.result.errors %}
+                        <div class="text-danger small mt-1">{{ form.result.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label">Observations / Notes</label>
+                    {{ form.notes }}
+                    {% if form.notes.errors %}
+                        <div class="text-danger small mt-1">{{ form.notes.errors }}</div>
+                    {% endif %}
+                </div>
+
+                {% if not examen.est_paye %}
+                <div class="alert alert-warning small mb-4">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>Note :</strong> Le paiement doit être validé avant de pouvoir enregistrer un résultat (Admis ou Ajourné).
+                </div>
+                {% endif %}
+
+                <div class="d-flex gap-3 mt-4">
+                    <button type="submit" class="btn-custom btn-primary-custom w-100 justify-content-center">
+                        <i class="fas fa-save"></i> Enregistrer le résultat
+                    </button>
+                    <a href="{% url 'examens:examen_list' %}" class="btn-custom btn-secondary-custom">
+                        Annuler
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
