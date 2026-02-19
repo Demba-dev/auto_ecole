@@ -1,0 +1,640 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Paramètres - KALANSSO{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/settings.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4 py-4">
+    <!-- Header avec breadcrumb -->
+    <div class="page-header">
+        <div>
+            <nav class="breadcrumb-custom" aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Paramètres</li>
+                </ol>
+            </nav>
+            <h1 class="page-title">Configuration</h1>
+            <p class="page-subtitle">Personnalisez et configurez votre application</p>
+        </div>
+    </div>
+
+    <div class="settings-container">
+        <!-- Tabs navigation -->
+        <div class="settings-tabs" id="settingsTabs" role="tablist">
+            <button type="button" role="tab" aria-selected="true" aria-controls="tab-general" data-tab="general" class="tab-btn active">
+                <i class="fas fa-building"></i>
+                Général
+            </button>
+            <button type="button" role="tab" aria-selected="false" aria-controls="tab-notifications" data-tab="notifications" class="tab-btn">
+                <i class="fas fa-bell"></i>
+                Notifications
+            </button>
+            <button type="button" role="tab" aria-selected="false" aria-controls="tab-paiements" data-tab="paiements" class="tab-btn">
+                <i class="fas fa-credit-card"></i>
+                Paiements
+            </button>
+            <button type="button" role="tab" aria-selected="false" aria-controls="tab-securite" data-tab="securite" class="tab-btn">
+                <i class="fas fa-shield-alt"></i>
+                Sécurité
+            </button>
+            <button type="button" role="tab" aria-selected="false" aria-controls="tab-backup" data-tab="backup" class="tab-btn">
+                <i class="fas fa-database"></i>
+                Sauvegarde
+            </button>
+        </div>
+
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert-custom alert-{{ message.tags }}">
+            <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'warning' %}exclamation-triangle{% else %}info-circle{% endif %}"></i>
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+
+        <!-- Tab: Général -->
+        <div id="tab-general" class="settings-card" style="display: block;">
+            <div class="card-header">
+                <div>
+                    <h3><i class="fas fa-building"></i> Informations générales</h3>
+                    <p>Configurez les informations de votre auto-école</p>
+                </div>
+            </div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="hidden" name="tab" value="general">
+                    
+                    <div class="form-section">
+                        <div class="section-title">
+                            <i class="fas fa-info-circle"></i>
+                            Identité de l'entreprise
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label required-field">
+                                    <i class="fas fa-tag"></i>
+                                    Nom de l'auto-école
+                                </label>
+                                <input type="text" name="app_name" class="form-control" 
+                                       value="{{ settings.app_name|default:'KALANSSO' }}" required>
+                                <small class="form-text">Nom affiché dans l'application et les documents</small>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-globe"></i>
+                                    Site web
+                                </label>
+                                <input type="url" name="website" class="form-control" 
+                                       value="{{ settings.website|default:'' }}" 
+                                       placeholder="https://www.example.com">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label required-field">
+                                <i class="fas fa-map-marker-alt"></i>
+                                Adresse complète
+                            </label>
+                            <textarea name="address" class="form-control" rows="3" required>{{ settings.address|default:'' }}</textarea>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label required-field">
+                                    <i class="fas fa-phone"></i>
+                                    Téléphone
+                                </label>
+                                <input type="tel" name="phone" class="form-control" 
+                                       value="{{ settings.phone|default:'' }}" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label required-field">
+                                    <i class="fas fa-envelope"></i>
+                                    Email
+                                </label>
+                                <input type="email" name="email" class="form-control" 
+                                       value="{{ settings.email|default:'' }}" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <div class="section-title">
+                            <i class="fas fa-image"></i>
+                            Logo et branding
+                        </div>
+
+                        <div class="logo-upload-area" onclick="document.getElementById('logoInput').click()">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <p>Cliquez pour télécharger votre logo</p>
+                            <small class="text-muted">PNG, JPG ou SVG (max. 2 Mo)</small>
+                        </div>
+                        <input type="file" id="logoInput" name="app_logo" class="d-none" accept="image/*">
+
+                        {% if settings.app_logo %}
+                        <div class="logo-preview-container">
+                            <img src="{{ settings.app_logo.url }}" class="logo-preview" alt="Logo actuel">
+                            <button type="button" class="logo-remove" onclick="removeLogo()">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-section">
+                        <div class="section-title">
+                            <i class="fas fa-clock"></i>
+                            Horaires d'ouverture
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Lundi - Vendredi</label>
+                                <div class="d-flex gap-2">
+                                    <input type="time" name="monday_friday_start" class="form-control" 
+                                           value="{{ settings.monday_friday_start|default:'09:00' }}">
+                                    <span class="align-self-center">à</span>
+                                    <input type="time" name="monday_friday_end" class="form-control" 
+                                           value="{{ settings.monday_friday_end|default:'18:00' }}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Samedi</label>
+                                <div class="d-flex gap-2">
+                                    <input type="time" name="saturday_start" class="form-control" 
+                                           value="{{ settings.saturday_start|default:'09:00' }}">
+                                    <span class="align-self-center">à</span>
+                                    <input type="time" name="saturday_end" class="form-control" 
+                                           value="{{ settings.saturday_end|default:'12:00' }}">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-custom btn-primary-custom">
+                            <i class="fas fa-save"></i>
+                            Enregistrer les modifications
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Tab: Notifications -->
+        <div id="tab-notifications" class="settings-card" style="display: none;">
+            <div class="card-header">
+                <div>
+                    <h3><i class="fas fa-bell"></i> Notifications</h3>
+                    <p>Configurez les alertes et notifications</p>
+                </div>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="tab" value="notifications">
+
+                    <div class="form-section">
+                        <div class="section-title">
+                            <i class="fas fa-envelope"></i>
+                            Notifications email
+                        </div>
+
+                        <div class="switch-group mb-3">
+                            <label class="switch">
+                                <input type="checkbox" name="email_rappels" {% if settings.email_rappels %}checked{% endif %}>
+                                <span class="slider"></span>
+                            </label>
+                            <div>
+                                <strong>Rappels de séances</strong>
+                                <p class="text-muted small mb-0">Envoyer des rappels par email 24h avant une séance</p>
+                            </div>
+                        </div>
+
+                        <div class="switch-group mb-3">
+                            <label class="switch">
+                                <input type="checkbox" name="email_resultats" {% if settings.email_resultats %}checked{% endif %}>
+                                <span class="slider"></span>
+                            </label>
+                            <div>
+                                <strong>Résultats d'examens</strong>
+                                <p class="text-muted small mb-0">Notifier les apprenants dès qu'un résultat est publié</p>
+                            </div>
+                        </div>
+
+                        <div class="switch-group mb-3">
+                            <label class="switch">
+                                <input type="checkbox" name="email_paiements" {% if settings.email_paiements %}checked{% endif %}>
+                                <span class="slider"></span>
+                            </label>
+                            <div>
+                                <strong>Confirmations de paiement</strong>
+                                <p class="text-muted small mb-0">Envoyer un reçu par email après chaque paiement</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <div class="section-title">
+                            <i class="fas fa-sms"></i>
+                            Notifications SMS
+                        </div>
+
+                        <div class="switch-group mb-3">
+                            <label class="switch">
+                                <input type="checkbox" name="sms_rappels" {% if settings.sms_rappels %}checked{% endif %}>
+                                <span class="slider"></span>
+                            </label>
+                            <div>
+                                <strong>Rappels par SMS</strong>
+                                <p class="text-muted small mb-0">Envoyer des rappels par SMS 2h avant une séance</p>
+                            </div>
+                        </div>
+
+                        <div class="info-card">
+                            <p>
+                                <i class="fas fa-info-circle text-info"></i>
+                                Crédits SMS disponibles : <strong>{{ settings.sms_credits|default:'100' }}</strong>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-custom btn-primary-custom">
+                            <i class="fas fa-save"></i>
+                            Enregistrer les préférences
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Tab: Paiements -->
+        <div id="tab-paiements" class="settings-card" style="display: none;">
+            <div class="card-header">
+                <div>
+                    <h3><i class="fas fa-credit-card"></i> Configuration des paiements</h3>
+                    <p>Paramètres de facturation et moyens de paiement</p>
+                </div>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="tab" value="paiements">
+
+                    <div class="form-section">
+                        <div class="section-title">
+                            <i class="fas fa-file-invoice"></i>
+                            Informations de facturation
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label required-field">Numéro de TVA</label>
+                            <input type="text" name="tva_number" class="form-control" 
+                                   value="{{ settings.tva_number|default:'' }}">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label required-field">Conditions de paiement</label>
+                            <select name="payment_terms" class="form-select">
+                                <option value="immediate" {% if settings.payment_terms == 'immediate' %}selected{% endif %}>
+                                    Paiement immédiat
+                                </option>
+                                <option value="15days" {% if settings.payment_terms == '15days' %}selected{% endif %}>
+                                    15 jours
+                                </option>
+                                <option value="30days" {% if settings.payment_terms == '30days' %}selected{% endif %}>
+                                    30 jours
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <div class="section-title">
+                            <i class="fas fa-money-bill-wave"></i>
+                            Moyens de paiement acceptés
+                        </div>
+
+                        <div class="switch-group mb-3">
+                            <label class="switch">
+                                <input type="checkbox" name="payment_especes" {% if settings.payment_especes %}checked{% endif %}>
+                                <span class="slider"></span>
+                            </label>
+                            <div>
+                                <strong>Espèces</strong>
+                            </div>
+                        </div>
+
+                        <div class="switch-group mb-3">
+                            <label class="switch">
+                                <input type="checkbox" name="payment_cb" {% if settings.payment_cb %}checked{% endif %}>
+                                <span class="slider"></span>
+                            </label>
+                            <div>
+                                <strong>Carte bancaire</strong>
+                            </div>
+                        </div>
+
+                        <div class="switch-group mb-3">
+                            <label class="switch">
+                                <input type="checkbox" name="payment_cheque" {% if settings.payment_cheque %}checked{% endif %}>
+                                <span class="slider"></span>
+                            </label>
+                            <div>
+                                <strong>Chèque</strong>
+                            </div>
+                        </div>
+
+                        <div class="switch-group mb-3">
+                            <label class="switch">
+                                <input type="checkbox" name="payment_virement" {% if settings.payment_virement %}checked{% endif %}>
+                                <span class="slider"></span>
+                            </label>
+                            <div>
+                                <strong>Virement bancaire</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-custom btn-primary-custom">
+                            <i class="fas fa-save"></i>
+                            Enregistrer
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Tab: Sécurité -->
+        <div id="tab-securite" class="settings-card" style="display: none;">
+            <div class="card-header">
+                <div>
+                    <h3><i class="fas fa-shield-alt"></i> Sécurité</h3>
+                    <p>Paramètres de sécurité et accès</p>
+                </div>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="tab" value="securite">
+
+                    <div class="form-section">
+                        <div class="section-title">
+                            <i class="fas fa-lock"></i>
+                            Politique de mots de passe
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Longueur minimale</label>
+                            <input type="number" name="password_min_length" class="form-control" 
+                                   value="{{ settings.password_min_length|default:'8' }}" min="6" max="20">
+                        </div>
+
+                        <div class="switch-group mb-3">
+                            <label class="switch">
+                                <input type="checkbox" name="password_requires_upper" {% if settings.password_requires_upper %}checked{% endif %}>
+                                <span class="slider"></span>
+                            </label>
+                            <div>
+                                <strong>Nécessite une majuscule</strong>
+                            </div>
+                        </div>
+
+                        <div class="switch-group mb-3">
+                            <label class="switch">
+                                <input type="checkbox" name="password_requires_number" {% if settings.password_requires_number %}checked{% endif %}>
+                                <span class="slider"></span>
+                            </label>
+                            <div>
+                                <strong>Nécessite un chiffre</strong>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Expiration du mot de passe (jours)</label>
+                            <input type="number" name="password_expiry_days" class="form-control" 
+                                   value="{{ settings.password_expiry_days|default:'90' }}" min="0">
+                            <small class="form-text">0 = jamais</small>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <div class="section-title">
+                            <i class="fas fa-history"></i>
+                            Journalisation
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Conserver les logs pendant (jours)</label>
+                            <input type="number" name="log_retention_days" class="form-control" 
+                                   value="{{ settings.log_retention_days|default:'30' }}" min="1" max="365">
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-custom btn-primary-custom">
+                            <i class="fas fa-save"></i>
+                            Enregistrer
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Tab: Sauvegarde -->
+        <div id="tab-backup" class="settings-card" style="display: none;">
+            <div class="card-header">
+                <div>
+                    <h3><i class="fas fa-database"></i> Sauvegarde et restauration</h3>
+                    <p>Gérez les sauvegardes de votre base de données</p>
+                </div>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="tab" value="backup">
+
+                    <div class="form-section">
+                        <div class="section-title">
+                            <i class="fas fa-clock"></i>
+                            Sauvegarde automatique
+                        </div>
+
+                        <div class="switch-group mb-3">
+                            <label class="switch">
+                                <input type="checkbox" name="auto_backup" {% if settings.auto_backup %}checked{% endif %}>
+                                <span class="slider"></span>
+                            </label>
+                            <div>
+                                <strong>Activer la sauvegarde automatique</strong>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Fréquence des sauvegardes</label>
+                            <select name="backup_frequency" class="form-select">
+                                <option value="daily" {% if settings.backup_frequency == 'daily' %}selected{% endif %}>Quotidienne</option>
+                                <option value="weekly" {% if settings.backup_frequency == 'weekly' %}selected{% endif %}>Hebdomadaire</option>
+                                <option value="monthly" {% if settings.backup_frequency == 'monthly' %}selected{% endif %}>Mensuelle</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Heure de la sauvegarde</label>
+                            <input type="time" name="backup_time" class="form-control" 
+                                   value="{{ settings.backup_time|time:'H:i' }}">
+                        </div>
+
+                        <div class="form-actions border-0 mt-0 pt-0">
+                            <button type="submit" class="btn-custom btn-primary-custom">
+                                <i class="fas fa-save"></i>
+                                Enregistrer les réglages
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="form-section">
+                    <div class="section-title">
+                        <i class="fas fa-download"></i>
+                        Actions manuelles
+                    </div>
+
+                    <div class="d-flex gap-2 flex-wrap mb-4">
+                        <a href="{% url 'system:create_backup' %}" class="btn-custom btn-success-custom">
+                            <i class="fas fa-database"></i>
+                            Sauvegarder maintenant
+                        </a>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Nom du fichier</th>
+                                    <th>Date</th>
+                                    <th>Taille</th>
+                                    <th class="text-end">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for backup in backups %}
+                                <tr>
+                                    <td>
+                                        <i class="fas fa-file-database text-muted me-2"></i>
+                                        {{ backup.filename }}
+                                    </td>
+                                    <td>{{ backup.date|date:"d/m/Y H:i" }}</td>
+                                    <td>{{ backup.size|filesizeformat }}</td>
+                                    <td class="text-end">
+                                        <a href="{% url 'system:restore_backup' filename=backup.filename %}" 
+                                           class="btn-custom btn-outline-custom btn-sm py-1 px-3"
+                                           onclick="return confirm('Attention ! La base de données actuelle sera remplacée par cette sauvegarde. Continuer ?')">
+                                            <i class="fas fa-undo"></i>
+                                            Restaurer
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="4" class="text-center py-4 text-muted">
+                                        Aucune sauvegarde disponible
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Gestion des tabs
+function showTab(tabName, el) {
+    // Masquer tous les tabs
+    document.querySelectorAll('[id^="tab-"]').forEach(tab => {
+        tab.style.display = 'none';
+    });
+    
+    // Afficher le tab sélectionné
+    const targetTab = document.getElementById(`tab-${tabName}`);
+    if (targetTab) {
+        targetTab.style.display = 'block';
+    }
+    
+    // Mettre à jour les boutons actifs
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    
+    if (el) {
+        el.classList.add('active');
+    } else {
+        // Au chargement via URL
+        const btn = document.querySelector(`.tab-btn[onclick*="'${tabName}'"]`);
+        if (btn) btn.classList.add('active');
+    }
+}
+
+// Prévisualisation du logo
+document.getElementById('logoInput').addEventListener('change', function(e) {
+    if (this.files && this.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const previewContainer = document.querySelector('.logo-preview-container') || document.createElement('div');
+            previewContainer.className = 'logo-preview-container';
+            previewContainer.innerHTML = `
+                <img src="${e.target.result}" class="logo-preview" alt="Nouveau logo">
+                <button type="button" class="logo-remove" onclick="removeLogo()">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            document.querySelector('.logo-upload-area').insertAdjacentElement('afterend', previewContainer);
+        }
+        reader.readAsDataURL(this.files[0]);
+    }
+});
+
+function removeLogo() {
+    const container = document.querySelector('.logo-preview-container');
+    if (container) {
+        container.remove();
+    }
+    document.getElementById('logoInput').value = '';
+}
+
+// Confirmation avant actions importantes
+document.querySelectorAll('.btn-danger-custom').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+        if (!confirm('Êtes-vous sûr de vouloir effectuer cette action ?')) {
+            e.preventDefault();
+        }
+    });
+});
+
+// Animation des tabs au chargement
+document.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const tab = urlParams.get('tab');
+    if (tab) {
+        showTab(tab);
+    }
+});
+</script>
+{% block extra_js %}
+    <script src="{% static 'js/settings.js' %}" defer></script>
+{% endblock %}
+{% endblock %}

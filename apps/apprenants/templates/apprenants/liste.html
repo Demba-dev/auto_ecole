@@ -5,66 +5,178 @@
 
 {% block extra_css %}
 <style>
-    /* ===== DESIGN APPRENANTS - Élégant & Chaleureux ===== */
+    /* ===== DESIGN APPRENANTS - Version Élégante KALANSSO ===== */
     :root {
-        --student-primary: #4361ee;
-        --student-secondary: #3f37c9;
-        --student-accent: #f72585;
-        --student-success: #4cc9f0;
-        --student-soft-blue: #f0f4ff;
-        --student-soft-pink: #fff0f5;
-        --student-soft-green: #f0fff0;
-        --student-soft-purple: #f8f0ff;
-        --student-gray: #fafbfc;
-        --student-text: #1e293b;
-        --student-text-light: #64748b;
+        --primary-dark: #0f172a;
+        --primary-soft: #f8fafc;
+        --accent-blue: #3b82f6;
+        --accent-blue-light: #eff6ff;
+        --success-green: #0b6e4f;
+        --success-light: #e7f3ef;
+        --warning-orange: #b45309;
+        --warning-light: #fffbeb;
+        --danger-red: #b91c1c;
+        --danger-light: #fef2f2;
+        --info-teal: #0891b2;
+        --info-light: #e0f2fe;
+        --text-dark: #1e293b;
+        --text-medium: #475569;
+        --text-muted: #64748b;
+        --border-light: #e2e8f0;
+        --border-soft: #f1f5f9;
+        --radius-md: 12px;
+        --radius-lg: 16px;
+        --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+        --shadow-md: 0 4px 12px rgba(0,0,0,0.05);
+        --shadow-hover: 0 12px 24px -8px rgba(0,0,0,0.1);
+        --transition: all 0.2s ease;
+    }
+
+    body {
+        background: #f9fafc;
+    }
+
+    /* ===== BREADCRUMB ===== */
+    .breadcrumb-custom {
+        margin-bottom: 1rem;
+    }
+    .breadcrumb-custom .breadcrumb {
+        background: transparent;
+        padding: 0;
+    }
+    .breadcrumb-custom .breadcrumb-item + .breadcrumb-item::before {
+        content: "·";
+        color: var(--text-muted);
+    }
+    .breadcrumb-custom .breadcrumb-item a {
+        text-decoration: none;
+        color: var(--text-muted);
+        font-size: 0.8rem;
+        transition: var(--transition);
+    }
+    .breadcrumb-custom .breadcrumb-item a:hover {
+        color: var(--accent-blue);
+    }
+    .breadcrumb-custom .breadcrumb-item.active {
+        color: var(--text-medium);
+        font-size: 0.8rem;
     }
 
     /* ===== HEADER ===== */
-    .student-header {
-        margin-bottom: 2.5rem;
-        padding-bottom: 1rem;
-        border-bottom: 2px solid #f1f5f9;
+    .page-header {
+        margin-bottom: 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
     }
 
-    .student-title {
-        font-size: 1.85rem;
+    .page-title {
+        font-size: 1.8rem;
         font-weight: 700;
-        color: var(--student-text);
+        color: var(--primary-dark);
         letter-spacing: -0.02em;
         margin-bottom: 0.25rem;
     }
 
-    .student-subtitle {
-        color: var(--student-text-light);
+    .page-subtitle {
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .page-subtitle i {
+        font-size: 0.7rem;
+        color: var(--accent-blue);
+    }
+
+    /* ===== BOUTONS ===== */
+    .btn-primary-custom {
+        background: var(--accent-blue);
+        color: white;
+        border: none;
+        border-radius: 30px;
+        padding: 0.6rem 1.5rem;
         font-size: 0.9rem;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: var(--transition);
+        text-decoration: none;
+    }
+    .btn-primary-custom:hover {
+        background: #2563eb;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 16px -4px rgba(59, 130, 246, 0.3);
+        color: white;
     }
 
-    /* ===== STATS CARDS - Épurées ===== */
-    .student-stats-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 1.5rem;
-        margin-bottom: 2.5rem;
-    }
-
-    .student-stat-card {
+    .btn-outline-custom {
         background: white;
-        border-radius: 20px;
-        padding: 1.5rem;
-        border: 1px solid #edf2f9;
-        transition: all 0.2s ease;
+        border: 1px solid var(--border-light);
+        color: var(--text-medium);
+        border-radius: 30px;
+        padding: 0.6rem 1.5rem;
+        font-size: 0.9rem;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: var(--transition);
+        text-decoration: none;
     }
-
-    .student-stat-card:hover {
-        border-color: var(--student-primary);
-        box-shadow: 0 8px 20px -8px rgba(67, 97, 238, 0.15);
+    .btn-outline-custom:hover {
+        border-color: var(--accent-blue);
+        color: var(--accent-blue);
+        background: var(--accent-blue-light);
         transform: translateY(-2px);
     }
 
+    /* ===== STATS CARDS ===== */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.25rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: var(--radius-lg);
+        padding: 1.5rem;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--border-soft);
+        transition: var(--transition);
+        position: relative;
+        overflow: hidden;
+    }
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, var(--accent-blue), #818cf8);
+        opacity: 0;
+        transition: var(--transition);
+    }
+    .stat-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-hover);
+        border-color: transparent;
+    }
+    .stat-card:hover::before {
+        opacity: 1;
+    }
+
     .stat-label {
-        color: var(--student-text-light);
-        font-size: 0.8rem;
+        color: var(--text-muted);
+        font-size: 0.75rem;
         text-transform: uppercase;
         letter-spacing: 0.3px;
         font-weight: 600;
@@ -74,399 +186,501 @@
     .stat-number {
         font-size: 2rem;
         font-weight: 700;
-        color: var(--student-text);
+        color: var(--primary-dark);
         line-height: 1;
-        margin-bottom: 0.25rem;
+        margin-bottom: 0.5rem;
     }
 
     .stat-trend {
-        font-size: 0.75rem;
-        color: #10b981;
-        background: #f0fdf4;
-        padding: 0.2rem 0.5rem;
-        border-radius: 20px;
+        font-size: 0.7rem;
+        background: var(--success-light);
+        color: var(--success-green);
+        padding: 0.2rem 0.75rem;
+        border-radius: 30px;
         display: inline-block;
     }
 
-    /* ===== FILTRES - Minimalistes ===== */
-    .filters-section {
+    /* ===== FILTRES ===== */
+    .filters-card {
         background: white;
-        border-radius: 16px;
+        border-radius: var(--radius-lg);
         padding: 1.5rem;
         margin-bottom: 2rem;
-        border: 1px solid #edf2f9;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--border-soft);
+    }
+
+    .filter-label {
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        margin-bottom: 0.5rem;
+        display: block;
+        letter-spacing: 0.3px;
+    }
+
+    .filter-input, .filter-select {
+        border: 1px solid var(--border-light);
+        border-radius: var(--radius-md);
+        padding: 0.7rem 1rem;
+        font-size: 0.9rem;
+        transition: var(--transition);
+        width: 100%;
+        background: white;
+    }
+    .filter-input:hover, .filter-select:hover {
+        border-color: var(--text-muted);
+    }
+    .filter-input:focus, .filter-select:focus {
+        border-color: var(--accent-blue);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        outline: none;
     }
 
     .search-wrapper {
-        border: 1px solid #e2e8f0;
-        border-radius: 12px;
-        padding: 0.15rem;
-        transition: all 0.2s;
-        background: white;
+        position: relative;
     }
-
-    .search-wrapper:focus-within {
-        border-color: var(--student-primary);
-        box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+    .search-wrapper i {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-muted);
+        font-size: 0.9rem;
     }
-
     .search-input {
-        border: none;
-        padding: 0.65rem 1rem;
-        background: transparent;
-    }
-
-    .search-input:focus {
-        box-shadow: none;
-    }
-
-    .filter-select {
-        border: 1px solid #e2e8f0;
-        border-radius: 12px;
-        padding: 0.65rem 1rem;
-        background: white;
-        color: var(--student-text);
-        font-size: 0.95rem;
-        transition: all 0.2s;
-    }
-
-    .filter-select:hover {
-        border-color: var(--student-primary);
+        padding-left: 2.5rem;
     }
 
     .btn-filter {
-        background: var(--student-primary);
+        background: var(--accent-blue);
         color: white;
         border: none;
-        border-radius: 12px;
-        padding: 0.65rem 1.5rem;
+        border-radius: 30px;
+        padding: 0.7rem 1.5rem;
         font-weight: 500;
-        transition: all 0.2s;
+        transition: var(--transition);
         width: 100%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
     }
-
     .btn-filter:hover {
-        background: var(--student-secondary);
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(67, 97, 238, 0.25);
+        background: #2563eb;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
     }
 
-    .btn-export {
+    .btn-clear {
         background: white;
-        border: 1px solid #e2e8f0;
-        border-radius: 12px;
-        padding: 0.65rem 1.5rem;
-        color: var(--student-text-light);
-        transition: all 0.2s;
+        border: 1px solid var(--border-light);
+        color: var(--text-muted);
+        border-radius: 30px;
+        padding: 0.7rem 1.5rem;
+        font-weight: 500;
+        transition: var(--transition);
+        width: 100%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        text-decoration: none;
+    }
+    .btn-clear:hover {
+        border-color: var(--accent-blue);
+        color: var(--accent-blue);
+        background: var(--accent-blue-light);
     }
 
-    .btn-export:hover {
-        border-color: var(--student-primary);
-        color: var(--student-primary);
-        background: var(--student-soft-blue);
-    }
-
-    /* ===== TABLEAU - Élégant & Aéré ===== */
-    .table-container {
+    /* ===== TABLEAU ===== */
+    .table-card {
         background: white;
-        border-radius: 20px;
-        border: 1px solid #edf2f9;
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--border-soft);
         overflow: hidden;
         margin-bottom: 2rem;
+        transition: var(--transition);
+    }
+    .table-card:hover {
+        box-shadow: var(--shadow-hover);
+    }
+
+    .card-header-custom {
+        padding: 1.25rem 1.5rem;
+        border-bottom: 1px solid var(--border-soft);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+        background: white;
+    }
+
+    .card-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--primary-dark);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0;
+    }
+    .card-title i {
+        color: var(--accent-blue);
+        font-size: 1rem;
+    }
+
+    .table-responsive {
+        overflow-x: auto;
     }
 
     .student-table {
-        margin-bottom: 0;
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
     }
 
-    .student-table thead th {
-        background: #fafcff;
-        color: var(--student-text-light);
+    .student-table th {
+        background: var(--primary-soft);
+        color: var(--text-medium);
         font-weight: 600;
-        font-size: 0.75rem;
+        font-size: 0.7rem;
         text-transform: uppercase;
         letter-spacing: 0.3px;
-        padding: 1.25rem 1rem;
-        border-bottom: 1px solid #edf2f9;
+        padding: 1rem 1.5rem;
+        text-align: left;
+        white-space: nowrap;
     }
 
-    .student-table tbody td {
-        padding: 1.25rem 1rem;
-        border-bottom: 1px solid #f1f5f9;
+    .student-table td {
+        padding: 1.25rem 1.5rem;
+        border-bottom: 1px solid var(--border-soft);
         vertical-align: middle;
-        color: var(--student-text);
+        color: var(--text-dark);
     }
 
     .student-table tbody tr {
-        transition: background 0.2s;
+        transition: var(--transition);
     }
-
     .student-table tbody tr:hover {
-        background: #fafcff;
+        background: var(--primary-soft);
     }
-
     .student-table tbody tr:last-child td {
         border-bottom: none;
     }
 
-    /* Avatar - Simple & Élégant */
+    /* Avatar */
     .avatar-circle {
         width: 44px;
         height: 44px;
-        border-radius: 14px;
-        background: linear-gradient(135deg, var(--student-soft-blue), #e9f0ff);
+        border-radius: 12px;
+        background: linear-gradient(135deg, var(--accent-blue-light), #dbeafe);
         display: flex;
         align-items: center;
         justify-content: center;
         font-weight: 600;
         font-size: 1rem;
-        color: var(--student-primary);
-        transition: all 0.2s;
+        color: var(--accent-blue);
+        transition: var(--transition);
     }
-
     .student-table tbody tr:hover .avatar-circle {
-        background: var(--student-primary);
+        background: var(--accent-blue);
         color: white;
+        transform: scale(1.05);
     }
 
-    /* Badges Permis - Discrets */
+    /* Badges Permis */
     .permis-badge {
-        background: #f8fafc;
-        border: 1px solid #e9ecef;
-        color: var(--student-text-light);
-        padding: 0.3rem 0.7rem;
+        background: var(--primary-soft);
+        border: 1px solid var(--border-light);
+        color: var(--text-medium);
+        padding: 0.25rem 0.75rem;
         border-radius: 30px;
         font-size: 0.7rem;
         font-weight: 500;
         display: inline-block;
         margin: 0.1rem;
-        transition: all 0.2s;
+        transition: var(--transition);
     }
-
     .permis-badge:hover {
-        background: var(--student-soft-blue);
-        border-color: var(--student-primary);
-        color: var(--student-primary);
+        background: var(--accent-blue-light);
+        border-color: var(--accent-blue);
+        color: var(--accent-blue);
     }
 
-    /* Status Badges - Sans icônes */
+    /* Status Badges */
     .status-badge {
-        padding: 0.4rem 1rem;
+        padding: 0.35rem 1rem;
         border-radius: 30px;
-        font-size: 0.75rem;
+        font-size: 0.7rem;
         font-weight: 600;
         display: inline-block;
+        border: 1px solid transparent;
     }
-
     .status-inscrit {
-        background: #fff9f0;
-        color: #b85e00;
-        border: 1px solid #ffe0b2;
+        background: var(--warning-light);
+        color: var(--warning-orange);
+        border-color: #fed7aa;
     }
-
     .status-formation {
-        background: #f0f4ff;
-        color: var(--student-primary);
-        border: 1px solid #d0e0ff;
+        background: var(--accent-blue-light);
+        color: var(--accent-blue);
+        border-color: #bfdbfe;
     }
-
     .status-permis_obtenu {
-        background: #f0fff4;
-        color: #0b6e4f;
-        border: 1px solid #c3e6cb;
+        background: var(--success-light);
+        color: var(--success-green);
+        border-color: #a7f3d0;
     }
-
     .status-abandon {
-        background: #fff5f5;
-        color: #b22222;
-        border: 1px solid #fcc6c6;
+        background: var(--danger-light);
+        color: var(--danger-red);
+        border-color: #fecaca;
     }
 
-    /* Progression - Subtile */
+    /* Progression */
     .progress-wrapper {
         display: flex;
         align-items: center;
-        gap: 1rem;
+        gap: 0.75rem;
     }
-
     .progress-bar-custom {
-        background: #f1f5f9;
+        background: var(--border-soft);
         border-radius: 30px;
         height: 6px;
-        width: 120px;
+        width: 100px;
         overflow: hidden;
     }
-
     .progress-fill {
-        background: var(--student-primary);
+        background: linear-gradient(90deg, var(--accent-blue), #818cf8);
         border-radius: 30px;
         height: 100%;
         width: 0%;
         transition: width 0.3s ease;
     }
-
     .progress-text {
-        color: var(--student-text-light);
-        font-size: 0.8rem;
+        color: var(--text-medium);
+        font-size: 0.75rem;
         font-weight: 500;
-        min-width: 60px;
+        min-width: 50px;
     }
 
-    /* Actions - Épurées */
+    /* Actions */
+    .actions-group {
+        display: flex;
+        gap: 0.35rem;
+        justify-content: flex-end;
+    }
     .action-btn {
-        width: 36px;
-        height: 36px;
-        border-radius: 10px;
+        width: 34px;
+        height: 34px;
+        border-radius: 8px;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        border: 1px solid #edf2f9;
+        border: 1px solid var(--border-light);
         background: white;
-        color: var(--student-text-light);
-        transition: all 0.2s;
+        color: var(--text-muted);
+        transition: var(--transition);
+        text-decoration: none;
     }
-
     .action-btn:hover {
         border-color: transparent;
         transform: translateY(-2px);
     }
-
     .btn-view:hover {
-        background: var(--student-soft-blue);
-        color: var(--student-primary);
+        background: var(--info-light);
+        color: var(--info-teal);
     }
-
     .btn-edit:hover {
-        background: #fff9f0;
-        color: #b85e00;
+        background: var(--warning-light);
+        color: var(--warning-orange);
     }
-
+    .btn-calendar:hover {
+        background: var(--accent-blue-light);
+        color: var(--accent-blue);
+    }
     .btn-delete:hover {
-        background: #fff5f5;
-        color: #b22222;
+        background: var(--danger-light);
+        color: var(--danger-red);
     }
 
-    /* Pagination - Simple */
+    /* Pagination */
     .pagination-custom {
+        display: flex;
+        justify-content: center;
         gap: 0.35rem;
+        margin-top: 1.5rem;
     }
-
     .page-link-custom {
-        border: 1px solid #edf2f9;
-        padding: 0.5rem 1rem;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         border-radius: 10px !important;
-        color: var(--student-text-light);
+        border: 1px solid var(--border-light);
+        color: var(--text-medium);
         background: white;
-        transition: all 0.2s;
+        transition: var(--transition);
+        text-decoration: none;
     }
-
     .page-link-custom:hover {
-        border-color: var(--student-primary);
-        color: var(--student-primary);
-        background: var(--student-soft-blue);
+        border-color: var(--accent-blue);
+        color: var(--accent-blue);
+        background: var(--accent-blue-light);
+        transform: translateY(-2px);
     }
-
-    .page-item.active .page-link-custom {
-        background: var(--student-primary);
+    .page-link-custom.active {
+        background: var(--accent-blue);
         color: white;
-        border-color: var(--student-primary);
+        border-color: var(--accent-blue);
+    }
+    .page-link-custom.disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
     }
 
-    /* Empty State - Élégant */
+    /* Empty State */
     .empty-state {
         padding: 4rem 2rem;
         text-align: center;
-        background: linear-gradient(135deg, #fafcff, white);
-        border-radius: 20px;
     }
-
+    .empty-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 30px;
+        background: var(--accent-blue-light);
+        color: var(--accent-blue);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        margin: 0 auto 1.5rem;
+    }
     .empty-state h5 {
-        font-size: 1.25rem;
+        font-size: 1.1rem;
         font-weight: 600;
-        color: var(--student-text);
+        color: var(--primary-dark);
         margin-bottom: 0.5rem;
     }
-
     .empty-state p {
-        color: var(--student-text-light);
+        color: var(--text-muted);
         margin-bottom: 1.5rem;
+        max-width: 300px;
+        margin-left: auto;
+        margin-right: auto;
     }
 
-    .btn-add {
-        background: var(--student-primary);
-        color: white;
+    /* Modal */
+    .modal-custom {
+        border-radius: var(--radius-lg);
         border: none;
-        border-radius: 12px;
-        padding: 0.65rem 2rem;
-        font-weight: 500;
-        transition: all 0.2s;
     }
-
-    .btn-add:hover {
-        background: var(--student-secondary);
-        transform: translateY(-2px);
-        box-shadow: 0 8px 16px -4px rgba(67, 97, 238, 0.3);
-        color: white;
+    .modal-header-custom {
+        padding: 1.5rem;
+        border-bottom: 1px solid var(--border-soft);
+    }
+    .modal-body-custom {
+        padding: 1.5rem;
+    }
+    .modal-footer-custom {
+        padding: 1rem 1.5rem;
+        border-top: 1px solid var(--border-soft);
+        display: flex;
+        gap: 0.5rem;
+        justify-content: flex-end;
     }
 
     /* Responsive */
     @media (max-width: 1200px) {
-        .student-stats-grid {
+        .stats-grid {
             grid-template-columns: repeat(2, 1fr);
         }
     }
 
+    @media (max-width: 992px) {
+        .student-table th, 
+        .student-table td {
+            padding: 1rem;
+        }
+    }
+
     @media (max-width: 768px) {
-        .student-stats-grid {
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .stats-grid {
             grid-template-columns: 1fr;
         }
-        
-        .student-title {
-            font-size: 1.5rem;
+        .student-table {
+            min-width: 800px;
+        }
+        .actions-group {
+            flex-wrap: wrap;
         }
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid px-4">
-    <!-- Header Élégant -->
-    <div class="student-header d-flex flex-wrap align-items-center justify-content-between">
+<div class="container-fluid px-4 py-4">
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb-custom" aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+            <li class="breadcrumb-item active">Apprenants</li>
+        </ol>
+    </nav>
+
+    <!-- Header -->
+    <div class="page-header">
         <div>
-            <h1 class="student-title">Apprenants</h1>
-            <p class="student-subtitle">
-                {{ apprenants_count }} apprenant{% if apprenants_count > 1 %}s{% endif %} • 
-                {{ en_formation_count }} en formation
-            </p>
+            <h1 class="page-title">Apprenants</h1>
+            <div class="page-subtitle">
+                <i class="fas fa-circle"></i>
+                {{ paginator.count|default:apprenants_count }} apprenant{{ paginator.count|default:apprenants_count|pluralize }} au total
+                {% if en_formation_count %} • {{ en_formation_count }} en formation{% endif %}
+            </div>
         </div>
-        <div class="d-flex gap-2 mt-3 mt-sm-0">
-            <a href="{% url 'exporter_apprenants' %}" class="btn-export">
+        <div class="d-flex gap-2">
+            <a href="{% url 'exporter_apprenants' %}" class="btn-outline-custom">
+                <i class="fas fa-download"></i>
                 Exporter
             </a>
-            <a href="{% url 'ajouter_apprenant' %}" class="btn-add">
+            <a href="{% url 'ajouter_apprenant' %}" class="btn-primary-custom">
+                <i class="fas fa-plus"></i>
                 Nouvel apprenant
             </a>
         </div>
     </div>
 
-    <!-- Stats Cards -->
-    <div class="student-stats-grid">
-        <div class="student-stat-card">
+    <!-- Statistiques -->
+    <div class="stats-grid">
+        <div class="stat-card">
             <div class="stat-label">Total apprenants</div>
             <div class="stat-number">{{ apprenants_count }}</div>
-            <span class="stat-trend">+12% ce mois</span>
+            <span class="stat-trend">
+                <i class="fas fa-arrow-up me-1"></i>+12% ce mois
+            </span>
         </div>
-        <div class="student-stat-card">
+        <div class="stat-card">
             <div class="stat-label">En formation</div>
             <div class="stat-number">{{ en_formation_count }}</div>
-            <span class="stat-trend">18 prêts pour examen</span>
+            <span class="stat-trend">{{ prets_examen }} prêts pour examen</span>
         </div>
-        <div class="student-stat-card">
+        <div class="stat-card">
             <div class="stat-label">Permis obtenus</div>
             <div class="stat-number">{{ permis_obtenu_count }}</div>
-            <span class="stat-trend">+5 cette semaine</span>
+            <span class="stat-trend">
+                <i class="fas fa-arrow-up me-1"></i>+5 cette semaine
+            </span>
         </div>
-        <div class="student-stat-card">
+        <div class="stat-card">
             <div class="stat-label">Taux de réussite</div>
             <div class="stat-number">{{ taux_reussite }}%</div>
             <span class="stat-trend">+3% vs mois dernier</span>
@@ -474,27 +688,36 @@
     </div>
 
     <!-- Filtres -->
-    <div class="filters-section">
+    <div class="filters-card">
         <form method="get" class="row g-3 align-items-end">
-            <div class="col-lg-5">
-                <label class="form-label fw-semibold small text-muted mb-2">Rechercher</label>
-                <div class="search-wrapper d-flex align-items-center">
-                    <input type="text" class="form-control search-input" name="q" 
-                           placeholder="Nom, prénom, email..." value="{{ request.GET.q|default:'' }}">
+            <div class="col-lg-4">
+                <label class="filter-label">
+                    <i class="fas fa-search me-1"></i>Rechercher
+                </label>
+                <div class="search-wrapper">
+                    <i class="fas fa-search"></i>
+                    <input type="text" class="filter-input search-input" name="q" 
+                           placeholder="Nom, prénom, téléphone, email..." 
+                           value="{{ request.GET.q|default:'' }}">
                 </div>
             </div>
             <div class="col-lg-2">
-                <label class="form-label fw-semibold small text-muted mb-2">Statut</label>
-                <select class="form-select filter-select" name="statut">
-                    <option value="">Tous les statuts</option>
+                <label class="filter-label">
+                    <i class="fas fa-tag me-1"></i>Statut
+                </label>
+                <select class="filter-select" name="statut">
+                    <option value="">Tous</option>
                     <option value="inscrit" {% if request.GET.statut == 'inscrit' %}selected{% endif %}>Inscrit</option>
                     <option value="formation" {% if request.GET.statut == 'formation' %}selected{% endif %}>En formation</option>
                     <option value="permis_obtenu" {% if request.GET.statut == 'permis_obtenu' %}selected{% endif %}>Permis obtenu</option>
+                    <option value="abandon" {% if request.GET.statut == 'abandon' %}selected{% endif %}>Abandon</option>
                 </select>
             </div>
             <div class="col-lg-3">
-                <label class="form-label fw-semibold small text-muted mb-2">Type de permis</label>
-                <select class="form-select filter-select" name="permis">
+                <label class="filter-label">
+                    <i class="fas fa-id-card me-1"></i>Type de permis
+                </label>
+                <select class="filter-select" name="permis">
                     <option value="">Tous les permis</option>
                     {% for permis in types_permis %}
                     <option value="{{ permis.code }}" {% if request.GET.permis == permis.code %}selected{% endif %}>
@@ -503,54 +726,88 @@
                     {% endfor %}
                 </select>
             </div>
-            <div class="col-lg-2">
-                <div class="d-grid">
+            <div class="col-lg-3">
+                <div class="d-flex gap-2">
                     <button type="submit" class="btn-filter">
+                        <i class="fas fa-filter"></i>
                         Filtrer
                     </button>
+                    {% if request.GET %}
+                    <a href="{% url 'liste_apprenants' %}" class="btn-clear">
+                        <i class="fas fa-times"></i>
+                        Effacer
+                    </a>
+                    {% endif %}
                 </div>
             </div>
         </form>
     </div>
 
     <!-- Tableau -->
-    <div class="table-container">
+    <div class="table-card">
+        <div class="card-header-custom">
+            <h5 class="card-title">
+                <i class="fas fa-users"></i>
+                Liste des apprenants
+                {% if request.GET %}
+                <span class="badge" style="background: var(--accent-blue-light); color: var(--accent-blue); margin-left: 0.5rem;">
+                    <i class="fas fa-filter"></i> Filtres actifs
+                </span>
+                {% endif %}
+            </h5>
+            <span class="text-muted small">
+                <i class="fas fa-info-circle"></i>
+                {{ paginator.count|default:apprenants|length }} apprenant{{ paginator.count|default:apprenants|length|pluralize }}
+            </span>
+        </div>
+
         <div class="table-responsive">
-            <table class="table student-table">
+            <table class="student-table">
                 <thead>
                     <tr>
-                        <th class="ps-4">Apprenant</th>
+                        <th>Apprenant</th>
                         <th>Contact</th>
                         <th>Permis</th>
                         <th>Progression</th>
                         <th>Statut</th>
-                        <th class="text-end pe-4">Actions</th>
+                        <th class="text-end">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for apprenant in apprenants %}
                     <tr>
-                        <td class="ps-4">
+                        <td>
                             <div class="d-flex align-items-center gap-3">
                                 <div class="avatar-circle">
                                     {{ apprenant.prenom|first|upper }}{{ apprenant.nom|first|upper }}
                                 </div>
                                 <div>
-                                    <div class="fw-semibold">{{ apprenant.prenom }} {{ apprenant.nom }}</div>
+                                    <div style="font-weight: 600; color: var(--primary-dark);">
+                                        {{ apprenant.prenom }} {{ apprenant.nom }}
+                                    </div>
                                     <small class="text-muted">
-                                        {{ apprenant.date_inscription|date:"d M Y" }}
+                                        <i class="fas fa-calendar-alt me-1" style="font-size: 0.6rem;"></i>
+                                        Inscrit le {{ apprenant.date_inscription|date:"d/m/Y" }}
                                     </small>
                                 </div>
                             </div>
                         </td>
                         <td>
-                            <div class="small text-muted">{{ apprenant.email|default:"-"|truncatechars:20 }}</div>
-                            <div class="small text-muted mt-1">{{ apprenant.telephone }}</div>
+                            <div style="font-size: 0.85rem;">
+                                <i class="fas fa-envelope text-muted me-1" style="font-size: 0.7rem;"></i>
+                                {{ apprenant.email|default:"-"|truncatechars:25 }}
+                            </div>
+                            <div style="font-size: 0.85rem; margin-top: 0.25rem;">
+                                <i class="fas fa-phone text-muted me-1" style="font-size: 0.7rem;"></i>
+                                {{ apprenant.telephone|default:"-" }}
+                            </div>
                         </td>
                         <td>
                             <div class="d-flex flex-wrap gap-1">
                                 {% for permis in apprenant.types_permis.all|slice:":3" %}
-                                    <span class="permis-badge">{{ permis.code }}</span>
+                                    <span class="permis-badge">
+                                        {{ permis.code }}
+                                    </span>
                                 {% empty %}
                                     <span class="text-muted small">-</span>
                                 {% endfor %}
@@ -566,7 +823,7 @@
                                         <div class="progress-fill" style="width: {{ prog.progression_pourcentage|default:0 }}%;"></div>
                                     </div>
                                     <span class="progress-text">
-                                        {{ prog.heures_effectuees|default:0 }}/{{ prog.heures_achetees|default:0 }}h
+                                        {{ prog.heures_effectuees|default:0 }}/{{ prog.heures_achetees|default:20 }}h
                                     </span>
                                 </div>
                             {% endwith %}
@@ -576,19 +833,20 @@
                                 {{ apprenant.get_statut_display }}
                             </span>
                         </td>
-                        <td class="text-end pe-4">
-                            <div class="d-flex gap-2 justify-content-end">
-                                <a href="{% url 'detail_apprenant' apprenant.id %}" class="action-btn btn-view">
+                        <td class="text-end">
+                            <div class="actions-group">
+                                <a href="{% url 'detail_apprenant' apprenant.id %}" class="action-btn btn-view" title="Voir détails">
                                     <i class="fas fa-eye"></i>
                                 </a>
-                                <a href="{% url 'modifier_apprenant' apprenant.id %}" class="action-btn btn-edit">
+                                <a href="{% url 'modifier_apprenant' apprenant.id %}" class="action-btn btn-edit" title="Modifier">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                <a href="{% url 'planning_apprenant' apprenant.id %}" class="action-btn">
+                                <a href="{% url 'planning_apprenant' apprenant.id %}" class="action-btn btn-calendar" title="Planning">
                                     <i class="fas fa-calendar-alt"></i>
                                 </a>
                                 <button type="button" class="action-btn btn-delete" 
-                                        data-bs-toggle="modal" data-bs-target="#deleteModal{{ apprenant.id }}">
+                                        data-bs-toggle="modal" data-bs-target="#deleteModal{{ apprenant.id }}"
+                                        title="Supprimer">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </div>
@@ -598,10 +856,13 @@
                     <tr>
                         <td colspan="6">
                             <div class="empty-state">
-                                <h5>Aucun apprenant</h5>
+                                <div class="empty-icon">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <h5>Aucun apprenant trouvé</h5>
                                 <p>Commencez par ajouter votre premier apprenant.</p>
-                                <a href="{% url 'ajouter_apprenant' %}" class="btn-add">
-                                    Ajouter un apprenant
+                                <a href="{% url 'ajouter_apprenant' %}" class="btn-primary-custom">
+                                    <i class="fas fa-plus"></i> Ajouter un apprenant
                                 </a>
                             </div>
                         </td>
@@ -610,69 +871,174 @@
                 </tbody>
             </table>
         </div>
+
+        <!-- Pied de tableau -->
+        {% if apprenants %}
+        <div style="padding: 1rem 1.5rem; border-top: 1px solid var(--border-soft);">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <small class="text-muted">
+                    <i class="fas fa-info-circle me-1"></i>
+                    Affichage de {{ page_obj.start_index|default:1 }} à {{ page_obj.end_index|default:apprenants|length }} sur {{ paginator.count|default:apprenants|length }} apprenants
+                </small>
+                <div class="d-flex gap-2">
+                    <span class="d-flex align-items-center gap-1">
+                        <i class="fas fa-circle" style="color: var(--warning-orange); font-size: 0.5rem;"></i>
+                        <small class="text-muted">Inscrit</small>
+                    </span>
+                    <span class="d-flex align-items-center gap-1">
+                        <i class="fas fa-circle" style="color: var(--accent-blue); font-size: 0.5rem;"></i>
+                        <small class="text-muted">En formation</small>
+                    </span>
+                    <span class="d-flex align-items-center gap-1">
+                        <i class="fas fa-circle" style="color: var(--success-green); font-size: 0.5rem;"></i>
+                        <small class="text-muted">Permis obtenu</small>
+                    </span>
+                </div>
+            </div>
+        </div>
+        {% endif %}
     </div>
 
     <!-- Pagination -->
     {% if is_paginated %}
-    <nav aria-label="Navigation">
-        <ul class="pagination justify-content-center pagination-custom">
-            {% if apprenants.has_previous %}
-            <li class="page-item">
-                <a class="page-link page-link-custom" href="?page={{ apprenants.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.statut %}&statut={{ request.GET.statut }}{% endif %}">
-                    Précédent
-                </a>
-            </li>
-            {% endif %}
+    <div class="pagination-custom">
+        {% if page_obj.has_previous %}
+        <a href="?page=1{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.statut %}&statut={{ request.GET.statut }}{% endif %}{% if request.GET.permis %}&permis={{ request.GET.permis }}{% endif %}" 
+           class="page-link-custom" title="Première page">
+            <i class="fas fa-angle-double-left"></i>
+        </a>
+        <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.statut %}&statut={{ request.GET.statut }}{% endif %}{% if request.GET.permis %}&permis={{ request.GET.permis }}{% endif %}" 
+           class="page-link-custom" title="Page précédente">
+            <i class="fas fa-angle-left"></i>
+        </a>
+        {% else %}
+        <span class="page-link-custom disabled">
+            <i class="fas fa-angle-left"></i>
+        </span>
+        {% endif %}
 
-            {% for num in apprenants.paginator.page_range %}
-                {% if apprenants.number == num %}
-                <li class="page-item active">
-                    <span class="page-link page-link-custom">{{ num }}</span>
-                </li>
-                {% elif num > apprenants.number|add:'-3' and num < apprenants.number|add:'3' %}
-                <li class="page-item">
-                    <a class="page-link page-link-custom" href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.statut %}&statut={{ request.GET.statut }}{% endif %}">{{ num }}</a>
-                </li>
-                {% endif %}
-            {% endfor %}
-
-            {% if apprenants.has_next %}
-            <li class="page-item">
-                <a class="page-link page-link-custom" href="?page={{ apprenants.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.statut %}&statut={{ request.GET.statut }}{% endif %}">
-                    Suivant
-                </a>
-            </li>
+        {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+                <span class="page-link-custom active">{{ num }}</span>
+            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                <a href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.statut %}&statut={{ request.GET.statut }}{% endif %}{% if request.GET.permis %}&permis={{ request.GET.permis }}{% endif %}" 
+                   class="page-link-custom">{{ num }}</a>
             {% endif %}
-        </ul>
-    </nav>
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.statut %}&statut={{ request.GET.statut }}{% endif %}{% if request.GET.permis %}&permis={{ request.GET.permis }}{% endif %}" 
+           class="page-link-custom" title="Page suivante">
+            <i class="fas fa-angle-right"></i>
+        </a>
+        <a href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.statut %}&statut={{ request.GET.statut }}{% endif %}{% if request.GET.permis %}&permis={{ request.GET.permis }}{% endif %}" 
+           class="page-link-custom" title="Dernière page">
+            <i class="fas fa-angle-double-right"></i>
+        </a>
+        {% else %}
+        <span class="page-link-custom disabled">
+            <i class="fas fa-angle-right"></i>
+        </span>
+        {% endif %}
+    </div>
     {% endif %}
 </div>
 
 <!-- Modals Suppression -->
 {% for apprenant in apprenants %}
-<div class="modal fade" id="deleteModal{{ apprenant.id }}" tabindex="-1">
+<div class="modal fade" id="deleteModal{{ apprenant.id }}" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content" style="border-radius: 16px; border: none;">
-            <div class="modal-body p-4">
-                <h5 class="fw-semibold mb-3">Confirmer la suppression</h5>
-                <p class="text-muted mb-4">
-                    Êtes-vous sûr de vouloir supprimer <span class="fw-semibold">{{ apprenant.prenom }} {{ apprenant.nom }}</span> ?
-                    Cette action est irréversible.
+        <div class="modal-content modal-custom">
+            <div class="modal-header-custom">
+                <h5 class="modal-title" style="font-weight: 600;">
+                    <i class="fas fa-exclamation-triangle text-danger me-2"></i>
+                    Confirmer la suppression
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body-custom">
+                <p class="mb-0">
+                    Êtes-vous sûr de vouloir supprimer 
+                    <span class="fw-semibold">{{ apprenant.prenom }} {{ apprenant.nom }}</span> ?
                 </p>
-                <div class="d-flex gap-2 justify-content-end">
-                    <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal">
-                        Annuler
+                <p class="text-muted small mt-2 mb-0">
+                    Cette action est irréversible. Toutes les données associées (examens, séances, paiements) seront également supprimées.
+                </p>
+            </div>
+            <div class="modal-footer-custom">
+                <button type="button" class="btn-outline-custom btn-sm-custom" data-bs-dismiss="modal">
+                    <i class="fas fa-times"></i>
+                    Annuler
+                </button>
+                <form method="post" action="{% url 'supprimer_apprenant' apprenant.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-danger-custom" style="background: var(--danger-red); color: white; border: none; border-radius: 30px; padding: 0.6rem 1.5rem;">
+                        <i class="fas fa-trash"></i>
+                        Supprimer
                     </button>
-                    <form method="post" action="{% url 'supprimer_apprenant' apprenant.id %}">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-danger px-4">
-                            Supprimer
-                        </button>
-                    </form>
-                </div>
+                </form>
             </div>
         </div>
     </div>
 </div>
 {% endfor %}
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Animation douce pour les stats
+    const statCards = document.querySelectorAll('.stat-card');
+    statCards.forEach((card, index) => {
+        card.style.animation = `fadeIn 0.3s ease-out ${index * 0.1}s both`;
+    });
+
+    // Auto-submit pour les selects de filtres
+    const filterSelects = document.querySelectorAll('select[name="statut"], select[name="permis"]');
+    filterSelects.forEach(select => {
+        select.addEventListener('change', function() {
+            this.closest('form').submit();
+        });
+    });
+
+    // Délai pour la recherche
+    const searchInput = document.querySelector('input[name="q"]');
+    if (searchInput) {
+        let timeout = null;
+        searchInput.addEventListener('keyup', function() {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => {
+                if (this.value.length >= 2 || this.value.length === 0) {
+                    this.closest('form').submit();
+                }
+            }, 500);
+        });
+    }
+});
+</script>
+
+<style>
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.btn-sm-custom {
+    padding: 0.5rem 1.2rem;
+    font-size: 0.85rem;
+}
+
+.btn-danger-custom {
+    transition: var(--transition);
+}
+.btn-danger-custom:hover {
+    background: #991b1b !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(185, 28, 28, 0.25);
+}
+</style>
 {% endblock %}

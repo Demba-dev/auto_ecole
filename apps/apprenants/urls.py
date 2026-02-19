@@ -12,5 +12,6 @@ urlpatterns = [
     path('<int:pk>/dossier/creer/', views.creer_dossier, name='creer_dossier'),
     path('<int:pk>/dossier/modifier/', views.modifier_dossier, name='modifier_dossier'),
     path('<int:pk>/progression/ajouter/', views.ajouter_progression, name='ajouter_progression'),
+    path('<int:pk>/seance/creer/', views.creer_seance_apprenant, name='creer_seance_apprenant'),
     path('exporter/', views.exporter_apprenants, name='exporter_apprenants'),
 ]

@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'apps.dashboard',
     'apps.documents',
     'apps.audit',
+    'apps.system',
     # third-party packages
     'crispy_forms',
     'crispy_bootstrap4',
@@ -77,6 +78,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'apps.system.context_processors.system_settings',
             ],
         },
     },

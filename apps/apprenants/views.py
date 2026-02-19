@@ -7,6 +7,7 @@ from .models import Apprenant, TypePermis, DossierApprenant, ProgressionConduite
 from apps.planning.models import Seance
 from datetime import date
 from .forms import ApprenantForm, DossierForm, ProgressionForm
+from apps.planning.forms import SeanceForm
 from django.contrib.auth.decorators import login_required
 from apps.accounts.decorators import admin_required
 
@@ -188,3 +189,21 @@ def planning_apprenant(request, pk):
         'today': today,
     }
     return render(request, 'apprenants/planning.html', context)
+
+@admin_required
+def creer_seance_apprenant(request, pk):
+    apprenant = get_object_or_404(Apprenant, pk=pk)
+    if request.method == 'POST':
+        form = SeanceForm(request.POST)
+        if form.is_valid():
+            seance = form.save(commit=False)
+            seance.apprenant = apprenant
+            seance.save()
+            return redirect('planning_apprenant', pk=pk)
+    else:
+        form = SeanceForm(initial={'apprenant': apprenant})
+    
+    return render(request, 'apprenants/seance_apprenant_form.html', {
+        'form': form,
+        'apprenant': apprenant
+    })
