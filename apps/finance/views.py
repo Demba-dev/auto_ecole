@@ -5,6 +5,7 @@ from django.utils import timezone
 from .forms import TarifForm, ContratForm, PaiementForm
 from .models import Tarif, Contrat, Paiement
 from apps.apprenants.models import Apprenant, TypePermis
+from apps.audit.utils import log_action
 
 
 def finance_hub(request, section='tarif'):
@@ -135,7 +136,14 @@ def paiement_create(request):
     form = PaiementForm(request.POST or None)
 
     if form.is_valid():
-        form.save()
+        paiement = form.save()
+        log_action(
+            user=request.user,
+            action='CREATE',
+            instance=paiement,
+            changes={'montant': str(paiement.montant), 'contrat': str(paiement.contrat)},
+            request=request
+        )
         return redirect('finance:hub_section', section='paiement')
 
     return render(request, 'finance/paiement_form.html', {'form': form} )
@@ -144,6 +152,12 @@ def paiement_delete(request, pk):
     paiement = get_object_or_404(Paiement, pk=pk)
 
     if request.method == 'POST':
+        log_action(
+            user=request.user,
+            action='DELETE',
+            instance=paiement,
+            request=request
+        )
         paiement.delete()
         return redirect('finance:hub_section', section='paiement')
 

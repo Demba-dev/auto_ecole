@@ -33,6 +33,7 @@ urlpatterns = [
     path("examens/", include("apps.examens.urls")),
     path("documents/", include("apps.documents.urls")),
     path("system/", include("apps.system.urls")),
+    path("audit/", include("apps.audit.urls")),
     path('login/', auth_views.LoginView.as_view(
         template_name='registration/login.html',
         authentication_form=AdminAuthenticationForm

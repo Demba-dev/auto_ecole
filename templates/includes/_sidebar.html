@@ -109,7 +109,7 @@
                     {% endif %}
                 </a>
                 
-                <a href="#" class="nav-link d-flex align-items-center gap-3 px-3 py-3 rounded-3 text-decoration-none inactive-link">
+                <a href="{% url 'audit:log_list' %}" class="nav-link d-flex align-items-center gap-3 px-3 py-3 rounded-3 text-decoration-none {% if request.resolver_match.app_name == 'audit' %}active-link{% else %}inactive-link{% endif %}">
                     <i class="fas fa-history" style="width: 20px; font-size: 18px;"></i>
                     <span class="fw-medium flex-fill">Audit</span>
                 </a>

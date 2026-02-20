@@ -1,0 +1,884 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Journal d'audit - KALANSSO{% endblock %}
+
+{% block extra_css %}
+<style>
+:root {
+    --primary: #0f172a;
+    --primary-light: #1e293b;
+    --primary-soft: #f1f5f9;
+    --accent: #3b82f6;
+    --accent-light: #eff6ff;
+    --success: #0b6e4f;
+    --success-light: #e7f3ef;
+    --warning: #b45309;
+    --warning-light: #fffbeb;
+    --danger: #b91c1c;
+    --danger-light: #fef2f2;
+    --info: #0891b2;
+    --info-light: #e0f2fe;
+    --text-dark: #0f172a;
+    --text-medium: #334155;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+    --border-light: #f1f5f9;
+    --radius: 16px;
+    --radius-sm: 12px;
+    --radius-lg: 20px;
+    --shadow: 0 4px 12px rgba(0,0,0,0.05);
+    --shadow-hover: 0 12px 24px -8px rgba(0,0,0,0.1);
+    --transition: 0.2s ease;
+}
+
+body {
+    background: #f8fafc;
+    font-family: 'Inter', sans-serif;
+}
+
+/* ------------------------------------------------
+   BREADCRUMB
+------------------------------------------------ */
+.breadcrumb-custom .breadcrumb {
+    background: transparent;
+    padding: 0;
+    margin-bottom: 1rem;
+}
+.breadcrumb-custom .breadcrumb-item + .breadcrumb-item::before {
+    content: "·";
+    color: var(--text-muted);
+}
+.breadcrumb-custom .breadcrumb-item a {
+    text-decoration: none;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    transition: var(--transition);
+}
+.breadcrumb-custom .breadcrumb-item a:hover {
+    color: var(--primary);
+}
+.breadcrumb-custom .breadcrumb-item.active {
+    color: var(--text-medium);
+    font-size: 0.85rem;
+}
+
+/* ------------------------------------------------
+   PAGE HEADER
+------------------------------------------------ */
+.page-header {
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+.page-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 0.25rem;
+    letter-spacing: -0.02em;
+}
+.page-subtitle {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* ------------------------------------------------
+   STATS MINI
+------------------------------------------------ */
+.stats-mini-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.stat-mini-card {
+    background: #fff;
+    border-radius: var(--radius-sm);
+    padding: 1.25rem;
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: var(--transition);
+    border: 1px solid transparent;
+}
+.stat-mini-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+    border-color: var(--accent);
+}
+.stat-mini-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: var(--accent-light);
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+}
+.stat-mini-content h4 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 0.2rem;
+    line-height: 1.2;
+}
+.stat-mini-content small {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+/* ------------------------------------------------
+   FILTRES
+------------------------------------------------ */
+.filters-card {
+    background: #fff;
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-light);
+}
+
+.filter-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+    display: block;
+    letter-spacing: 0.3px;
+}
+
+.filter-select, .filter-input {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.6rem 1rem;
+    font-size: 0.85rem;
+    transition: var(--transition);
+}
+.filter-select:hover, .filter-input:hover {
+    border-color: var(--text-muted);
+}
+.filter-select:focus, .filter-input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.btn-filter {
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 30px;
+    padding: 0.6rem 1.5rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: var(--transition);
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+.btn-filter:hover {
+    background: #2563eb;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.btn-clear {
+    background: #fff;
+    border: 1px solid var(--border);
+    color: var(--text-medium);
+    border-radius: 30px;
+    padding: 0.6rem 1.5rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: var(--transition);
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    text-decoration: none;
+}
+.btn-clear:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-light);
+}
+
+/* ------------------------------------------------
+   TABLEAU
+------------------------------------------------ */
+.audit-card {
+    background: #fff;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    transition: var(--transition);
+    animation: fadeIn 0.3s ease-out;
+}
+.audit-card:hover {
+    box-shadow: var(--shadow-hover);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card-header-custom {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--border-light);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    background: #fff;
+}
+
+.card-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0;
+}
+.card-title i {
+    color: var(--accent);
+    font-size: 1rem;
+}
+
+.table-responsive {
+    overflow-x: auto;
+}
+
+.table-audit {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.table-audit th {
+    background: var(--primary-soft);
+    color: var(--text-medium);
+    font-weight: 600;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 1rem 1.5rem;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.table-audit td {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--border-light);
+    vertical-align: middle;
+    color: var(--text-dark);
+}
+
+.table-audit tbody tr {
+    transition: var(--transition);
+}
+.table-audit tbody tr:hover {
+    background: var(--primary-soft);
+}
+.table-audit tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Badges d'action */
+.badge-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 1rem;
+    border-radius: 30px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+.badge-create { 
+    background: var(--success-light); 
+    color: var(--success);
+    border: 1px solid #a7f3d0;
+}
+.badge-update { 
+    background: var(--accent-light); 
+    color: var(--accent);
+    border: 1px solid #bfdbfe;
+}
+.badge-delete { 
+    background: var(--danger-light); 
+    color: var(--danger);
+    border: 1px solid #fecaca;
+}
+.badge-login { 
+    background: var(--primary-soft); 
+    color: var(--primary);
+    border: 1px solid var(--border);
+}
+.badge-other { 
+    background: var(--info-light); 
+    color: var(--info);
+    border: 1px solid #bae6fd;
+}
+
+/* User info */
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+.user-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--accent), #2563eb);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    transition: var(--transition);
+}
+.user-info:hover .user-avatar {
+    transform: scale(1.05);
+}
+.user-details {
+    line-height: 1.3;
+}
+.user-name {
+    font-weight: 600;
+    color: var(--text-dark);
+    font-size: 0.9rem;
+}
+.user-username {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+}
+
+/* Object info */
+.object-info {
+    display: flex;
+    flex-direction: column;
+}
+.object-name {
+    font-weight: 600;
+    color: var(--text-dark);
+    font-size: 0.9rem;
+}
+.object-type {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+/* IP */
+.ip-address {
+    background: var(--primary-soft);
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    color: var(--text-medium);
+    display: inline-block;
+}
+
+/* Bouton détails */
+.btn-details {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: #fff;
+    color: var(--text-muted);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+    cursor: pointer;
+}
+.btn-details:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-light);
+    transform: translateY(-1px);
+}
+.btn-details.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
+/* Détails collapse */
+.details-collapse {
+    margin-top: 1rem;
+    background: var(--primary-soft);
+    border-radius: var(--radius-sm);
+    padding: 1rem;
+    font-size: 0.85rem;
+    border: 1px solid var(--border-light);
+    animation: slideDown 0.2s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.details-collapse pre {
+    margin: 0;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    color: var(--text-dark);
+}
+
+.details-collapse code {
+    background: transparent;
+    color: var(--text-dark);
+}
+
+/* Pagination */
+.pagination-custom {
+    display: flex;
+    justify-content: center;
+    gap: 0.35rem;
+    margin: 2rem 0 1rem;
+}
+.page-link-custom {
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    color: var(--text-medium);
+    background: #fff;
+    transition: var(--transition);
+    text-decoration: none;
+}
+.page-link-custom:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-light);
+    transform: translateY(-1px);
+}
+.page-link-custom.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+.page-link-custom.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Empty state */
+.empty-state {
+    padding: 4rem 2rem;
+    text-align: center;
+}
+.empty-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 30px;
+    background: var(--accent-light);
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    margin: 0 auto 1.5rem;
+}
+.empty-state h5 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--primary);
+    margin-bottom: 0.5rem;
+}
+.empty-state p {
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+    max-width: 300px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .table-audit th,
+    .table-audit td {
+        padding: 1rem;
+    }
+    
+    .user-info {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .badge-action {
+        white-space: normal;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4 py-4">
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb-custom" aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'dashboard:dashboard' %}">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="#">Administration</a></li>
+            <li class="breadcrumb-item active">Journal d'audit</li>
+        </ol>
+    </nav>
+
+    <!-- Header -->
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Journal d'audit</h1>
+            <p class="page-subtitle">
+                <i class="fas fa-history"></i>
+                Historique des actions effectuées sur la plateforme
+                <span class="badge bg-light text-dark ms-2">{{ total_logs }} entrées</span>
+            </p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{% url 'audit:export' %}" class="btn btn-outline-secondary btn-sm" style="border-radius: 30px;">
+                <i class="fas fa-download"></i> Exporter
+            </a>
+            <button class="btn btn-outline-secondary btn-sm" style="border-radius: 30px;" onclick="refreshLogs()">
+                <i class="fas fa-sync-alt"></i> Actualiser
+            </button>
+        </div>
+    </div>
+
+    <!-- Mini stats -->
+    <div class="stats-mini-grid">
+        <div class="stat-mini-card">
+            <div class="stat-mini-icon">
+                <i class="fas fa-plus-circle"></i>
+            </div>
+            <div class="stat-mini-content">
+                <h4>{{ stats.creations|default:"0" }}</h4>
+                <small>Créations</small>
+            </div>
+        </div>
+        <div class="stat-mini-card">
+            <div class="stat-mini-icon" style="background: var(--accent-light); color: var(--accent);">
+                <i class="fas fa-edit"></i>
+            </div>
+            <div class="stat-mini-content">
+                <h4>{{ stats.modifications|default:"0" }}</h4>
+                <small>Modifications</small>
+            </div>
+        </div>
+        <div class="stat-mini-card">
+            <div class="stat-mini-icon" style="background: var(--danger-light); color: var(--danger);">
+                <i class="fas fa-trash-alt"></i>
+            </div>
+            <div class="stat-mini-content">
+                <h4>{{ stats.suppressions|default:"0" }}</h4>
+                <small>Suppressions</small>
+            </div>
+        </div>
+        <div class="stat-mini-card">
+            <div class="stat-mini-icon" style="background: var(--primary-soft); color: var(--primary);">
+                <i class="fas fa-sign-in-alt"></i>
+            </div>
+            <div class="stat-mini-content">
+                <h4>{{ stats.connexions|default:"0" }}</h4>
+                <small>Connexions</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtres -->
+    <div class="filters-card">
+        <form method="get" class="row g-3 align-items-end">
+            <div class="col-lg-3">
+                <label class="filter-label">Période</label>
+                <select name="periode" class="filter-select">
+                    <option value="">Toutes</option>
+                    <option value="aujourdhui" {% if request.GET.periode == 'aujourdhui' %}selected{% endif %}>Aujourd'hui</option>
+                    <option value="semaine" {% if request.GET.periode == 'semaine' %}selected{% endif %}>Cette semaine</option>
+                    <option value="mois" {% if request.GET.periode == 'mois' %}selected{% endif %}>Ce mois</option>
+                </select>
+            </div>
+            <div class="col-lg-3">
+                <label class="filter-label">Action</label>
+                <select name="action" class="filter-select">
+                    <option value="">Toutes</option>
+                    <option value="CREATE" {% if request.GET.action == 'CREATE' %}selected{% endif %}>Création</option>
+                    <option value="UPDATE" {% if request.GET.action == 'UPDATE' %}selected{% endif %}>Modification</option>
+                    <option value="DELETE" {% if request.GET.action == 'DELETE' %}selected{% endif %}>Suppression</option>
+                    <option value="LOGIN" {% if request.GET.action == 'LOGIN' %}selected{% endif %}>Connexion</option>
+                </select>
+            </div>
+            <div class="col-lg-3">
+                <label class="filter-label">Utilisateur</label>
+                <input type="text" name="user" class="filter-input" placeholder="Nom d'utilisateur..." value="{{ request.GET.user }}">
+            </div>
+            <div class="col-lg-3">
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn-filter">
+                        <i class="fas fa-filter"></i> Filtrer
+                    </button>
+                    <a href="{% url 'audit:log_list' %}" class="btn-clear">
+                        <i class="fas fa-times"></i> Effacer
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Tableau -->
+    <div class="audit-card">
+        <div class="card-header-custom">
+            <h5 class="card-title">
+                <i class="fas fa-list-ul"></i>
+                Historique des actions
+                {% if request.GET %}
+                <span class="badge" style="background: var(--accent-light); color: var(--accent); margin-left: 0.5rem;">
+                    <i class="fas fa-filter"></i> Filtres actifs
+                </span>
+                {% endif %}
+            </h5>
+            <span class="text-muted small">
+                <i class="fas fa-clock"></i> Dernière mise à jour : {% now "d/m/Y H:i" %}
+            </span>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table-audit">
+                <thead>
+                    <tr>
+                        <th>Date & Heure</th>
+                        <th>Utilisateur</th>
+                        <th>Action</th>
+                        <th>Objet</th>
+                        <th>IP</th>
+                        <th class="text-center">Détails</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in logs %}
+                    <tr>
+                        <td class="text-nowrap">
+                            <div>{{ log.timestamp|date:"d/m/Y" }}</div>
+                            <small class="text-muted">{{ log.timestamp|date:"H:i:s" }}</small>
+                        </td>
+                        <td>
+                            <div class="user-info">
+                                <div class="user-avatar">
+                                    {{ log.user.get_full_name|default:log.user.username|first|upper }}
+                                </div>
+                                <div class="user-details">
+                                    <div class="user-name">{{ log.user.get_full_name|default:log.user.username }}</div>
+                                    <div class="user-username">{{ log.user.username }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="badge-action 
+                                {% if log.action == 'CREATE' %}badge-create
+                                {% elif log.action == 'UPDATE' %}badge-update
+                                {% elif log.action == 'DELETE' %}badge-delete
+                                {% elif log.action == 'LOGIN' %}badge-login
+                                {% else %}badge-other{% endif %}">
+                                <i class="fas fa-{% if log.action == 'CREATE' %}plus-circle{% elif log.action == 'UPDATE' %}edit{% elif log.action == 'DELETE' %}trash-alt{% elif log.action == 'LOGIN' %}sign-in-alt{% else %}circle{% endif %}"></i>
+                                {{ log.get_action_display }}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="object-info">
+                                <div class="object-name">{{ log.object_repr|truncatechars:40 }}</div>
+                                <div class="object-type">{{ log.content_type.name|default:"N/A" }}</div>
+                            </div>
+                        </td>
+                        <td>
+                            {% if log.ip_address %}
+                                <span class="ip-address">
+                                    <i class="fas fa-network-wired"></i> {{ log.ip_address }}
+                                </span>
+                            {% else %}
+                                <span class="text-muted">-</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-center">
+                            {% if log.changes %}
+                            <button class="btn-details" type="button" data-toggle="collapse" data-target="#details-{{ log.id }}" aria-expanded="false">
+                                <i class="fas fa-{% if log.changes|length > 100 %}eye{% else %}info{% endif %}"></i>
+                            </button>
+                            <div class="collapse details-collapse" id="details-{{ log.id }}">
+                                <pre><code>{{ log.changes|pprint }}</code></pre>
+                            </div>
+                            {% else %}
+                            <span class="text-muted">-</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6">
+                            <div class="empty-state">
+                                <div class="empty-icon">
+                                    <i class="fas fa-history"></i>
+                                </div>
+                                <h5>Aucune action enregistrée</h5>
+                                <p>Le journal d'audit sera alimenté au fur et à mesure des actions sur la plateforme.</p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Footer du tableau -->
+        {% if logs %}
+        <div style="padding: 1rem 1.5rem; border-top: 1px solid var(--border-light);">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <small class="text-muted">
+                    <i class="fas fa-info-circle"></i>
+                    Affichage de {{ page_obj.start_index|default:1 }} à {{ page_obj.end_index|default:logs|length }} sur {{ paginator.count|default:logs|length }} entrées
+                </small>
+                <div class="d-flex gap-3">
+                    <span class="d-flex align-items-center gap-1">
+                        <i class="fas fa-circle" style="color: var(--success); font-size: 0.5rem;"></i>
+                        <small class="text-muted">Création</small>
+                    </span>
+                    <span class="d-flex align-items-center gap-1">
+                        <i class="fas fa-circle" style="color: var(--accent); font-size: 0.5rem;"></i>
+                        <small class="text-muted">Modification</small>
+                    </span>
+                    <span class="d-flex align-items-center gap-1">
+                        <i class="fas fa-circle" style="color: var(--danger); font-size: 0.5rem;"></i>
+                        <small class="text-muted">Suppression</small>
+                    </span>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Pagination -->
+    {% if is_paginated %}
+    <div class="pagination-custom">
+        {% if page_obj.has_previous %}
+        <a href="?page=1{% if request.GET %}&{{ request.GET.urlencode }}{% endif %}" class="page-link-custom">
+            <i class="fas fa-angle-double-left"></i>
+        </a>
+        <a href="?page={{ page_obj.previous_page_number }}{% if request.GET %}&{{ request.GET.urlencode }}{% endif %}" class="page-link-custom">
+            <i class="fas fa-angle-left"></i>
+        </a>
+        {% endif %}
+
+        {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+                <span class="page-link-custom active">{{ num }}</span>
+            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                <a href="?page={{ num }}{% if request.GET %}&{{ request.GET.urlencode }}{% endif %}" class="page-link-custom">{{ num }}</a>
+            {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}{% if request.GET %}&{{ request.GET.urlencode }}{% endif %}" class="page-link-custom">
+            <i class="fas fa-angle-right"></i>
+        </a>
+        <a href="?page={{ page_obj.paginator.num_pages }}{% if request.GET %}&{{ request.GET.urlencode }}{% endif %}" class="page-link-custom">
+            <i class="fas fa-angle-double-right"></i>
+        </a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+
+<script>
+// Fonction d'actualisation
+function refreshLogs() {
+    location.reload();
+}
+
+// Gestion des boutons de détails
+document.addEventListener('DOMContentLoaded', function() {
+    const detailButtons = document.querySelectorAll('.btn-details');
+    
+    detailButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const targetId = this.getAttribute('data-target');
+            const target = document.querySelector(targetId);
+            
+            if (target) {
+                const isExpanded = this.getAttribute('aria-expanded') === 'true';
+                this.setAttribute('aria-expanded', !isExpanded);
+                this.classList.toggle('active', !isExpanded);
+            }
+        });
+    });
+    
+    // Auto-submit des filtres
+    const filterSelects = document.querySelectorAll('.filter-select');
+    filterSelects.forEach(select => {
+        select.addEventListener('change', function() {
+            this.closest('form').submit();
+        });
+    });
+    
+    // Délai pour la recherche
+    const searchInput = document.querySelector('input[name="user"]');
+    if (searchInput) {
+        let timeout = null;
+        searchInput.addEventListener('keyup', function() {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => {
+                if (this.value.length >= 2 || this.value.length === 0) {
+                    this.closest('form').submit();
+                }
+            }, 500);
+        });
+    }
+});
+</script>
+{% endblock %}
