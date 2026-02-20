@@ -7,7 +7,7 @@ from django.db.models import Count
 
 from django.core.exceptions import ValidationError
 from .forms import SeanceForm
-
+from apps.system.notifications import notify_apprenant_seance
 
 
 @admin_required
@@ -45,7 +45,9 @@ def seance_create(request):
 
     if form.is_valid():
         try:
-            form.save()
+            seance = form.save()
+            # Envoi de l'email de notification (affiché en console car en local)
+            notify_apprenant_seance(seance)
             messages.success(request, "Séance créée avec succès.")
             return redirect('planning:planning_hub_section', section='seances')
         except (ValueError, ValidationError) as e:

@@ -59,6 +59,7 @@ def vehicule_list(request):
     vehicules = Vehicule.objects.all()
     return render(request, 'vehicules/vehicule_list.html', {'vehicules': vehicules})
 
+@admin_required
 def vehicule_create(request):
     if request.method == 'POST':
         form = VehiculeForm(request.POST)
@@ -81,6 +82,7 @@ def vehicule_update(request, pk):
         form = VehiculeForm(instance=vehicule)
     return render(request, 'vehicules/vehicule_form.html', {'form': form})
 
+@admin_required
 def vehicule_delete(request, pk):
     vehicule = get_object_or_404(Vehicule, pk=pk)
     if request.method == 'POST':

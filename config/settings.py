@@ -144,8 +144,17 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # Crispy forms configuration
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
-# Redirection après connexion/déconnexion
-# Use the namespaced route so reverse('dashboard:dashboard') resolves correctly
-LOGIN_URL = 'login'
-LOGIN_REDIRECT_URL = 'dashboard:dashboard'
-LOGOUT_REDIRECT_URL = 'login'
+# Configuration des Emails
+if DEBUG:
+    # Affiche les emails dans le terminal au lieu de les envoyer réellement
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+else:
+    # Configuration SMTP réelle (à remplir pour la production)
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = 'smtp.gmail.com'
+    EMAIL_PORT = 587
+    EMAIL_USE_TLS = True
+    EMAIL_HOST_USER = 'votre-email@gmail.com'
+    EMAIL_HOST_PASSWORD = 'votre-mot-de-passe'
+
+DEFAULT_FROM_EMAIL = 'KALANSSO ERP <noreply@kalansso.com>'

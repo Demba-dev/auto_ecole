@@ -105,6 +105,7 @@ def tarif_delete(request, pk):
     return render(request, 'finance/tarif_confirm_delete.html', {'tarif': tarif} )
 
 # =================Contrat==================
+@admin_required
 def contrat_create(request):
     form = ContratForm(request.POST or None)
 
