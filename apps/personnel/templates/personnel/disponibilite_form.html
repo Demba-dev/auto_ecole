@@ -689,9 +689,9 @@ input[type="time"] {
     <!-- Header compact -->
     <div class="page-header">
         <div>
-            <nav class="breadcrumb-custom">
+            <nav class="breadcrumb-custom mb-4">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'dashboard:dashboard' %}">Dashboard</a></li>
                     <li class="breadcrumb-item"><a href="{% url 'personnel:hub_section' 'disponibilite' %}">Disponibilités</a></li>
                     <li class="breadcrumb-item active">
                         {% if form.instance.pk %}Modifier{% else %}Nouvelle disponibilité{% endif %}

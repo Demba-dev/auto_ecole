@@ -589,12 +589,12 @@
     <!-- Header -->
     <div class="form-header">
         <div class="breadcrumb-nav">
-            <a href="{% url 'dashboard' %}" class="breadcrumb-link">
+            <a href="{% url 'dashboard:dashboard' %}" class="breadcrumb-link">
                 <i class="fas fa-home"></i>
                 <span>Dashboard</span>
             </a>
             <span class="breadcrumb-sep">/</span>
-            <a href="{% url 'liste_apprenants' %}" class="breadcrumb-link">
+            <a href="{% url 'apprenants:liste_apprenants' %}" class="breadcrumb-link">
                 <i class="fas fa-users"></i>
                 <span>Apprenants</span>
             </a>
@@ -626,7 +626,7 @@
                     </p>
                 </div>
             </div>
-            <a href="{% url 'liste_apprenants' %}" class="btn-back">
+            <a href="{% url 'apprenants:liste_apprenants' %}" class="btn-back">
                 <i class="fas fa-arrow-left"></i>
                 Retour à la liste
             </a>
@@ -855,7 +855,7 @@
                             <i class="fas fa-save"></i>
                             {% if form.instance.pk %}Enregistrer les modifications{% else %}Ajouter l'apprenant{% endif %}
                         </button>
-                        <a href="{% url 'liste_apprenants' %}" class="btn btn-secondary">
+                        <a href="{% url 'apprenants:liste_apprenants' %}" class="btn btn-secondary">
                             <i class="fas fa-times"></i>
                             Annuler
                         </a>
@@ -893,7 +893,7 @@
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                         Annuler
                     </button>
-                    <form method="post" action="{% url 'supprimer_apprenant' form.instance.pk %}" style="display: inline;">
+                    <form method="post" action="{% url 'apprenants:supprimer_apprenant' form.instance.pk %}" style="display: inline;">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-danger">
                             <i class="fas fa-trash-alt me-2"></i>Supprimer

@@ -655,11 +655,11 @@ input[type="file"] {
 <div class="container-fluid px-4 py-4">
     <!-- Header avec breadcrumb - style identique au profil -->
     <div class="page-header">
-        <nav class="breadcrumb-custom" aria-label="breadcrumb">
+        <nav class="breadcrumb-custom mb-4" aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
-                <li class="breadcrumb-item"><a href="{% url 'liste_apprenants' %}">Apprenants</a></li>
-                <li class="breadcrumb-item"><a href="{% url 'detail_apprenant' apprenant.id %}">{{ apprenant.prenom }} {{ apprenant.nom }}</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'apprenants:liste_apprenants' %}">Apprenants</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'apprenants:detail_apprenant' apprenant.id %}">{{ apprenant.prenom }} {{ apprenant.nom }}</a></li>
                 <li class="breadcrumb-item active">
                     {% if form.instance.pk %}Modifier dossier{% else %}Nouveau dossier{% endif %}
                 </li>
@@ -684,7 +684,7 @@ input[type="file"] {
                     {% endif %}
                 </p>
             </div>
-            <a href="{% url 'detail_apprenant' apprenant.id %}" class="btn-soft">
+            <a href="{% url 'apprenants:detail_apprenant' apprenant.id %}" class="btn-soft">
                 <i class="fas fa-arrow-left"></i> Retour au profil
             </a>
         </div>
@@ -988,7 +988,7 @@ input[type="file"] {
                 </div>
                 
                 <div class="form-actions">
-                    <a href="{% url 'detail_apprenant' apprenant.id %}" class="btn-outline">
+                    <a href="{% url 'apprenants:detail_apprenant' apprenant.id %}" class="btn-outline">
                         <i class="fas fa-times"></i> Annuler
                     </a>
                     <button type="submit" class="btn-accent">

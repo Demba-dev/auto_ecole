@@ -1,0 +1,500 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Connexion - KALANSSO{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'vendor/fontawesome/all.min.css' %}">
+<style>
+:root{
+    --accent: #45ab8b; /* green */
+    --accent-2: #cfd8d5;
+    --muted: #c3ccda;
+    --card-bg: #ffffff;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    overflow: auto;
+    -webkit-font-smoothing:antialiased;
+}
+
+.login-page {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+}
+
+/* ===== PARTIE GAUCHE - FORMULAIRE MINIMALISTE ===== */
+ .form-section {
+    flex: 0 0 40%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 2rem;
+    position: relative;
+    z-index: 2;
+    background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+}
+
+ .form-container {
+    width: 100%;
+    max-width: 460px;
+    background: var(--card-bg);
+    border-radius: 14px;
+    padding: 2.5rem;
+    box-shadow: 0 22px 48px rgba(12, 26, 75, 0.06);
+    border: 1px solid rgba(15,23,42,0.04);
+}
+
+/* Logo simple */
+.logo-area {
+    margin-bottom: 2.5rem;
+}
+
+.logo-icon {
+    width: 56px;
+    height: 56px;
+    background: transparent; /* remove colored background */
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.75rem;
+    box-shadow: 0 6px 18px rgba(2,6,23,0.04);
+    border: 1px solid rgba(15,23,42,0.06);
+}
+
+.logo-icon i {
+    font-size: 22px;
+    color: var(--accent); /* icon uses accent color on neutral background */
+}
+
+.logo-icon img {
+    width: 78%;
+    height: 78%;
+    object-fit: contain;
+    filter: none; /* ensure logos keep original colors */
+    border-radius: 6px;
+}
+
+.logo-area h1 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #2d3d61;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.25rem;
+}
+
+.logo-area p {
+    color: var(--muted);
+    font-size: 0.9rem;
+}
+
+/* Titre */
+.form-title {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 0.5rem;
+}
+.form-subtitle { color: #6b7280; margin-bottom: 1.25rem; font-size:0.95rem }
+
+/* Formulaire */
+.form-group {
+    margin-bottom: 1.25rem;
+}
+
+.form-label {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #334155;
+    margin-bottom: 0.5rem;
+}
+
+.input-icon { position: relative; }
+.input-icon i {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9ca3af;
+    font-size: 0.95rem;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.95rem 0.75rem 0.95rem 44px;
+    border: 1px solid #e6eef8;
+    border-radius: 10px;
+    font-size: 0.975rem;
+    transition: all 0.18s ease;
+    background: #fff;
+    color: #0f172a;
+    box-shadow: inset 0 1px 0 rgba(16,24,40,0.02);
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 6px 18px rgba(5,150,105,0.08);
+}
+
+.form-control::placeholder {
+    color: #94a3b8;
+    font-size: 0.95rem;
+}
+
+/* Options */
+.login-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 1.5rem 0 1rem 0;
+}
+
+.remember-me {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    color: var(--muted);
+    font-size: 0.9rem;
+}
+
+.remember-me input {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--accent);
+}
+
+.forgot-password {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.2s;
+}
+
+.forgot-password:hover {
+    color: #0f172a;
+}
+
+/* Bouton */
+.btn-login {
+    width: 100%;
+    background: linear-gradient(90deg,var(--accent) 0%,var(--accent-2) 100%);
+    color: white;
+    border: none;
+    padding: 1rem;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform .12s ease, box-shadow .16s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    box-shadow: 0 14px 36px rgba(5,150,105,0.12);
+}
+
+.btn-login:hover { transform: translateY(-3px); box-shadow: 0 20px 50px rgba(5,150,105,0.18); }
+
+.btn-login i {
+    font-size: 0.95rem;
+}
+
+/* Alertes minimalistes */
+.alert {
+    padding: 0.875rem 1rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.alert-danger {
+    background: #fef2f2;
+    color: #991b1b;
+}
+
+.alert-success {
+    background: #f0fdf4;
+    color: #166534;
+}
+
+/* Footer simple */
+.login-footer {
+    margin-top: 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #94a3b8;
+    font-size: 0.85rem;
+}
+
+.footer-links {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.footer-links a {
+    color: #94a3b8;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.footer-links a:hover {
+    color: #0f172a;
+}
+
+.version {
+    color: #cbd5e1;
+}
+
+/* ===== PARTIE DROITE - IMAGE ===== */
+.image-section {
+    flex: 0 0 60%;
+    position: relative;
+    overflow: hidden;
+}
+
+.image-wrapper {
+    width: 100%;
+    height: 100%;
+}
+
+.image-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    filter: brightness(0.9);
+}
+
+.image-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.1) 100%);
+}
+
+.image-content {
+    position: absolute;
+    bottom: 3rem;
+    left: 3rem;
+    color: white;
+    max-width: 80%;
+}
+
+.image-content h2 {
+    font-size: 2.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    line-height: 1.2;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.image-content p {
+    font-size: 1rem;
+    opacity: 0.9;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+/* Badges stats */
+.stats-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-top: 2rem;
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(5px);
+    padding: 0.75rem 1.5rem;
+    border-radius: 40px;
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+.stats-badge span {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: white;
+    font-size: 0.9rem;
+}
+
+.stats-badge i {
+    color: white;
+    opacity: 0.7;
+}
+
+.stats-badge strong {
+    font-weight: 600;
+    margin-right: 0.25rem;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .form-section {
+        flex: 0 0 45%;
+    }
+    .image-section {
+        flex: 0 0 55%;
+    }
+}
+
+@media (max-width: 768px) {
+    .login-page {
+        flex-direction: column;
+    }
+    .form-section {
+        flex: 0 0 auto;
+        height: 100vh;
+        width: 100%;
+    }
+    .image-section {
+        display: none;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="login-page">
+    <!-- PARTIE GAUCHE - FORMULAIRE MINIMALISTE -->
+    <div class="form-section">
+        <div class="form-container">
+            <!-- Logo -->
+            <div class="logo-area">
+                <div class="logo-icon">
+                    {% if system_settings.app_logo %}
+                        <img src="{{ system_settings.app_logo.url }}" alt="Logo">
+                    {% else %}
+                        <i class="fas fa-steering-wheel"></i>
+                    {% endif %}
+                </div>
+                <h1>{{ system_settings.app_name|default:"KALANSSO" }}</h1>
+                <p>Gestion d'auto-école</p>
+            </div>
+
+            <!-- Titre -->
+            <h2 class="form-title">Connexion</h2>
+            <p class="form-subtitle">Entrez vos identifiants pour accéder au tableau de bord</p>
+
+            <!-- Messages -->
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle"></i>
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            {% if form.errors %}
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-circle"></i>
+                    Identifiants incorrects
+                </div>
+            {% endif %}
+
+            <!-- Formulaire -->
+            <form method="post" action="{% url 'login' %}">
+                {% csrf_token %}
+                <div class="form-group input-icon">
+                    <label class="form-label">Email</label>
+                    <i class="fas fa-user"></i>
+                    <input type="text" name="username" class="form-control" 
+                           placeholder="nom@exemple.com" required autofocus>
+                </div>
+                
+                <div class="form-group input-icon">
+                    <label class="form-label">Mot de passe</label>
+                    <i class="fas fa-lock"></i>
+                    <input type="password" name="password" class="form-control" 
+                           placeholder="••••••••" required>
+                </div>
+
+                <div class="login-options">
+                    <label class="remember-me">
+                        <input type="checkbox" name="remember_me">
+                        <span>Se souvenir</span>
+                    </label>
+                    <a href="#" class="forgot-password">
+                        Mot de passe oublié?
+                    </a>
+                </div>
+
+                <button type="submit" class="btn-login">
+                    <span>Se connecter</span>
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+
+                <input type="hidden" name="next" value="{{ next }}">
+            </form>
+
+            <!-- Footer -->
+            <div class="login-footer">
+                <div class="footer-links">
+                    <a href="#" onclick="showDemoCredentials()">Démo</a>
+                    <a href="#">Aide</a>
+                </div>
+                <div class="version">
+                    v2.0
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PARTIE DROITE - IMAGE -->
+    <div class="image-section">
+        <div class="image-wrapper">
+            <img src="{% static 'images/driver-bg.jpg' %}" alt="Driver" 
+                 onerror="this.src='https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80'">
+            <div class="image-overlay"></div>
+            <div class="image-content">
+                <h2>Bienvenue sur<br>KALANSSO</h2>
+                <p>La solution complète pour votre auto-école</p>
+                <div class="stats-badge">
+                    <span><i class="fas fa-school"></i> <strong>150+</strong> auto-écoles</span>
+                    <span><i class="fas fa-users"></i> <strong>5000+</strong> apprenants</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function showDemoCredentials() {
+    const alert = document.createElement('div');
+    alert.className = 'alert alert-success';
+    alert.innerHTML = `
+        <i class="fas fa-info-circle"></i>
+        <div>
+            <strong>Mode démo</strong> — Utilisateur: admin@kalan.com / Mot de passe: kalan2024
+        </div>
+    `;
+    
+    document.querySelector('.form-container').insertBefore(alert, document.querySelector('form'));
+    
+    document.querySelector('input[name="username"]').value = 'admin@kalan.com';
+    document.querySelector('input[name="password"]').value = 'kalan2024';
+}
+</script>
+{% endblock %}

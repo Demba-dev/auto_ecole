@@ -1,5 +1,6 @@
 # views.py
 from django.shortcuts import render
+from apps.accounts.decorators import admin_required
 from django.utils import timezone
 from django.db.models import Count, Sum, Q
 from apps.apprenants.models import Apprenant
@@ -41,6 +42,7 @@ def build_objectifs_context(today):
     }
 
 
+@admin_required
 def dashboard(request):
     today = timezone.now().date()
     first_day_of_month = today.replace(day=1)
@@ -93,7 +95,7 @@ def dashboard(request):
         
         # === QUICK ACTIONS ===
         "quick_actions": [
-            {"label": "Ajouter apprenant", "url": reverse('ajouter_apprenant'), "icon": "user-plus"},
+            {"label": "Ajouter apprenant", "url": reverse('apprenants:ajouter_apprenant'), "icon": "user-plus"},
             {"label": "Nouvelle séance", "url": reverse('planning:seance_create'), "icon": "calendar-plus"},
             {"label": "Créer examen", "url": reverse('examens:examen_create'), "icon": "graduation-cap"},
             {"label": "Ajouter véhicule", "url": reverse('vehicules:vehicule_create'), "icon": "car"},

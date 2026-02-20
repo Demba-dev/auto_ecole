@@ -597,9 +597,9 @@ body {
     <!-- Header avec breadcrumb -->
     <div class="page-header">
         <div>
-            <nav class="breadcrumb-custom" aria-label="breadcrumb">
+            <nav class="breadcrumb-custom mb-4" aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'dashboard:dashboard' %}">Dashboard</a></li>
                     <li class="breadcrumb-item"><a href="{% url 'vehicules:vehicules_hub' %}">Véhicules</a></li>
                     <li class="breadcrumb-item active">Historique Maintenance</li>
                 </ol>

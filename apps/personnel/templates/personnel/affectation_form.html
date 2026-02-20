@@ -619,9 +619,9 @@ body {
     <!-- Header compact -->
     <div class="page-header">
         <div>
-            <nav class="breadcrumb-custom">
+            <nav class="breadcrumb-custom mb-4">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'dashboard:dashboard' %}">Dashboard</a></li>
                     <li class="breadcrumb-item"><a href="{% url 'personnel:hub_section' 'affectation' %}">Affectations</a></li>
                     <li class="breadcrumb-item active">
                         {% if form.instance.pk %}Modifier{% else %}Nouvelle affectation{% endif %}

@@ -248,9 +248,9 @@ textarea.form-control {
     <div class="breadcrumb-custom mb-4">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{% url 'liste_apprenants' %}">Apprenants</a></li>
-                <li class="breadcrumb-item"><a href="{% url 'detail_apprenant' pk=apprenant.pk %}">{{ apprenant }}</a></li>
-                <li class="breadcrumb-item"><a href="{% url 'planning_apprenant' pk=apprenant.pk %}">Planning</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'apprenants:liste_apprenants' %}">Apprenants</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'apprenants:detail_apprenant' pk=apprenant.pk %}">{{ apprenant }}</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'apprenants:planning_apprenant' pk=apprenant.pk %}">Planning</a></li>
                 <li class="breadcrumb-item active">Nouvelle séance</li>
             </ol>
         </nav>
@@ -327,7 +327,7 @@ textarea.form-control {
                     <!-- PARTIE 2 : Attributions & Notes -->
                     <div id="part2" style="display: none;">
                         <div class="form-grid">
-                            <div class="form-group full-width">
+                            <div class="form-group full-width" style="display: none;">
                                 <label class="form-label"><i class="fas fa-user-graduate"></i> Apprenant <span class="required-star">*</span></label>
                                 {{ form.apprenant }}
                                 {% if form.apprenant.errors %}<div class="error-feedback">{{ form.apprenant.errors.0 }}</div>{% endif %}
@@ -366,7 +366,7 @@ textarea.form-control {
                         </button>
                         
                         <div class="d-flex gap-3">
-                            <a href="{% url 'planning_apprenant' pk=apprenant.pk %}" class="btn-nav btn-prev text-decoration-none">Annuler</a>
+                            <a href="{% url 'apprenants:planning_apprenant' pk=apprenant.pk %}" class="btn-nav btn-prev text-decoration-none">Annuler</a>
                             
                             <button type="button" class="btn-nav btn-next" id="btnNext">
                                 Suivant <i class="fas fa-arrow-right"></i>
@@ -403,6 +403,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Gestion du wizard
     btnNext.addEventListener('click', () => {
+        const typeSeance = document.querySelector('[name="type_seance"]').value;
+        const dateInput = document.querySelector('[name="date"]').value;
+        const heureDebut = document.querySelector('[name="heure_debut"]').value;
+        const duree = document.querySelector('[name="duree_minutes"]').value;
+
+        if (!typeSeance || !dateInput || !heureDebut || !duree) {
+            alert("Veuillez remplir tous les champs obligatoires de la première étape.");
+            return;
+        }
+
         part1.style.display = 'none';
         part2.style.display = 'block';
         
@@ -429,8 +439,15 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Si on a des erreurs dans la partie 2 lors de la soumission
-    {% if form.apprenant.errors or form.moniteur.errors or form.statut.errors %}
-        btnNext.click();
+    {% if form.moniteur.errors or form.statut.errors %}
+        part1.style.display = 'none';
+        part2.style.display = 'block';
+        btnNext.style.display = 'none';
+        btnSave.style.display = 'inline-flex';
+        btnPrev.style.visibility = 'visible';
+        step1.classList.remove('active');
+        step1.classList.add('completed');
+        step2.classList.add('active');
     {% endif %}
 });
 </script>

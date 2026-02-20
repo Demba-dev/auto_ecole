@@ -10,11 +10,11 @@
     
     <title>{% block title %}KALANSSO ERP{% endblock %} | Auto-école KALANSSO</title>
 
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-    <!-- Font Awesome 6 (Icônes) -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Bootstrap CSS (local) -->
+    <link rel="stylesheet" href="{% static 'vendor/bootstrap/bootstrap.min.css' %}">
+
+    <!-- Font Awesome 6 (local) -->
+    <link rel="stylesheet" href="{% static 'vendor/fontawesome/all.min.css' %}">
 
     <link rel="icon" href="{% static 'images/favicon.ico' %}">
 
@@ -75,7 +75,9 @@
             margin-left: -288px;
         }
         #content {
-            width: 100%;
+            flex: 1;
+            width: auto;
+            min-width: 0;
             min-height: 100vh;
             background-color: #f8f9fa;
             transition: all 0.3s;
@@ -126,6 +128,12 @@
             background: rgba(71, 85, 105, 0.5) !important;
             color: white !important;
         }
+
+        .profile-footer-card:hover {
+            background: rgba(71, 85, 105, 0.7) !important;
+            border-color: rgba(59, 130, 246, 0.5) !important;
+            transform: translateY(-2px);
+        }
     </style>
     
     {% block extra_css %}{% endblock %}
@@ -134,12 +142,16 @@
 
 <div id="wrapper">
     <!-- Sidebar -->
-    {% include "includes/_sidebar.html" %}
+    {% if user.is_authenticated %}
+        {% include "includes/_sidebar.html" %}
+    {% endif %}
 
     <!-- Page Content -->
     <div id="content" class="d-flex flex-column">
         <!-- Header / Navbar inside content -->
-        {% include "includes/_navbar.html" %}
+        {% if user.is_authenticated %}
+            {% include "includes/_navbar.html" %}
+        {% endif %}
 
         <!-- Messages flash -->
         {% if messages %}
@@ -185,8 +197,8 @@
     </div>
 </div>
 
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Bootstrap JS (local) -->
+<script src="{% static 'vendor/bootstrap/bootstrap.bundle.min.js' %}"></script>
 
 <!-- Scripts personnalisés -->
 <script>

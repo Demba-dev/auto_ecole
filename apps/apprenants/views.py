@@ -81,7 +81,7 @@ def ajouter_apprenant(request):
         form = ApprenantForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            return redirect('liste_apprenants')
+            return redirect('apprenants:liste_apprenants')
     else:
         form = ApprenantForm()
     return render(request, 'apprenants/form.html', {'form': form})
@@ -93,7 +93,7 @@ def modifier_apprenant(request, pk):
         form = ApprenantForm(request.POST, request.FILES, instance=apprenant)
         if form.is_valid():
             form.save()
-            return redirect('liste_apprenants')
+            return redirect('apprenants:liste_apprenants')
     else:
         form = ApprenantForm(instance=apprenant)
     return render(request, 'apprenants/form.html', {'form': form})
@@ -103,7 +103,7 @@ def supprimer_apprenant(request, pk):
     apprenant = get_object_or_404(Apprenant, pk=pk)
     if request.method == 'POST':
         apprenant.delete()
-        return redirect('liste_apprenants')
+        return redirect('apprenants:liste_apprenants')
     return render(request, 'apprenants/confirmer_suppression.html', {'apprenant': apprenant})
 
 @admin_required
@@ -144,7 +144,7 @@ def creer_dossier(request, pk):
             dossier = form.save(commit=False)
             dossier.apprenant = apprenant
             dossier.save()
-            return redirect('detail_apprenant', pk=pk)
+            return redirect('apprenants:detail_apprenant', pk=pk)
     else:
         form = DossierForm()
     return render(request, 'apprenants/dossier_form.html', {'form': form, 'apprenant': apprenant})
@@ -157,7 +157,7 @@ def modifier_dossier(request, pk):
         form = DossierForm(request.POST, request.FILES, instance=dossier)
         if form.is_valid():
             form.save()
-            return redirect('detail_apprenant', pk=pk)
+            return redirect('apprenants:detail_apprenant', pk=pk)
     else:
         form = DossierForm(instance=dossier)
     return render(request, 'apprenants/dossier_form.html', {'form': form, 'apprenant': apprenant})
@@ -172,7 +172,7 @@ def ajouter_progression(request, pk):
         form = ProgressionForm(request.POST, instance=progression)
         if form.is_valid():
             form.save()
-            return redirect('detail_apprenant', pk=pk)
+            return redirect('apprenants:detail_apprenant', pk=pk)
     else:
         form = ProgressionForm(instance=progression)
     return render(request, 'apprenants/progression_form.html', {'form': form, 'apprenant': apprenant})
@@ -199,7 +199,7 @@ def creer_seance_apprenant(request, pk):
             seance = form.save(commit=False)
             seance.apprenant = apprenant
             seance.save()
-            return redirect('planning_apprenant', pk=pk)
+            return redirect('apprenants:planning_apprenant', pk=pk)
     else:
         form = SeanceForm(initial={'apprenant': apprenant})
     

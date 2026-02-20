@@ -630,9 +630,9 @@
 {% block content %}
 <div class="container-fluid px-4 py-4">
     <!-- Breadcrumb -->
-    <nav class="breadcrumb-custom" aria-label="breadcrumb">
+    <nav class="breadcrumb-custom mb-4" aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'dashboard:dashboard' %}">Dashboard</a></li>
             <li class="breadcrumb-item active">Apprenants</li>
         </ol>
     </nav>
@@ -648,11 +648,11 @@
             </div>
         </div>
         <div class="d-flex gap-2">
-            <a href="{% url 'exporter_apprenants' %}" class="btn-outline-custom">
+            <a href="{% url 'apprenants:exporter_apprenants' %}" class="btn-outline-custom">
                 <i class="fas fa-download"></i>
                 Exporter
             </a>
-            <a href="{% url 'ajouter_apprenant' %}" class="btn-primary-custom">
+            <a href="{% url 'apprenants:ajouter_apprenant' %}" class="btn-primary-custom">
                 <i class="fas fa-plus"></i>
                 Nouvel apprenant
             </a>
@@ -733,7 +733,7 @@
                         Filtrer
                     </button>
                     {% if request.GET %}
-                    <a href="{% url 'liste_apprenants' %}" class="btn-clear">
+                    <a href="{% url 'apprenants:liste_apprenants' %}" class="btn-clear">
                         <i class="fas fa-times"></i>
                         Effacer
                     </a>
@@ -835,13 +835,13 @@
                         </td>
                         <td class="text-end">
                             <div class="actions-group">
-                                <a href="{% url 'detail_apprenant' apprenant.id %}" class="action-btn btn-view" title="Voir détails">
+                                <a href="{% url 'apprenants:detail_apprenant' apprenant.id %}" class="action-btn btn-view" title="Voir détails">
                                     <i class="fas fa-eye"></i>
                                 </a>
-                                <a href="{% url 'modifier_apprenant' apprenant.id %}" class="action-btn btn-edit" title="Modifier">
+                                <a href="{% url 'apprenants:modifier_apprenant' apprenant.id %}" class="action-btn btn-edit" title="Modifier">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                <a href="{% url 'planning_apprenant' apprenant.id %}" class="action-btn btn-calendar" title="Planning">
+                                <a href="{% url 'apprenants:planning_apprenant' apprenant.id %}" class="action-btn btn-calendar" title="Planning">
                                     <i class="fas fa-calendar-alt"></i>
                                 </a>
                                 <button type="button" class="action-btn btn-delete" 
@@ -861,7 +861,7 @@
                                 </div>
                                 <h5>Aucun apprenant trouvé</h5>
                                 <p>Commencez par ajouter votre premier apprenant.</p>
-                                <a href="{% url 'ajouter_apprenant' %}" class="btn-primary-custom">
+                                <a href="{% url 'apprenants:ajouter_apprenant' %}" class="btn-primary-custom">
                                     <i class="fas fa-plus"></i> Ajouter un apprenant
                                 </a>
                             </div>
@@ -970,7 +970,7 @@
                     <i class="fas fa-times"></i>
                     Annuler
                 </button>
-                <form method="post" action="{% url 'supprimer_apprenant' apprenant.id %}">
+                <form method="post" action="{% url 'apprenants:supprimer_apprenant' apprenant.id %}">
                     {% csrf_token %}
                     <button type="submit" class="btn-danger-custom" style="background: var(--danger-red); color: white; border: none; border-radius: 30px; padding: 0.6rem 1.5rem;">
                         <i class="fas fa-trash"></i>

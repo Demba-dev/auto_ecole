@@ -34,8 +34,8 @@
                     </div>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-3" aria-labelledby="userDropdown">
-                    <li><a class="dropdown-item py-2" href="#"><i class="fas fa-user-circle me-2 text-muted"></i>Mon profil</a></li>
-                    <li><a class="dropdown-item py-2" href="#"><i class="fas fa-cog me-2 text-muted"></i>Paramètres</a></li>
+                    <li><a class="dropdown-item py-2" href="{% url 'accounts:profile' %}"><i class="fas fa-user-circle me-2 text-muted"></i>Mon profil</a></li>
+                    <li><a class="dropdown-item py-2" href="{% url 'system:settings' %}"><i class="fas fa-cog me-2 text-muted"></i>Paramètres</a></li>
                     <li><hr class="dropdown-divider opacity-50"></li>
                     <li>
                         <form method="post" action="{% url 'logout' %}">

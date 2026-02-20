@@ -633,9 +633,9 @@ body {
     <!-- Header -->
     <div class="page-header">
         <div>
-            <nav class="breadcrumb-custom">
+            <nav class="breadcrumb-custom mb-4">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'dashboard:dashboard' %}">Dashboard</a></li>
                     <li class="breadcrumb-item"><a href="{% url 'finance:hub_section' 'paiement' %}">Paiements</a></li>
                     <li class="breadcrumb-item active">
                         {% if form.instance.pk %}Modifier paiement #{{ form.instance.id }}{% else %}Nouveau paiement{% endif %}

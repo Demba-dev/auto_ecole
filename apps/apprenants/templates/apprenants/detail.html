@@ -131,23 +131,23 @@ body { font-family: 'Inter', sans-serif; background: #f8fafc; color: var(--text-
     <!-- Header avec breadcrumb et actions -->
     <div class="page-header d-flex flex-wrap align-items-center justify-content-between">
         <div>
-            <nav class="breadcrumb-custom">
+            <nav class="breadcrumb-custom mb-4">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="{% url 'liste_apprenants' %}">Apprenants</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'dashboard:dashboard' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'apprenants:liste_apprenants' %}">Apprenants</a></li>
                     <li class="breadcrumb-item active">Profil</li>
                 </ol>
             </nav>
             <h1 class="h3 fw-bold text-dark mb-0">Profil apprenant</h1>
         </div>
         <div class="d-flex gap-2 mt-3 mt-md-0">
-            <a href="{% url 'liste_apprenants' %}" class="btn-soft">
+            <a href="{% url 'apprenants:liste_apprenants' %}" class="btn-soft">
                 <i class="fas fa-arrow-left"></i> Retour
             </a>
-            <a href="{% url 'modifier_apprenant' apprenant.id %}" class="btn-outline">
+            <a href="{% url 'apprenants:modifier_apprenant' apprenant.id %}" class="btn-outline">
                 <i class="fas fa-edit"></i> Modifier
             </a>
-            <a href="{% url 'planning_apprenant' apprenant.id %}" class="btn-accent">
+            <a href="{% url 'apprenants:planning_apprenant' apprenant.id %}" class="btn-accent">
                 <i class="fas fa-calendar-alt"></i> Planning
             </a>
         </div>
@@ -280,7 +280,7 @@ body { font-family: 'Inter', sans-serif; background: #f8fafc; color: var(--text-
                         {% endif %}
                         
                         <div class="d-flex gap-2 justify-content-end mt-3">
-                            <a href="{% url 'ajouter_progression' apprenant.id %}" class="btn-soft">
+                            <a href="{% url 'apprenants:ajouter_progression' apprenant.id %}" class="btn-soft">
                                 <i class="fas fa-sync-alt"></i> Mettre à jour les heures
                             </a>
                         </div>
@@ -288,7 +288,7 @@ body { font-family: 'Inter', sans-serif; background: #f8fafc; color: var(--text-
                         <div class="empty-state">
                             <i class="fas fa-car"></i>
                             <p>Aucune progression de conduite enregistrée</p>
-                            <a href="{% url 'ajouter_progression' apprenant.id %}" class="btn-accent">
+                            <a href="{% url 'apprenants:ajouter_progression' apprenant.id %}" class="btn-accent">
                                 <i class="fas fa-plus"></i> Ajouter un suivi
                             </a>
                         </div>
@@ -366,7 +366,7 @@ body { font-family: 'Inter', sans-serif; background: #f8fafc; color: var(--text-
 
                         <!-- Actions documents -->
                         <div class="d-flex gap-2 justify-content-end mt-3">
-                            <a href="{% url 'modifier_dossier' apprenant.id %}" class="btn-soft">
+                            <a href="{% url 'apprenants:modifier_dossier' apprenant.id %}" class="btn-soft">
                                 <i class="fas fa-folder-open"></i> Gérer les documents
                             </a>
                         </div>
@@ -374,7 +374,7 @@ body { font-family: 'Inter', sans-serif; background: #f8fafc; color: var(--text-
                         <div class="empty-state">
                             <i class="fas fa-folder-open"></i>
                             <p>Aucun dossier administratif trouvé</p>
-                            <a href="{% url 'creer_dossier' apprenant.id %}" class="btn-accent">
+                            <a href="{% url 'apprenants:creer_dossier' apprenant.id %}" class="btn-accent">
                                 <i class="fas fa-plus"></i> Créer un dossier
                             </a>
                         </div>

@@ -1,0 +1,820 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Mon Profil - KALANSSO{% endblock %}
+
+{% block extra_css %}
+<style>
+:root {
+    --primary: #0f172a;
+    --primary-light: #1e293b;
+    --primary-soft: #f1f5f9;
+    --accent: #3b82f6;
+    --accent-light: #eff6ff;
+    --success: #0b6e4f;
+    --success-light: #e7f3ef;
+    --warning: #b45309;
+    --warning-light: #fffbeb;
+    --danger: #b91c1c;
+    --danger-light: #fef2f2;
+    --text-dark: #0f172a;
+    --text-medium: #334155;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+    --border-light: #f1f5f9;
+    --radius: 16px;
+    --radius-sm: 12px;
+    --radius-lg: 20px;
+    --shadow: 0 4px 12px rgba(0,0,0,0.05);
+    --shadow-hover: 0 12px 24px -8px rgba(0,0,0,0.1);
+    --transition: 0.2s ease;
+}
+
+body {
+    background: #f8fafc;
+    font-family: 'Inter', sans-serif;
+}
+
+/* ------------------------------------------------
+   BREADCRUMB
+------------------------------------------------ */
+.breadcrumb-custom .breadcrumb {
+    background: transparent;
+    padding: 0;
+    margin-bottom: 1rem;
+}
+.breadcrumb-custom .breadcrumb-item + .breadcrumb-item::before {
+    content: "·";
+    color: var(--text-muted);
+}
+.breadcrumb-custom .breadcrumb-item a {
+    text-decoration: none;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    transition: var(--transition);
+}
+.breadcrumb-custom .breadcrumb-item a:hover {
+    color: var(--primary);
+}
+.breadcrumb-custom .breadcrumb-item.active {
+    color: var(--text-medium);
+    font-size: 0.85rem;
+}
+
+/* ------------------------------------------------
+   PAGE HEADER
+------------------------------------------------ */
+.page-header {
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+.page-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 0.25rem;
+    letter-spacing: -0.02em;
+}
+.page-subtitle {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+/* ------------------------------------------------
+   PROFIL CONTAINER
+------------------------------------------------ */
+.profile-container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+/* ------------------------------------------------
+   CARTE PROFIL
+------------------------------------------------ */
+.profile-card {
+    background: #fff;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    transition: var(--transition);
+    animation: fadeIn 0.3s ease-out;
+}
+.profile-card:hover {
+    box-shadow: var(--shadow-hover);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Header avec photo */
+.profile-header {
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    padding: 3rem 2rem;
+    text-align: center;
+    color: white;
+    position: relative;
+    overflow: hidden;
+}
+
+.profile-header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at center, rgba(255,255,255,0.1) 0%, transparent 70%);
+    animation: rotate 30s linear infinite;
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Photo */
+.profile-photo-container {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 1.5rem;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.profile-photo {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid rgba(255, 255, 255, 0.2);
+    transition: var(--transition);
+    box-shadow: 0 10px 20px -5px rgba(0,0,0,0.2);
+}
+
+.profile-photo:hover {
+    transform: scale(1.05);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.profile-initial {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: white;
+    font-size: 3.5rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 4px solid rgba(255, 255, 255, 0.2);
+    transition: var(--transition);
+    box-shadow: 0 10px 20px -5px rgba(0,0,0,0.2);
+}
+
+.profile-initial:hover {
+    transform: scale(1.05);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.photo-edit-badge {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    width: 36px;
+    height: 36px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary);
+    border: 2px solid white;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    transition: var(--transition);
+}
+
+.photo-edit-badge:hover {
+    background: var(--accent);
+    color: white;
+    transform: rotate(90deg);
+}
+
+.profile-header h2 {
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    position: relative;
+    z-index: 1;
+}
+
+.profile-header p {
+    opacity: 0.8;
+    font-size: 0.95rem;
+    margin-bottom: 0;
+    position: relative;
+    z-index: 1;
+}
+
+/* Corps */
+.profile-body {
+    padding: 2.5rem;
+}
+
+/* Sections */
+.form-section {
+    margin-bottom: 2.5rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--border-light);
+}
+.form-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.section-title i {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: var(--accent-light);
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+}
+
+.section-title h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 0;
+}
+
+/* Formulaire */
+.form-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+.form-group:last-child {
+    margin-bottom: 0;
+}
+
+.form-label {
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--text-dark);
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.form-label i {
+    color: var(--accent);
+    font-size: 0.8rem;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 0.95rem;
+    transition: var(--transition);
+    background: #fff;
+    color: var(--text-dark);
+}
+
+.form-control:hover {
+    border-color: var(--text-muted);
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+}
+
+.form-control:read-only {
+    background: var(--primary-soft);
+    cursor: not-allowed;
+}
+
+/* Input file stylisé */
+.file-input-wrapper {
+    position: relative;
+}
+
+.file-input {
+    position: absolute;
+    width: 0;
+    height: 0;
+    opacity: 0;
+    overflow: hidden;
+}
+
+.file-input-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: var(--primary-soft);
+    border: 1px dashed var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-medium);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.file-input-label:hover {
+    background: var(--accent-light);
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.file-input-label i {
+    font-size: 1rem;
+}
+
+.file-name {
+    margin-left: 1rem;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+/* Alertes */
+.alert-custom {
+    padding: 1rem 1.5rem;
+    border-radius: var(--radius-sm);
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.95rem;
+    animation: slideIn 0.3s ease;
+    border-left: 4px solid transparent;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.alert-success {
+    background: var(--success-light);
+    border-left-color: var(--success);
+    color: var(--success);
+}
+
+.alert-warning {
+    background: var(--warning-light);
+    border-left-color: var(--warning);
+    color: var(--warning);
+}
+
+.alert-danger {
+    background: var(--danger-light);
+    border-left-color: var(--danger);
+    color: var(--danger);
+}
+
+/* Badges */
+.badge-custom {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 1rem;
+    border-radius: 30px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    background: rgba(255,255,255,0.2);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.3);
+}
+
+/* Boutons */
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-light);
+}
+
+.btn-custom {
+    padding: 0.875rem 2rem;
+    border-radius: 30px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.btn-primary-custom {
+    background: var(--accent);
+    color: white;
+}
+
+.btn-primary-custom:hover {
+    background: #2563eb;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px -4px rgba(59, 130, 246, 0.3);
+}
+
+.btn-outline-custom {
+    background: transparent;
+    border: 1.5px solid var(--border);
+    color: var(--text-medium);
+}
+
+.btn-outline-custom:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-light);
+    transform: translateY(-2px);
+}
+
+.btn-danger-custom {
+    background: var(--danger-light);
+    color: var(--danger);
+}
+
+.btn-danger-custom:hover {
+    background: var(--danger);
+    color: white;
+    transform: translateY(-2px);
+}
+
+/* Statistiques */
+.stats-mini-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.stat-mini-card {
+    background: var(--primary-soft);
+    border-radius: var(--radius-sm);
+    padding: 1.25rem;
+    text-align: center;
+    transition: var(--transition);
+}
+
+.stat-mini-card:hover {
+    transform: translateY(-2px);
+    background: #fff;
+    box-shadow: var(--shadow);
+}
+
+.stat-mini-number {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary);
+    line-height: 1.2;
+    margin-bottom: 0.25rem;
+}
+
+.stat-mini-label {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .profile-header {
+        padding: 2rem 1rem;
+    }
+    
+    .profile-body {
+        padding: 1.5rem;
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .btn-custom {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .profile-photo, .profile-initial {
+        width: 100px;
+        height: 100px;
+        font-size: 2.5rem;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4 py-4">
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb-custom" aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'dashboard:dashboard' %}">Dashboard</a></li>
+            <li class="breadcrumb-item active">Mon Profil</li>
+        </ol>
+    </nav>
+
+    <!-- Header -->
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Mon Profil</h1>
+            <p class="page-subtitle">Gérez vos informations personnelles et vos préférences</p>
+        </div>
+        <div>
+            <span class="badge-custom">
+                <i class="fas fa-calendar-alt"></i>
+                Membre depuis {{ user.date_joined|date:"d/m/Y" }}
+            </span>
+        </div>
+    </div>
+
+    <div class="profile-container">
+        <div class="profile-card">
+            <!-- En-tête avec photo -->
+            <div class="profile-header">
+                <div class="profile-photo-container" onclick="document.getElementById('id_photo').click()">
+                    {% if user.photo %}
+                        <img src="{{ user.photo.url }}" alt="{{ user.get_full_name }}" class="profile-photo">
+                    {% else %}
+                        <div class="profile-initial">
+                            {{ user.first_name|first|default:user.username|first|upper }}
+                        </div>
+                    {% endif %}
+                    <div class="photo-edit-badge">
+                        <i class="fas fa-camera"></i>
+                    </div>
+                </div>
+                <h2>{{ user.get_full_name|default:user.username }}</h2>
+                <p>
+                    <i class="fas fa-badge-check me-1"></i>
+                    
+                    {% if user.is_superuser %}
+                        <span class="badge-custom ms-2">Administrateur</span>
+                    {% endif %}
+                </p>
+            </div>
+            
+            <!-- Corps avec formulaire -->
+            <div class="profile-body">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert-custom alert-{{ message.tags }}">
+                            <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'warning' %}exclamation-triangle{% else %}info-circle{% endif %}"></i>
+                            {{ message }}
+                            <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                <form method="post" enctype="multipart/form-data" id="profileForm">
+                    {% csrf_token %}
+                    
+                    <!-- Section Informations personnelles -->
+                    <div class="form-section">
+                        <div class="section-title">
+                            <i class="fas fa-user-circle"></i>
+                            <h4>Informations personnelles</h4>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-user"></i>
+                                    Prénom
+                                </label>
+                                {{ form.first_name }}
+                                {% if form.first_name.errors %}
+                                    <div class="text-danger small mt-1">{{ form.first_name.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-user"></i>
+                                    Nom
+                                </label>
+                                {{ form.last_name }}
+                                {% if form.last_name.errors %}
+                                    <div class="text-danger small mt-1">{{ form.last_name.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-envelope"></i>
+                                Email
+                            </label>
+                            {{ form.email }}
+                            {% if form.email.errors %}
+                                <div class="text-danger small mt-1">{{ form.email.errors.0 }}</div>
+                            {% endif %}
+                            <small class="text-muted">Votre email sera utilisé pour les notifications</small>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-phone"></i>
+                                    Téléphone
+                                </label>
+                                {{ form.telephone }}
+                                {% if form.telephone.errors %}
+                                    <div class="text-danger small mt-1">{{ form.telephone.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-id-card"></i>
+                                    Identifiant
+                                </label>
+                                <input type="text" class="form-control" value="{{ user.username }}" readonly>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section Photo -->
+                    <div class="form-section">
+                        <div class="section-title">
+                            <i class="fas fa-camera"></i>
+                            <h4>Photo de profil</h4>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="file-input-wrapper">
+                                {{ form.photo }}
+                                <label for="{{ form.photo.id_for_label }}" class="file-input-label">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    Choisir une photo
+                                </label>
+                                <span class="file-name" id="file-name">
+                                    {% if user.photo %}Fichier actuel : {{ user.photo.name }}{% endif %}
+                                </span>
+                            </div>
+                            {% if form.photo.errors %}
+                                <div class="text-danger small mt-1">{{ form.photo.errors.0 }}</div>
+                            {% endif %}
+                            <small class="text-muted d-block mt-2">
+                                Formats acceptés : JPG, PNG. Taille max : 2 Mo
+                            </small>
+                        </div>
+                    </div>
+
+                    <!-- Section Statistiques -->
+                    <div class="form-section">
+                        <div class="section-title">
+                            <i class="fas fa-chart-line"></i>
+                            <h4>Activité</h4>
+                        </div>
+
+                        {% if stats %}
+                            <div class="stats-mini-grid">
+                                <div class="stat-mini-card">
+                                    <div class="stat-mini-number">{{ stats.total_seances|default:"0" }}</div>
+                                    <div class="stat-mini-label">Séances</div>
+                                </div>
+                                <div class="stat-mini-card">
+                                    <div class="stat-mini-number">{{ stats.total_examens|default:"0" }}</div>
+                                    <div class="stat-mini-label">Examens</div>
+                                </div>
+                                <div class="stat-mini-card">
+                                    <div class="stat-mini-number">{{ stats.total_heures|default:"0"|floatformat:1 }}</div>
+                                    <div class="stat-mini-label">Heures</div>
+                                </div>
+                                <div class="stat-mini-card">
+                                    <div class="stat-mini-number">{{ stats.taux_reussite|default:"0" }}%</div>
+                                    <div class="stat-mini-label">Réussite</div>
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="py-3 text-center text-muted">Aucune donnée d'activité disponible pour le moment.</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="form-actions">
+                        <button type="submit" class="btn-custom btn-primary-custom">
+                            <i class="fas fa-save"></i>
+                            Enregistrer
+                        </button>
+                        <a href="{% url 'dashboard:dashboard' %}" class="btn-custom btn-outline-custom">
+                            <i class="fas fa-arrow-left"></i>
+                            Retour
+                        </a>
+                        
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Afficher le nom du fichier sélectionné
+document.addEventListener('DOMContentLoaded', function() {
+    const photoInput = document.getElementById('{{ form.photo.id_for_label }}');
+    const fileNameSpan = document.getElementById('file-name');
+    
+    if (photoInput) {
+        photoInput.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                fileNameSpan.textContent = 'Fichier sélectionné : ' + this.files[0].name;
+                
+                // Prévisualisation (optionnelle)
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const photoContainer = document.querySelector('.profile-photo-container');
+                    const existingImg = document.querySelector('.profile-photo');
+                    const existingInitial = document.querySelector('.profile-initial');
+                    
+                    if (existingImg) {
+                        existingImg.src = e.target.result;
+                    } else if (existingInitial) {
+                        // Remplacer l'initiale par une image
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.className = 'profile-photo';
+                        existingInitial.parentNode.replaceChild(img, existingInitial);
+                    }
+                }
+                reader.readAsDataURL(this.files[0]);
+            } else {
+                fileNameSpan.textContent = '{% if user.photo %}Fichier actuel : {{ user.photo.name }}{% endif %}';
+            }
+        });
+    }
+});
+
+// Confirmation avant de quitter si modifications non sauvegardées
+let formModified = false;
+document.querySelectorAll('#profileForm input, #profileForm select').forEach(input => {
+    input.addEventListener('change', () => formModified = true);
+});
+
+window.addEventListener('beforeunload', function(e) {
+    if (formModified) {
+        e.preventDefault();
+        e.returnValue = 'Vous avez des modifications non sauvegardées.';
+    }
+});
+
+// Animation douce
+document.querySelectorAll('.form-control').forEach(input => {
+    input.addEventListener('focus', function() {
+        this.parentElement.classList.add('focused');
+    });
+    input.addEventListener('blur', function() {
+        this.parentElement.classList.remove('focused');
+    });
+});
+</script>
+{% endblock %}

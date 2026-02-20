@@ -1,6 +1,7 @@
-# apps/apprenants/urls.py
 from django.urls import path
 from . import views
+
+app_name = 'apprenants'
 
 urlpatterns = [
     path('', views.liste_apprenants, name='liste_apprenants'),
