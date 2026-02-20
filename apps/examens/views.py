@@ -8,10 +8,12 @@ from django.db.models import Q, Count
 from apps.apprenants.models import Apprenant
 from django.urls import reverse
 from django.contrib import messages
+from apps.accounts.decorators import admin_required
 from .models import Examen, EXAM_TYPE_CHOICES, RESULT_CHOICES
 from .forms import ExamenForm, ExamenResultForm
 
 # Hub général (optionnel)
+@admin_required
 def examens_hub(request):
     today = timezone.now().date()
     week_later = today + timedelta(days=7)
@@ -61,6 +63,7 @@ def examens_hub(request):
     
     return render(request, 'examens/hub.html', context)
     
+@admin_required
 def activites(request):
     """
     Vue détaillée de toutes les activités récentes liées aux examens
@@ -80,6 +83,7 @@ def activites(request):
     
     return render(request, 'examens/activites.html', {'activites': activites_liste})
 
+@admin_required
 def planning(request):
     """
     Vue calendrier/planning des examens à venir
@@ -99,6 +103,7 @@ def planning(request):
         'planning_data': planning_data
     })
 
+@admin_required
 def statistiques(request):
     """
     Vue détaillée des statistiques d'examens
@@ -148,6 +153,7 @@ def statistiques(request):
     
     return render(request, 'examens/statistiques.html', context)
 
+@admin_required
 def examen_export(request):
     """
     Exporte la liste des examens en CSV avec les filtres appliqués
@@ -200,6 +206,7 @@ def examen_export(request):
     return response
 
 # Liste des examens
+@admin_required
 def examen_list(request):
     examens = Examen.objects.select_related('apprenant', 'moniteur', 'vehicule', 'seance').all()
     
@@ -245,6 +252,7 @@ def examen_list(request):
     return render(request, 'examens/examen_list.html', context)
 
 # Créer un examen
+@admin_required
 def examen_create(request):
     if request.method == 'POST':
         form = ExamenForm(request.POST)
@@ -257,6 +265,7 @@ def examen_create(request):
     return render(request, 'examens/examen_form.html', {'form': form, 'action': 'Créer'})
 
 # Modifier un examen
+@admin_required
 def examen_update(request, pk):
     examen = get_object_or_404(Examen, pk=pk)
     if request.method == 'POST':
@@ -276,6 +285,7 @@ def examen_update(request, pk):
     })
 
 # Valider un examen (saisie résultat)
+@admin_required
 def examen_validate(request, pk):
     examen = get_object_or_404(Examen, pk=pk)
     
@@ -304,6 +314,7 @@ def examen_validate(request, pk):
     })
 
 # Enregistrer le paiement
+@admin_required
 def examen_paiement(request, pk):
     examen = get_object_or_404(Examen, pk=pk)
     examen.est_paye = True
@@ -312,16 +323,19 @@ def examen_paiement(request, pk):
     return redirect('examens:examen_detail', pk=pk)
 
 # Imprimer l'examen
+@admin_required
 def examen_print(request, pk):
     examen = get_object_or_404(Examen, pk=pk)
     return render(request, 'examens/examen_print.html', {'examen': examen})
 
 # Détail d’un examen
+@admin_required
 def examen_detail(request, pk):
     examen = get_object_or_404(Examen, pk=pk)
     return render(request, 'examens/examen_detail.html', {'examen': examen})
 
 # Supprimer un examen
+@admin_required
 def examen_delete(request, pk):
     examen = get_object_or_404(Examen, pk=pk)
     if request.method == 'POST':

@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib.auth.decorators import login_required, user_passes_test
+from apps.accounts.decorators import admin_required
 from .models import Vehicule, Maintenance
 from .forms import VehiculeForm, MaintenanceForm
 
@@ -16,8 +16,7 @@ def is_admin_or_staff(user):
 
 
 
-@login_required
-@user_passes_test(is_admin_or_staff)
+@admin_required
 def vehicules_hub(request, section=None):
     """
     Hub Véhicules : affiche le hub ou les listes selon la section
@@ -55,6 +54,7 @@ def vehicules_hub(request, section=None):
     return render(request, template_name, context)
 
 
+@admin_required
 def vehicule_list(request):
     vehicules = Vehicule.objects.all()
     return render(request, 'vehicules/vehicule_list.html', {'vehicules': vehicules})
@@ -69,6 +69,7 @@ def vehicule_create(request):
         form = VehiculeForm()
     return render(request, 'vehicules/vehicule_form.html', {'form': form})
 
+@admin_required
 def vehicule_update(request, pk):
     vehicule = get_object_or_404(Vehicule, pk=pk)
     if request.method == 'POST':
@@ -92,8 +93,7 @@ def vehicule_delete(request, pk):
 # CRUD Maintenance
 # ==========================
 
-@login_required
-@user_passes_test(is_admin_or_staff)
+@admin_required
 def maintenance_list(request):
     maintenances = Maintenance.objects.select_related('vehicule').all().order_by('-date')
     total_interventions = maintenances.count()
@@ -111,6 +111,8 @@ def maintenance_list(request):
     }
     return render(request, 'vehicules/maintenance_list.html', context)
 
+
+@admin_required
 def maintenance_create(request):
     if request.method == 'POST':
         form = MaintenanceForm(request.POST)
@@ -121,6 +123,7 @@ def maintenance_create(request):
         form = MaintenanceForm()
     return render(request, 'vehicules/maintenance_form.html', {'form': form})
 
+@admin_required
 def maintenance_update(request, pk):
     maintenance = get_object_or_404(Maintenance, pk=pk)
     if request.method == 'POST':
@@ -132,6 +135,7 @@ def maintenance_update(request, pk):
         form = MaintenanceForm(instance=maintenance)
     return render(request, 'vehicules/maintenance_form.html', {'form': form})
 
+@admin_required
 def maintenance_delete(request, pk):
     maintenance = get_object_or_404(Maintenance, pk=pk)
     if request.method == 'POST':

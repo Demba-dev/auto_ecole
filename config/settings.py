@@ -146,5 +146,6 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 # Redirection après connexion/déconnexion
 # Use the namespaced route so reverse('dashboard:dashboard') resolves correctly
+LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'dashboard:dashboard'
 LOGOUT_REDIRECT_URL = 'login'

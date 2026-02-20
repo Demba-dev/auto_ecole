@@ -1,15 +1,19 @@
 import csv
 from django.http import HttpResponse
 from django.shortcuts import render
-from django.contrib.auth.decorators import user_passes_test
+from apps.accounts.decorators import admin_required
 from .models import AuditLog
 
-@user_passes_test(lambda u: u.is_superuser)
+def is_superuser(user):
+    return user.is_authenticated and user.is_superuser
+
+@admin_required
 def audit_log_list(request):
     logs = AuditLog.objects.select_related('user', 'content_type').all()[:100]
     return render(request, 'audit/log_list.html', {'logs': logs})
 
-@user_passes_test(lambda u: u.is_superuser)
+@admin_required
+
 def audit_export(request):
     """Exporte les logs d'audit en format CSV."""
     response = HttpResponse(content_type='text/csv')

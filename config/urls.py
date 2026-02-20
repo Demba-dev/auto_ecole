@@ -17,11 +17,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 from django.contrib.auth import views as auth_views
+from django.views.generic import RedirectView
 from apps.accounts.forms import AdminAuthenticationForm
 from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
+    path('', RedirectView.as_view(pattern_name='dashboard:dashboard')),
     path('admin/', admin.site.urls),
     path("dashboard/", include(("apps.dashboard.urls", "dashboard"), namespace="dashboard")),
     path("accounts/", include("apps.accounts.urls")),

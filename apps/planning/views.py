@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from apps.accounts.decorators import admin_required
 from django.contrib import messages
 from .models import Seance
 from django.utils import timezone
@@ -8,6 +9,8 @@ from django.core.exceptions import ValidationError
 from .forms import SeanceForm
 
 
+
+@admin_required
 def planning_hub(request, section=None):
     context = {'active_section': section or 'hub'}
     today = timezone.now().date()
@@ -36,6 +39,7 @@ def planning_hub(request, section=None):
     return render(request, template_name, context)
 
 
+@admin_required
 def seance_create(request):
     form = SeanceForm(request.POST or None)
 
@@ -49,7 +53,7 @@ def seance_create(request):
 
     return render(request, 'planning/seance_form.html', {'form': form})
 
-
+@admin_required
 def seance_update(request, pk):
     seance = get_object_or_404(Seance, pk=pk)
     form = SeanceForm(request.POST or None, instance=seance)
@@ -64,7 +68,7 @@ def seance_update(request, pk):
 
     return render(request, 'planning/seance_form.html', {'form': form})
 
-
+@admin_required
 def seance_delete(request, pk):
     seance = get_object_or_404(Seance, pk=pk)
 

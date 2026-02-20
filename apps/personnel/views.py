@@ -1,5 +1,4 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib.auth.decorators import login_required
 from apps.accounts.decorators import admin_required
 from .models import Employe, MoniteurProfile, AffectationMoniteur, DisponibiliteMoniteur
 from .forms import EmployeForm, MoniteurProfileForm, AffectationMoniteurForm, DisponibiliteMoniteurForm

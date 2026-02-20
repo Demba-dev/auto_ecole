@@ -6,8 +6,9 @@ from .forms import TarifForm, ContratForm, PaiementForm
 from .models import Tarif, Contrat, Paiement
 from apps.apprenants.models import Apprenant, TypePermis
 from apps.audit.utils import log_action
+from apps.accounts.decorators import admin_required
 
-
+@admin_required
 def finance_hub(request, section='tarif'):
     context = {'active': section}
 
@@ -69,6 +70,8 @@ def finance_hub(request, section='tarif'):
 
 
 # ==================Tarif==================
+
+@admin_required
 def tarif_create(request):
     form = TarifForm(request.POST or None)
 
@@ -79,6 +82,7 @@ def tarif_create(request):
     return render(request, 'finance/tarif_form.html', {'form': form} )
 
 
+@admin_required
 def tarif_update(request, pk):
     tarif = get_object_or_404(Tarif, pk=pk)
     form = TarifForm(request.POST or None, instance=tarif)
@@ -90,6 +94,7 @@ def tarif_update(request, pk):
     return render(request, 'finance/tarif_form.html', {'form': form} )
 
 
+@admin_required
 def tarif_delete(request, pk):
     tarif = get_object_or_404(Tarif, pk=pk)
 
@@ -110,6 +115,7 @@ def contrat_create(request):
     return render(request, 'finance/contrat_form.html', {'form': form} )
 
 
+@admin_required
 def contrat_update(request, pk):
     contrat = get_object_or_404(Contrat, pk=pk)
     form = ContratForm(request.POST or None, instance=contrat)
@@ -121,6 +127,7 @@ def contrat_update(request, pk):
     return render(request, 'finance/contrat_form.html', {'form': form} )
 
 
+@admin_required
 def contrat_delete(request, pk):
     contrat = get_object_or_404(Contrat, pk=pk)
 
@@ -132,6 +139,7 @@ def contrat_delete(request, pk):
 
 # =================Paiement==================
 
+@admin_required
 def paiement_create(request):
     form = PaiementForm(request.POST or None)
 
@@ -148,6 +156,7 @@ def paiement_create(request):
 
     return render(request, 'finance/paiement_form.html', {'form': form} )
 
+@admin_required
 def paiement_delete(request, pk):
     paiement = get_object_or_404(Paiement, pk=pk)
 
@@ -164,11 +173,13 @@ def paiement_delete(request, pk):
     return render(request, 'finance/paiement_confirm_delete.html', {'paiement': paiement} )
 
 
+@admin_required
 def paiement_detail(request, pk):
     paiement = get_object_or_404(Paiement, pk=pk)
     return render(request, 'finance/paiement_detail.html', {'paiement': paiement})
 
 
+@admin_required
 def get_contrat_info(request, pk):
     contrat = get_object_or_404(Contrat, pk=pk)
     data = {
